@@ -4,7 +4,7 @@
         <img src="../assets/logo.jpg" alt="PantryPal Logo" class="logo">
         <div class="menu">
           <button class="btn-login">Login</button>
-          <button class="btn-signup">Sign Up</button>
+          <button class="btn-signup" @click="goToSignUp">Sign Up</button>
         </div>
       </div>
       <div class="separator"></div>
@@ -25,8 +25,13 @@
   
   <script>
   export default {
-    name: 'LandingPage'
-  };
+    name: 'LandingPage',
+    methods: {
+        goToSignUp() {
+        this.$router.push('/signup');
+        },
+    }
+};
   </script>
   
   <style scoped>
