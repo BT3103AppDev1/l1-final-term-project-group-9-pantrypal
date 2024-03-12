@@ -1,0 +1,71 @@
+/* login-page.css */
+.login-container {
+    display: flex;
+    align-items: stretch;
+    height: 100vh;
+    background: url('../assets/login-background.jpg') no-repeat center center;
+    background-size: cover;
+  }
+  
+  .login-image-container {
+    flex: 1;
+    border-top-left-radius: 50% 20%;
+    border-bottom-left-radius: 50% 20%;
+  }
+  
+  .login-form-container {
+    margin-left: 100px;
+    max-width: 400px;
+    width: 50%; 
+    background-color: white; 
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-top-right-radius: 50% 20%;
+    border-bottom-right-radius: 50% 20%;
+  }
+  
+  .login-form-container h1 {
+    margin-bottom: 2rem;
+    margin-left: 100px;
+  }
+  
+
+  .btn-login {
+    display: block;
+    width: 100%;
+    padding: 1rem;
+    background-color: #1fd655; /* Button color */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    margin-top: 1rem;
+    cursor: pointer;
+  }
+  
+  .register-link {
+    text-align: center;
+    margin-top: 1rem;
+  }
+  
+  .register-link a {
+    color: #1fd655; 
+  }
+  
+  .input-group input {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+  }
+
+  .logo {
+    height: 150px;
+    width: 150px;
+    margin-left: 125px;
+  }
+  
+  
+  

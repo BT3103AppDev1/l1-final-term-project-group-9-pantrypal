@@ -1,6 +1,9 @@
 <template>
     <div class="signup-container">
+      <div class="signup-image-container">
+      </div>
       <div class="signup-form-container">
+        <img src="../assets/logo.jpg" alt="PantryPal Logo" class="logo">
         <h1>Create New Account</h1>
         <form class="signup-form" @submit.prevent="register">
           <div class="input-group">
@@ -22,11 +25,8 @@
           <div class="login-link">
             Already Registered? <a href="/login">Login</a>
           </div>
-          <button type="submit" class="btn-signup">sign up</button>
+          <button type="submit" class="btn-signup">Sign Up</button>
         </form>
-      </div>
-      <div class="signup-image-container">
-        <!-- The background image will be set via CSS -->
       </div>
     </div>
   </template>
