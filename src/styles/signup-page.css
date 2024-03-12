@@ -1,15 +1,29 @@
 .signup-container {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 2rem;
-    height: 100vh;
-  }
-  
-  .signup-form-container {
-    max-width: 400px;
-    width: 100%;
-  }
+  display: flex;
+  height: 100vh;
+  background: url('../assets/registration-background.jpg') no-repeat center center;
+  background-size: cover;
+}
+
+.signup-image-container {
+  width: 50%; /* Adjust width as necessary */
+  height: 100vh;
+  border-top-left-radius: 50% 20%;
+  border-bottom-left-radius: 50% 20%;
+}
+
+.signup-form-container {
+  margin-left: 150px; /* Push the form container to the right */
+  max-width: 400px;
+  width: 50%; /* Adjust width as necessary */
+  background-color: white; /* Adjust color as needed */
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-top-right-radius: 50% 20%;
+  border-bottom-right-radius: 50% 20%;
+}
   
   .signup-form h1 {
     margin-bottom: 2rem;
@@ -29,7 +43,7 @@
     width: 100%;
     padding: 0.5rem;
     margin-bottom: 0.5rem;
-    border: 1px solid #ccc;
+    border: 2px solid #ccc;
     border-radius: 5px;
   }
   
@@ -54,12 +68,4 @@
     cursor: pointer;
   }
   
-  .signup-image-container {
-    background: url('@/assets/your-background-image.jpg') no-repeat center center;
-    background-size: cover;
-    width: 50vw;
-    height: 100vh;
-    border-top-right-radius: 50% 20%;
-    border-bottom-right-radius: 50% 20%;
-  }
   

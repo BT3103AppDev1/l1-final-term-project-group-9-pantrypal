@@ -1,5 +1,7 @@
 <template>
     <div class="signup-container">
+      <div class="signup-image-container">
+      </div>
       <div class="signup-form-container">
         <h1>Create New Account</h1>
         <form class="signup-form" @submit.prevent="register">
@@ -24,9 +26,6 @@
           </div>
           <button type="submit" class="btn-signup">sign up</button>
         </form>
-      </div>
-      <div class="signup-image-container">
-        <!-- The background image will be set via CSS -->
       </div>
     </div>
   </template>
