@@ -3,7 +3,7 @@
       <div class="top-bar">
         <img src="../assets/logo.jpg" alt="PantryPal Logo" class="logo">
         <div class="menu">
-          <button class="btn-login">Login</button>
+          <button class="btn-login" @click="goToLogin">Login</button>
           <button class="btn-signup" @click="goToSignUp">Sign Up</button>
         </div>
       </div>
@@ -29,6 +29,9 @@
     methods: {
         goToSignUp() {
         this.$router.push('/signup');
+        },
+        goToLogin() {
+        this.$router.push('/login');
         },
     }
 };
