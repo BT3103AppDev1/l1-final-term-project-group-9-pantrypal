@@ -13,10 +13,8 @@
             <h1>Transform leftovers into culinary treasures!</h1>
         </header>
         <section class="gallery">
-            <div class="gallery-item">
-            <img src= "../assets/landingfood1.jpg" alt="food">
-            <img src= "../assets/landingfood2.jpg" alt="food">
-            <img src= "../assets/landingfood3.jpg" alt="food">
+            <div>
+                <img class="gallery-item" src= "../assets/landingfood.png" alt="food">
             </div>
         </section>
       </div>
