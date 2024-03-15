@@ -16,7 +16,6 @@
   margin-left: 150px; /* Push the form container to the right */
   max-width: 400px;
   width: 50%; /* Adjust width as necessary */
-  background-color: white; /* Adjust color as needed */
   padding: 2rem;
   display: flex;
   flex-direction: column;
