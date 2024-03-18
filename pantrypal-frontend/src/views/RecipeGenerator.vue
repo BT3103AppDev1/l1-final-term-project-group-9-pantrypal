@@ -194,50 +194,37 @@ h1 {
   font-size: 16px;
   background-color: white;
   border-radius: 24px;
-  margin-right: 8px;
-}
 
-.askButton {
-  background-color: #1877f2;
-  color: white;
-  font-size: 16px;
-  padding: 8px 16px;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  border-radius: 24px;
-  transition: background-color 0.3s ease-in-out;
-}
-
-.askButton:hover {
-  background-color: #145cb3;
-}
-
-@media (max-width: 480px) {
-  .container {
-    width: 100%;
-    max-width: none;
-    border-radius: 0;
-  }
-}
-.chatbox-container {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  z-index: 1000;
-}
-
-.messageBox {
-  padding: 16px;
-  flex-grow: 1;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.messageFromUser,
-.messageFromChatGpt {
-  display: flex;
-}
-</style>
+  <div class="recipeGenerator">
+    <h1>Recipe Generator</h1>
+    <CircleButton logo="src/assets/chefbot-button.png" @click="toggleChefBot" />
+    <ChefBot v-if="showChefBot" @close="showChefBot = false" />
+  </div>
+</template>
+  
+  <script>
+  import ChefBot from '@/components/ChefBot.vue';
+  import CircleButton from '@/components/CircleButton.vue';
+  
+  export default {
+    name: 'Recipe Generator',
+    components: {
+      ChefBot,
+      CircleButton,
+    },
+    data() {
+      return {
+        showChefBot: false,
+      };
+    },
+    methods: {
+      toggleChefBot() {
+        this.showChefBot = !this.showChefBot;
+      },
+    },
+  };
+  </script>
+  
+  <style scoped>
+  /* Add your scoped styles here */
+  </style>  
