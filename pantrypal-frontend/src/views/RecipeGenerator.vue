@@ -1,71 +1,73 @@
-
 <template>
-    <div class="chatbox-container">
-<div class="container">
-  <h1>Chefbot</h1>
-<div class="messageBox mt-8">
-  <template v-for="(message, index) in messages" :key="index">
-    <div :class="message.from == 'user' ? 'messageFromUser' : 'messageFromChatGpt'">
-      <div :class="message.from == 'user' ? 'userMessageWrapper' : 'chatGptMessageWrapper'">
-        <div :class="message.from == 'user' ? 'userMessageContent' : 'chatGptMessageContent'">{{ message.data }}</div>
+  <div class="chatbox-container">
+    <div class="container">
+      <h1>Chefbot</h1>
+      <div class="messageBox mt-8">
+        <template>
+          <div class="community-page">
+            <div class="recipe-list">
+              <div v-for="recipe in recipes" :key="recipe.recipe_id" class="recipe-card">
+                <div class="info">
+                  <span>By {{ recipe.user_id }}</span>
+                  <span>{{ recipe.categories.join(", ") }}</span>
+                </div>
+                <h2>{{ recipe.recipe_name }}</h2>
+                <img :src="recipe.recipe_img_url" :alt="recipe.recipe_name" />
+                <p>{{ recipe.description }}</p>
+                <button @click="viewRecipe(recipe)">View Recipe</button>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+      <div class="inputContainer">
+        <input
+          v-model="currentMessage"
+          type="text"
+          class="messageInput"
+          placeholder="Ask me anything..."
+        />
+        <button @click="sendMessage(currentMessage)" class="askButton">Ask</button>
       </div>
     </div>
-  </template>
-</div>
-<div class="inputContainer">
-  <input
-    v-model="currentMessage"
-    type="text"
-    class="messageInput"
-    placeholder="Ask me anything..."
-  />
-  <button
-    @click="sendMessage(currentMessage)"
-    class="askButton"
-  >
-    Ask
-  </button>
-</div>
-</div>
-</div>
+  </div>
 </template>
 
-
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
-    name: 'Recipe Generator',
-    data() {
-        return {
-        currentMessage: '',
-        messages: [],
-        };
-    },
-    methods: {
-        async sendMessage(message) {
-            this.messages.push({
-                from: 'user',
-                data: message,
-            });
+  name: "Recipe Generator",
+  data() {
+    return {
+      currentMessage: "",
+      messages: [],
+    };
+  },
+  methods: {
+    async sendMessage(message) {
+      this.messages.push({
+        from: "user",
+        data: message,
+      });
 
-            await axios
-                .post('http://localhost:3000/chatbot', {
-                    message: message,
-                })
-            .then((response) => {
-                this.messages.push({
-                    from: 'chatGpt',
-                    data: response.data.data, // Access the 'data' property of the response object
-                });
-            });
-        },
+      await axios
+        .post("http://localhost:3000/chatbot", {
+          message: message,
+        })
+        .then((response) => {
+          this.messages.push({
+            from: "chatGpt",
+            data: response.data.data, // Access the 'data' property of the response object
+          });
+        });
     },
+  },
 };
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap");
 
 .chatbox-container {
   position: fixed;
@@ -83,7 +85,7 @@ export default {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 
 h1 {
@@ -108,9 +110,8 @@ h1 {
 
 .messageFromUser,
 .messageFromChatGpt {
-  display: flex; }
-
-
+  display: flex;
+}
 
 .messageBox {
   max-height: 400px;
@@ -152,13 +153,13 @@ h1 {
 }
 
 .userMessageContent {
-  background-color: #1877F2;
+  background-color: #1877f2;
   color: white;
   border-top-left-radius: 0;
 }
 
 .chatGptMessageContent {
-  background-color: #EDEDED;
+  background-color: #ededed;
   color: #222;
   border-top-right-radius: 0;
 }
@@ -197,7 +198,7 @@ h1 {
 }
 
 .askButton {
-  background-color: #1877F2;
+  background-color: #1877f2;
   color: white;
   font-size: 16px;
   padding: 8px 16px;
@@ -209,7 +210,7 @@ h1 {
 }
 
 .askButton:hover {
-  background-color: #145CB3;
+  background-color: #145cb3;
 }
 
 @media (max-width: 480px) {
@@ -225,7 +226,6 @@ h1 {
   right: 24px;
   z-index: 1000;
 }
-
 
 .messageBox {
   padding: 16px;
