@@ -25,9 +25,7 @@
 <script>
 export default {
     methods: {
-        goToCommunityPage() {
-
-        },
+        goToCommunityPage() { },
         goToCreateNewRecipePage() { },
     },
 };

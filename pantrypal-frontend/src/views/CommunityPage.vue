@@ -133,17 +133,18 @@ export default {
       this.selectedRecipe = null;
       this.selectedIngredients = [];
     },
-  },
-  computed: {
-    filteredRecipes() {
-      return this.recipes.filter((recipe) => {
-        const nameMatch = recipe.recipe_name
-          .toLowerCase()
-          .includes(this.searchQuery.toLowerCase());
-        return nameMatch;
-      });
+
+    computed: {
+      filteredRecipes() {
+        return this.recipes.filter((recipe) => {
+          const nameMatch = recipe.recipe_name
+            .toLowerCase()
+            .includes(this.searchQuery.toLowerCase());
+          return nameMatch;
+        });
+      },
     },
-  },
+  }
 };
 </script>
 
