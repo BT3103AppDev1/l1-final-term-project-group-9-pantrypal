@@ -1,22 +1,46 @@
 <template>
+
   <div class="community-page">
-    <!-- search bar -->
-    <input
-      type="text"
-      v-model="searchQuery"
-      placeholder="Search name or ingredients..."
-    />
-    <!-- title to be removed when navbar is finished -->
-    <h1>Community Recipes</h1>
+    <TopBar />
+
+
+    <div class="filterBar">
+      <div class="search-bar">
+        <input type="text" class="search-input" placeholder="Search name or ingredients...">
+        <button type="button" class="search-button">
+          <img src="../assets/search-icon.svg" alt="Search Icon">
+        </button>
+      </div>
+      <div class="category-bar-text">
+        <p>Category: </p>
+      </div>
+      <div class="category-bar-dropdown">
+
+        <div class="dropdown-container">
+          <dropdown class="my-dropdown-toggle" :options="arrayOfCategories" :selected="category" :placeholder="'All'"
+            :closeOnOutsideClick="true">
+          </dropdown>
+        </div>
+      </div>
+      <div class="sortby-bar-text">
+        <p>Sort By: </p>
+      </div>
+      <div class="category-bar-dropdown">
+        <div class="dropdown-container">
+          <dropdown class="my-dropdown-toggle" :options="arrayOfSorts" :selected="sort" :placeholder="'Most Recent'"
+            :closeOnOutsideClick="true">
+          </dropdown>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- RecipeCards######### -->
 
     <!-- recipe card list -->
     <div class="recipe-list">
-      <div
-        v-for="recipe in filteredRecipes"
-        :key="recipe.recipe_id"
-        class="recipe-card"
-        @click="toggleRecipeDetails(recipe)"
-      >
+      <div v-for="recipe in filteredRecipes" :key="recipe.recipe_id" class="recipe-card"
+        @click="toggleRecipeDetails(recipe)">
         <img :src="recipe.recipe_img_url" :alt="recipe.recipe_name" />
         <h2>{{ recipe.recipe_name }}</h2>
         <div class="info">
@@ -41,11 +65,7 @@
           <ul class="checkbox-list">
             <!-- Add a class to the ul for styling -->
             <li v-for="(ingredient, index) in selectedRecipe.ingredients" :key="index">
-              <input
-                type="checkbox"
-                :id="'ingredient' + index"
-                v-model="selectedIngredients[index]"
-              />
+              <input type="checkbox" :id="'ingredient' + index" v-model="selectedIngredients[index]" />
               <label :for="'ingredient' + index">{{ ingredient }}</label>
             </li>
           </ul>
@@ -68,10 +88,24 @@
 <script>
 import { db } from "../firebase.js";
 import { collection, getDocs } from "firebase/firestore";
+import TopBar from '@/components/TopBar.vue';
+import dropdown from 'vue-dropdowns';
 
 export default {
+  components: {
+    TopBar,
+    dropdown
+  },
   data() {
     return {
+      arrayOfCategories: [{ name: 'All' }, { name: 'chinese' }, { name: 'western' },],
+      category: {
+      },
+      arrayOfSorts: [{ name: 'Most Recent' }, { name: 'Most Liked' }],
+      sort: {
+      },
+
+
       recipes: [],
       searchQuery: "",
       selectedRecipe: null,
@@ -99,34 +133,109 @@ export default {
       this.selectedRecipe = null;
       this.selectedIngredients = [];
     },
-  },
-  computed: {
-    filteredRecipes() {
-      return this.recipes.filter((recipe) => {
-        const nameMatch = recipe.recipe_name
-          .toLowerCase()
-          .includes(this.searchQuery.toLowerCase());
-        return nameMatch;
-      });
+
+    computed: {
+      filteredRecipes() {
+        return this.recipes.filter((recipe) => {
+          const nameMatch = recipe.recipe_name
+            .toLowerCase()
+            .includes(this.searchQuery.toLowerCase());
+          return nameMatch;
+        });
+      },
     },
-  },
+  }
 };
 </script>
 
 <style scoped>
 .community-page {
-  max-width: 800px;
   margin: 0 auto;
-  padding: 20px;
+}
+
+.filterBar {
+  display: flex;
+  padding: 0 4rem;
+  margin: 2rem 0;
 }
 
 .search-bar {
-  width: 150%;
+  display: flex;
+  flex: 0.5;
+  align-items: center;
+  width: 100%;
+  background-color: #f5f5f5;
+  height: 40px;
+  border-radius: 30px;
+  padding: 0 10px;
+}
+
+.search-input {
+  flex: 1;
+  border: none;
+  outline: none;
   padding: 10px;
-  margin-bottom: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
   font-size: 16px;
+  background-color: inherit
+}
+
+.search-button {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  padding: 0;
+}
+
+.search-button img {
+  width: 20px;
+  height: 20px;
+}
+
+.category-bar-text {
+  display: flex;
+  flex: 0.125;
+  height: 40px;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.sortby-bar-text {
+  display: flex;
+  flex: 0.1;
+  height: 40px;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.category-bar-dropdown {
+  display: flex;
+  flex: 0.125;
+  height: 40px;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.my-dropdown-toggle {
+  border-radius: 20px;
+}
+
+.my-dropdown-toggle .dropdown-toggle {
+  border-color: black;
+  font-weight: 800;
+  border-radius: 50px;
+  text-align: center;
+  min-width: 120px;
+  border: 10;
+  border-width: 10px;
+}
+
+.my-dropdown-toggle .dropdown-toggle-placeholder {
+  color: #c4c4c4;
+}
+
+.dropdown-menu {
+  width: 150px;
+  text-align: center;
 }
 
 .recipe-list {

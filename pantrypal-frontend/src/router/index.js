@@ -5,6 +5,7 @@ import Login from '@/views/Login.vue'
 import RecipeGenerator from '@/views/RecipeGenerator.vue'
 import CommunityPage from '@/views/CommunityPage.vue'
 
+
 const routes = [
     {
         path: '/',
@@ -30,7 +31,10 @@ const routes = [
         path: '/community-page',
         name: 'Community Page',
         component: CommunityPage
-    }
+    },
+
+    
+    
 ]
 
 const router = createRouter({
