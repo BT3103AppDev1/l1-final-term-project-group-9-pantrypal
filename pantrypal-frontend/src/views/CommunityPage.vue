@@ -39,19 +39,22 @@
 
     <!-- recipe card list -->
     <div class="recipe-list">
-      <div v-for="recipe in filteredRecipes" :key="recipe.recipe_id" class="recipe-card"
-        @click="toggleRecipeDetails(recipe)">
+
+      <div v-for="recipe in recipes" :key="recipe.recipe_id" class="recipe-card" @click="toggleRecipeDetails(recipe)">
         <img :src="recipe.recipe_img_url" :alt="recipe.recipe_name" />
         <h2>{{ recipe.recipe_name }}</h2>
         <div class="info">
           <span>{{ recipe.categories.join(", ") }}</span>
         </div>
+
         <p>@{{ recipe.user_id }}</p>
       </div>
+
     </div>
 
     <!-- popout recipe window -->
     <div v-if="selectedRecipe" class="popout-recipe">
+
       <div class="popout-recipe-content">
         <span class="close" @click="closeModal">&times;</span>
         <h2>{{ selectedRecipe.recipe_name }}</h2>
@@ -146,6 +149,7 @@ export default {
     },
   }
 };
+console.log("test")
 </script>
 
 <style scoped>
