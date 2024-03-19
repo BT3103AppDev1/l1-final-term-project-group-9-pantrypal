@@ -5,30 +5,30 @@
     <ChefBot v-if="showChefBot" @close="showChefBot = false" />
   </div>
 </template>
-  
-  <script>
-  import ChefBot from '@/components/ChefBot.vue';
-  import CircleButton from '@/components/CircleButton.vue';
-  
-  export default {
-    name: 'Recipe Generator',
-    components: {
-      ChefBot,
-      CircleButton,
+
+<script>
+import ChefBot from "@/components/ChefBot.vue";
+import CircleButton from "@/components/CircleButton.vue";
+
+export default {
+  name: "Recipe Generator",
+  components: {
+    ChefBot,
+    CircleButton,
+  },
+  data() {
+    return {
+      showChefBot: false,
+    };
+  },
+  methods: {
+    toggleChefBot() {
+      this.showChefBot = !this.showChefBot;
     },
-    data() {
-      return {
-        showChefBot: false,
-      };
-    },
-    methods: {
-      toggleChefBot() {
-        this.showChefBot = !this.showChefBot;
-      },
-    },
-  };
-  </script>
-  
-  <style scoped>
-  /* Add your scoped styles here */
-  </style>  
+  },
+};
+</script>
+
+<style scoped>
+/* Add your scoped styles here */
+</style>
