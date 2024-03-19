@@ -41,7 +41,7 @@
     <div class="recipe-list">
 
       <div v-for="recipe in recipes" :key="recipe.recipe_id" class="recipe-card" @click="toggleRecipeDetails(recipe)">
-        <img :src="recipe.recipe_img_url" :alt="recipe.recipe_name" />
+        <RecipeImage :path="recipe.recipe_img_url" />
         <h2>{{ recipe.recipe_name }}</h2>
         <div class="info">
           <span>{{ recipe.categories.join(", ") }}</span>
@@ -54,7 +54,7 @@
 
     <!-- popout recipe window -->
     <div v-if="selectedRecipe" class="popout-recipe">
-
+      <RecipeImage :path="selectedRecipe.recipe_img_url" />
       <div class="popout-recipe-content">
         <span class="close" @click="closeModal">&times;</span>
         <h2>{{ selectedRecipe.recipe_name }}</h2>
@@ -85,19 +85,26 @@
         </div>
       </div>
     </div>
+    <p>test</p>
+
+
+
+
   </div>
 </template>
 
 <script>
-import { db } from "../firebase.js";
+import { db, storage } from "../firebase.js";
 import { collection, getDocs } from "firebase/firestore";
 import TopBar from '@/components/TopBar.vue';
 import dropdown from 'vue-dropdowns';
+import RecipeImage from "@/components/RecipeImage.vue";
 
 export default {
   components: {
     TopBar,
-    dropdown
+    dropdown,
+    RecipeImage
   },
   data() {
     return {
@@ -124,6 +131,7 @@ export default {
       querySnapshot.forEach((doc) => {
         this.recipes.push(doc.data());
       });
+
     },
     toggleRecipeDetails(recipe) {
       recipe.showDetails = !recipe.showDetails;
