@@ -32,9 +32,34 @@
         <span class="close" @click="closeModal">&times;</span>
         <h2>{{ selectedRecipe.recipe_name }}</h2>
         <p>Serving size: {{ selectedRecipe.serving_size }}</p>
-        <p>{{ selectedRecipe.description }}</p>
-        <p>{{ selectedRecipe.ingredients }}</p>
-        <p>{{ selectedRecipe.directions }}</p>
+        <p>Description: {{ selectedRecipe.description }}</p>
+        <!-- <p>{{ selectedRecipe.ingredients }}</p>
+        <p>{{ selectedRecipe.directions }}</p> -->
+        <!-- Ingredients -->
+        <div class="recipe-section">
+          <h3>Ingredients:</h3>
+          <ul class="checkbox-list">
+            <!-- Add a class to the ul for styling -->
+            <li v-for="(ingredient, index) in selectedRecipe.ingredients" :key="index">
+              <input
+                type="checkbox"
+                :id="'ingredient' + index"
+                v-model="selectedIngredients[index]"
+              />
+              <label :for="'ingredient' + index">{{ ingredient }}</label>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Directions -->
+        <div class="recipe-section">
+          <h3>Directions:</h3>
+          <ol>
+            <li v-for="(step, index) in selectedRecipe.directions" :key="index">
+              {{ step }}
+            </li>
+          </ol>
+        </div>
       </div>
     </div>
   </div>
@@ -50,6 +75,7 @@ export default {
       recipes: [],
       searchQuery: "",
       selectedRecipe: null,
+      selectedIngredients: [],
     };
   },
   created() {
@@ -71,6 +97,7 @@ export default {
     },
     closeModal() {
       this.selectedRecipe = null;
+      this.selectedIngredients = [];
     },
   },
   computed: {
@@ -158,5 +185,29 @@ export default {
   max-width: 80%;
   max-height: 80%;
   overflow-y: auto;
+}
+
+.checkbox-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.checkbox-list li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.checkbox-list li input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+.recipe-section ol {
+  padding-left: 20px;
+}
+
+.recipe-section ol li {
+  position: relative;
+  padding-left: 10px;
 }
 </style>
