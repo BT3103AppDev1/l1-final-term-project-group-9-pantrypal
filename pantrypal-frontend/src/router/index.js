@@ -1,4 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { auth } from '../firebase.js';
+import { onAuthStateChanged } from 'firebase/auth';
+
 import LandingPage from '@/views/LandingPage.vue'
 import SignUp from '@/views/SignUp.vue'
 import Login from '@/views/Login.vue'
@@ -25,12 +28,14 @@ const routes = [
     {
         path: '/recipe-generator',
         name: 'Recipe Generator',
-        component: RecipeGenerator
+        component: RecipeGenerator,
+        meta: { requiresAuth: true}
     },
     {
         path: '/community-page',
         name: 'Community Page',
-        component: CommunityPage
+        component: CommunityPage,
+        meta: { requiresAuth: true}
     },
 
     
@@ -41,5 +46,18 @@ const router = createRouter({
     history: createWebHistory(),
     routes
 })
+
+router.beforeEach((to, from, next) => {
+    const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+
+    onAuthStateChanged(auth, (user) => {
+        console.log(user);
+        if (requiresAuth && !user) {
+            next('/login');
+        } else {
+            next();
+        }
+    });
+});
 
 export default router
