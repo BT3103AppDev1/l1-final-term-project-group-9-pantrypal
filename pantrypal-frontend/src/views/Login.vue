@@ -13,10 +13,11 @@
             <input type="password" id="password" v-model="user.password" required>
           </div>
           <div class="register-link">
-            New Here? <a href="/register">Register</a>
+            New Here? <a href="/signup">Register</a>
           </div>
           <button type="submit" class="btn-login">log in</button>
         </form>
+      <div class="error-message" v-if="error" style="color: red;">{{ error }}</div>
       </div>
       <div class="login-image-container">
       </div>
@@ -24,34 +25,34 @@
   </template>
   
   <script>
-  import { auth } from '@/firebase';
+  import { auth } from '../firebase.js';
   import { signInWithEmailAndPassword } from 'firebase/auth';
   
   export default {
-    name: 'Login',
-    data() {
-      return {
-        user: {
-          email: '',
-          password: '',
-        },
-        error: '',
-      };
-    },
-    methods: {
-      login() {
-        signInWithEmailAndPassword(auth, this.user.email, this.user.password)
-          .then(response => {
-            console.log('User logged in:', response.user);
-          })
-          .catch(error => {
-            this.error = error.message;
-            console.error('Login error:', error);
-          });
+  name: 'Login',
+  data() {
+    return {
+      user: {
+        email: '',
+        password: '',
       },
+      error: '', 
+    };
+  },
+  methods: {
+    login() {
+      signInWithEmailAndPassword(auth, this.user.email, this.user.password)
+        .then(() => {
+          this.$router.push('/community-page'); 
+        })
+        .catch(error => {
+          this.error = 'Invalid login credentials. Please try again.'; 
+          console.error('Login error:', error);
+        });
     },
-  };
-  </script>
+  },
+};
+</script>
   
   <style scoped>
   @import "@/styles/login-page.css";
