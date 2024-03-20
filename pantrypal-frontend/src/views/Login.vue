@@ -24,7 +24,7 @@
   </template>
   
   <script>
-  import { auth } from '@/firebase';
+  import { auth } from '../firebase.js';
   import { signInWithEmailAndPassword } from 'firebase/auth';
   
   export default {
