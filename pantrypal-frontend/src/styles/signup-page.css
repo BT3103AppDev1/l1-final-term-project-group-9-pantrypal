@@ -1,0 +1,77 @@
+.signup-container {
+  display: flex;
+  height: 100vh;
+  background: url('../assets/registration-background.jpg') no-repeat center center;
+  background-size: cover;
+}
+
+.signup-image-container {
+  width: 50%; /* Adjust width as necessary */
+  height: 100vh;
+  border-top-left-radius: 50% 20%;
+  border-bottom-left-radius: 50% 20%;
+}
+
+.signup-form-container {
+  margin-left: 150px; /* Push the form container to the right */
+  max-width: 400px;
+  width: 50%; /* Adjust width as necessary */
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-top-right-radius: 50% 20%;
+  border-bottom-right-radius: 50% 20%;
+}
+  
+  .signup-form-container h1 {
+    margin-bottom: 2rem;
+    margin-left: 70px;
+    color: #333; /* Adjust the color as needed */
+  }
+  
+  .input-group {
+    margin-bottom: 1rem;
+  }
+  
+  .input-group label {
+    display: block;
+    margin-bottom: .5rem;
+  }
+  
+  .input-group input {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .login-link {
+    text-align: center;
+    margin-top: 1rem;
+  }
+  
+  .login-link a {
+    color: #1fd655;
+  }
+  
+  .btn-signup {
+    display: block;
+    width: 100%;
+    padding: 1rem;
+    background-color: #1fd655; /* Button color */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    margin-top: 1rem;
+    cursor: pointer;
+  }
+
+  .logo {
+    height: 150px;
+    width: 150px;
+    margin-left: 125px;
+  }
+  
+  
