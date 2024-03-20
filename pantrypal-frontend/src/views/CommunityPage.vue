@@ -39,62 +39,26 @@
 
     <!-- recipe card list -->
     <div class="recipe-list">
-
-      <div v-for="recipe in recipes" :key="recipe.recipe_id" class="recipe-card" @click="toggleRecipeDetails(recipe)">
-        <RecipeImage :path="recipe.recipe_img_url" />
-        <h2>{{ recipe.recipe_name }}</h2>
-        <div class="info">
-          <span>{{ recipe.categories.join(", ") }}</span>
-        </div>
-
-        <p>@{{ recipe.user_id }}</p>
-      </div>
-
+      <RecipeCard
+        v-for="recipe in filteredRecipes"
+        :key="recipe.recipe_id"
+        :recipe="recipe"
+        @toggle="toggleRecipeDetails"
+      />
     </div>
 
-    <!-- popout recipe window -->
-    <div v-if="selectedRecipe" class="popout-recipe">
-      <RecipeImage :path="selectedRecipe.recipe_img_url" />
-      <div class="popout-recipe-content">
-        <span class="close" @click="closeModal">&times;</span>
-        <h2>{{ selectedRecipe.recipe_name }}</h2>
-        <p>Serving size: {{ selectedRecipe.serving_size }}</p>
-        <p>Description: {{ selectedRecipe.description }}</p>
-        <!-- <p>{{ selectedRecipe.ingredients }}</p>
-        <p>{{ selectedRecipe.directions }}</p> -->
-        <!-- Ingredients -->
-        <div class="recipe-section">
-          <h3>Ingredients:</h3>
-          <ul class="checkbox-list">
-            <!-- Add a class to the ul for styling -->
-            <li v-for="(ingredient, index) in selectedRecipe.ingredients" :key="index">
-              <input type="checkbox" :id="'ingredient' + index" v-model="selectedIngredients[index]" />
-              <label :for="'ingredient' + index">{{ ingredient }}</label>
-            </li>
-          </ul>
-        </div>
-
-        <!-- Directions -->
-        <div class="recipe-section">
-          <h3>Directions:</h3>
-          <ol>
-            <li v-for="(step, index) in selectedRecipe.directions" :key="index">
-              {{ step }}
-            </li>
-          </ol>
-        </div>
-      </div>
-    </div>
-    <p>test</p>
-
-
-
-
+    <RecipeDetailsWindow
+      v-if="selectedRecipe"
+      :selectedRecipe="selectedRecipe"
+      :selectedIngredients="selectedIngredients"
+      :closeModal="closeModal"
+    />
   </div>
 </template>
 
-<script>
-import { db, storage } from "../firebase.js";
+import RecipeCard from "../components/RecipeCard.vue";
+import RecipeDetailsWindow from "../components/RecipeDetailsWindow.vue";
+import { db } from "../firebase.js";
 import { collection, getDocs } from "firebase/firestore";
 import TopBar from '@/components/TopBar.vue';
 import dropdown from 'vue-dropdowns';
@@ -102,6 +66,8 @@ import RecipeImage from "@/components/RecipeImage.vue";
 
 export default {
   components: {
+    RecipeCard,
+    RecipeDetailsWindow,
     TopBar,
     dropdown,
     RecipeImage
@@ -135,9 +101,6 @@ export default {
     },
     toggleRecipeDetails(recipe) {
       recipe.showDetails = !recipe.showDetails;
-      this.selectedRecipe = recipe;
-    },
-    viewRecipe(recipe) {
       this.selectedRecipe = recipe;
     },
     closeModal() {
@@ -254,37 +217,6 @@ console.log("test")
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
-}
-
-.recipe-card {
-  width: calc(33.33% - 20px);
-  margin-bottom: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
-}
-
-.recipe-card:hover {
-  transform: scale(1.03);
-  transition: transform 0.3s ease;
-}
-
-.recipe-card img {
-  width: 100%;
-  max-height: 200px;
-  object-fit: cover;
-}
-
-.recipe-card .info {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-
-.user-id {
-  font-style: italic;
 }
 
 .popout-recipe {
