@@ -27,6 +27,7 @@
           </div>
           <button type="submit" class="btn-signup">Sign Up</button>
         </form>
+      <div class="error-message" v-if="error" style="color: red; text-align: center; margin-top: 20px;">{{ error }}</div>
       </div>
     </div>
   </template>
@@ -45,7 +46,7 @@ export default {
         password: '',
         confirmPassword: '',
       },
-      error: '',
+      error: '', 
     };
   },
   methods: {
@@ -56,12 +57,15 @@ export default {
       }
 
       createUserWithEmailAndPassword(auth, this.user.email, this.user.password)
-        .then(response => {
-          console.log('User created:', response.user);
-          alert('User created:', response.user);
+        .then(() => {
+          this.$router.push('/community-page');
         })
         .catch(error => {
-          this.error = error.message;
+          if (error.code === 'auth/email-already-in-use') {
+            this.error = 'This email is already in use. Please use a different email.';
+          } else {
+            this.error = error.message; 
+          }
           console.error('Registration error:', error);
         });
     },

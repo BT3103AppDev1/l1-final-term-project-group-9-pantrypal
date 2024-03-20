@@ -53,7 +53,7 @@ router.beforeEach((to, from, next) => {
     onAuthStateChanged(auth, (user) => {
         console.log(user);
         if (requiresAuth && !user) {
-            next('/login');
+            next('/');
         } else {
             next();
         }
