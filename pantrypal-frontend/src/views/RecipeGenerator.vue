@@ -2,7 +2,7 @@
   <div class="recipeGenerator">
     <h1>Recipe Generator</h1>
     <CircleButton logo="src/assets/chefbot-button.png" @click="toggleChefBot" />
-    <ChefBot v-if="showChefBot" @close="showChefBot = false" />
+    <ChefBot v-show="showChefBot" @close="showChefBot = false" />
   </div>
 </template>
 

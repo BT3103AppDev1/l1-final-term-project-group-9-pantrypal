@@ -1,30 +1,32 @@
 
 <template>
-    <div class="chatbox-container">
-        <div class="container">
-            <h1>Chefbot</h1>
-            <div class="messageBox mt-8">
-                <template v-for="(message, index) in messages" :key="index">
-                    <div :class="message.from == 'user' ? 'messageFromUser' : 'messageFromChatGpt'">
-                        <div :class="message.from == 'user' ? 'userMessageWrapper' : 'chatGptMessageWrapper'">
-                            <div :class="message.from == 'user' ? 'userMessageContent' : 'chatGptMessageContent'">{{ message.data }}</div>
+    <div class="popup-container" @mousedown.self.prevent="this.$emit('close')">
+        <div class="chatbox-container">
+            <div class="container">
+                <h1>Chefbot</h1>
+                <div class="messageBox mt-8">
+                    <template v-for="(message, index) in messages" :key="index">
+                        <div :class="message.from == 'user' ? 'messageFromUser' : 'messageFromChatGpt'">
+                            <div :class="message.from == 'user' ? 'userMessageWrapper' : 'chatGptMessageWrapper'">
+                                <div :class="message.from == 'user' ? 'userMessageContent' : 'chatGptMessageContent'">{{ message.data }}</div>
+                            </div>
                         </div>
-                    </div>
-                </template>
-            </div>
-            <div class="inputContainer">
-                <input
-                    v-model="currentMessage"
-                    type="text"
-                    class="messageInput"
-                    placeholder="Ask me anything..."
-                />
-                <button
-                    @click="sendMessage(currentMessage)"
-                    class="askButton"
-                >
-                    Ask
-                </button>
+                    </template>
+                </div>
+                <form v-on:submit.prevent="sendMessage" class="inputContainer">
+                    <input
+                        v-model="currentMessage"
+                        type="text"
+                        class="messageInput"
+                        placeholder="Ask me anything..."
+                    />
+                    <button
+                        type="submit"
+                        class="askButton"
+                    >
+                        Ask
+                    </button>
+                </form>
             </div>
         </div>
     </div>
@@ -43,29 +45,35 @@
             };
         },
         methods: {
-            async sendMessage(message) {
-            this.messages.push({
-                from: 'user',
-                data: message,
-            });
-    
-            const conversationHistory = this.messages.map(m => ({
-                role: m.from === 'user' ? 'user' : 'assistant',
-                content: m.data,
-            }));
-    
-            await axios
-                .post('http://localhost:3000/chatbot', {
-                    message: message,
-                    conversationHistory: conversationHistory, 
-                })
-            .then((response) => {
+            async sendMessage() {
+                const message = this.currentMessage.trim();
+
+                if (!message) return;
+
+                this.currentMessage = null;
+                
                 this.messages.push({
-                    from: 'chatGpt',
-                    data: response.data.data, 
+                    from: 'user',
+                    data: message,
                 });
-            });
-        },
+        
+                const conversationHistory = this.messages.map(m => ({
+                    role: m.from === 'user' ? 'user' : 'assistant',
+                    content: m.data,
+                }));
+        
+                await axios
+                    .post('http://localhost:3000/chatbot', {
+                        message,
+                        conversationHistory, 
+                    })
+                .then((response) => {
+                    this.messages.push({
+                        from: 'chatGpt',
+                        data: response.data.data, 
+                    });
+                });
+            },
         },
     };
     </script>
@@ -73,6 +81,12 @@
     <style scoped>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
     
+    .popup-container {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+    }
+
     .chatbox-container {
       position: fixed;
       bottom: 24px;
@@ -111,11 +125,15 @@
       flex-direction: column;
       gap: 12px;
     }
-    
+
     .messageFromUser,
     .messageFromChatGpt {
       display: flex; }
     
+    .messageFromUser,
+    .userMessageWrapper {
+        justify-content: right;
+    }
     
     
     .messageBox {
@@ -136,7 +154,6 @@
     .userMessageWrapper,
     .chatGptMessageWrapper {
       display: flex;
-      flex-direction: column;
     }
     
     .userMessageWrapper {
@@ -146,7 +163,7 @@
     .chatGptMessageWrapper {
       align-self: flex-start;
     }
-    
+
     .userMessageContent,
     .chatGptMessageContent {
       max-width: 60%;
@@ -160,13 +177,13 @@
     .userMessageContent {
       background-color: #1877F2;
       color: white;
-      border-top-left-radius: 0;
+      border-top-right-radius: 0;
     }
     
     .chatGptMessageContent {
       background-color: #EDEDED;
       color: #222;
-      border-top-right-radius: 0;
+      border-top-left-radius: 0;
     }
     
     .userMessageTimestamp,
