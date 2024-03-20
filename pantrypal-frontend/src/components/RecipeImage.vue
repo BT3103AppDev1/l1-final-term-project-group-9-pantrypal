@@ -1,5 +1,6 @@
 <template>
-    <img :src="url" alt="" />
+    <img v-if="ifCard" class="card" :src="url" alt="" />
+    <img v-else class="window" :src="url" alt="" />
 </template>
 
 <script>
@@ -7,8 +8,6 @@ import { storage } from "../firebase.js";
 import { getDownloadURL, ref } from "firebase/storage";
 
 export default {
-
-
     data() {
         return {
             url: "https://via.placeholder.com/140x100"
@@ -16,17 +15,25 @@ export default {
     },
     props: {
         path: String,
+        ifCard: Boolean
     },
-    mounted() {
+    created() {
         getDownloadURL(ref(storage, this.path)).then((url) => this.url = url)
     }
 }
 </script>
 
 <style scoped>
-img {
+.card {
     object-fit: cover;
     width: 250px;
     height: 250px;
+}
+
+.window {
+    object-fit: cover;
+    width: 300px;
+    height: 300px;
+    border-radius: 20px;
 }
 </style>
