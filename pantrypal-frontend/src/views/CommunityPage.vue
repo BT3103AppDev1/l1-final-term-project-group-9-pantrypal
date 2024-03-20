@@ -3,7 +3,6 @@
   <div class="community-page">
     <TopBar />
 
-
     <div class="filterBar">
       <div class="search-bar">
         <input type="text" class="search-input" placeholder="Search name or ingredients...">
@@ -39,20 +38,12 @@
 
     <!-- recipe card list -->
     <div class="recipe-list">
-      <RecipeCard
-        v-for="recipe in filteredRecipes"
-        :key="recipe.recipe_id"
-        :recipe="recipe"
-        @toggle="toggleRecipeDetails"
-      />
+      <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe"
+        @toggle="toggleRecipeDetails" />
     </div>
 
-    <RecipeDetailsWindow
-      v-if="selectedRecipe"
-      :selectedRecipe="selectedRecipe"
-      :selectedIngredients="selectedIngredients"
-      :closeModal="closeModal"
-    />
+    <RecipeDetailsWindow v-if="selectedRecipe" :selectedRecipe="selectedRecipe"
+      :selectedIngredients="selectedIngredients" :closeModal="closeModal" />
   </div>
 </template>
 
@@ -82,7 +73,7 @@ export default {
       sort: {
       },
 
-
+      filteredRecipes: [],
       recipes: [],
       searchQuery: "",
       selectedRecipe: null,
@@ -97,6 +88,7 @@ export default {
       const querySnapshot = await getDocs(collection(db, "all_recipes"));
       querySnapshot.forEach((doc) => {
         this.recipes.push(doc.data());
+        this.filteredRecipes.push(doc.data());
       });
 
     },
@@ -121,7 +113,6 @@ export default {
     },
   }
 };
-console.log("test")
 </script>
 
 <style scoped>
@@ -215,53 +206,11 @@ console.log("test")
 }
 
 .recipe-list {
+  margin: 60px;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-around;
-}
+  align-self: flex-start;
+  flex-direction: row;
 
-.popout-recipe {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgb(255, 255, 255);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.popout-recipe-content {
-  background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-  max-width: 80%;
-  max-height: 80%;
-  overflow-y: auto;
-}
-
-.checkbox-list {
-  list-style-type: none;
-  padding: 0;
-}
-
-.checkbox-list li {
-  display: flex;
-  align-items: center;
-  margin-bottom: 5px;
-}
-
-.checkbox-list li input[type="checkbox"] {
-  margin-right: 10px;
-}
-
-.recipe-section ol {
-  padding-left: 20px;
-}
-
-.recipe-section ol li {
-  position: relative;
-  padding-left: 10px;
 }
 </style>
