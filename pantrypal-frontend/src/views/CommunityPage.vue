@@ -56,6 +56,7 @@
   </div>
 </template>
 
+<script>
 import RecipeCard from "../components/RecipeCard.vue";
 import RecipeDetailsWindow from "../components/RecipeDetailsWindow.vue";
 import { db } from "../firebase.js";
