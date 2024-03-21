@@ -3,12 +3,20 @@
         <div class="firstContainer">
             <img src="../assets/logo.jpg" alt="PantryPal Logo" class="logo" />
         </div>
-        <div class="secondContainer">
+        <div v-if="ifFeed" class="secondContainer">
+            <button class="custom-button" @click="goToCommunityPage()">
+                <p class="button-text-selected">My Feed</p>
+            </button>
+            <button class="custom-button" @click="goToRecipeGenerator()">
+                <p class="button-text">Smart Leftovers</p>
+            </button>
+        </div>
+        <div v-else class="secondContainer">
             <button class="custom-button" @click="goToCommunityPage()">
                 <p class="button-text">My Feed</p>
             </button>
-            <button class="custom-button" @click="goToCreateNewRecipePage()">
-                <p class="button-text">Smart Leftovers</p>
+            <button class="custom-button" @click="goToRecipeGenerator()">
+                <p class="button-text-selected">Smart Leftovers</p>
             </button>
         </div>
         <div class="thirdContainer">
@@ -23,16 +31,24 @@
 </template>
 
 <script>
-import { auth } from '../firebase.js'; 
+import { auth } from '../firebase.js';
 import { signOut } from 'firebase/auth';
 
 export default {
+    props: {
+        ifFeed: Boolean
+    },
     methods: {
-        goToCommunityPage() { },
-        goToCreateNewRecipePage() { },
+        goToCommunityPage() {
+            console.log("test")
+            this.$router.push('/community-page');
+        },
+        goToRecipeGenerator() {
+            this.$router.push('/recipe-generator');
+        },
         logout() {
             signOut(auth).then(() => {
-                this.$router.push('/'); 
+                this.$router.push('/');
             }).catch((error) => {
                 console.error("Logout Error:", error);
             });
@@ -62,6 +78,7 @@ export default {
     cursor: pointer;
 }
 
+
 .button-text {
     padding: 10px 20px;
     font-size: 20px;
@@ -70,6 +87,16 @@ export default {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+}
+
+.button-text-selected {
+    padding: 10px 20px;
+    font-size: 20px;
+    font-weight: 800;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    color: darkgreen;
 }
 
 .button-text:hover {

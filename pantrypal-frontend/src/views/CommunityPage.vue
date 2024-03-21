@@ -1,8 +1,7 @@
 <template>
 
   <div class="community-page">
-    <TopBar />
-
+    <TopBar :ifFeed=true />
     <div class="filterBar">
       <div class="search-bar">
         <input type="text" class="search-input" placeholder="Search name or ingredients...">
@@ -51,7 +50,7 @@
 import RecipeCard from "../components/RecipeCard.vue";
 import RecipeDetailsWindow from "../components/RecipeDetailsWindow.vue";
 import { db } from "../firebase.js";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, getDoc, doc } from "firebase/firestore";
 import TopBar from '@/components/TopBar.vue';
 import dropdown from 'vue-dropdowns';
 import RecipeImage from "@/components/RecipeImage.vue";
@@ -111,14 +110,21 @@ export default {
         });
       },
     },
-    filterUsingCategory(payload) {
+    async filterUsingCategory(payload) {
       this.category = payload;
-      if (this.category.name === 'All') {
+      if (this.category.name == 'All') {
         this.filteredRecipes = this.recipes;
       } else {
-        this.filteredRecipes = this.recipes.filter(recipe => recipe.categories.includes(this.category.name));
+        this.filteredRecipes = []
+        const docSnap = await getDoc(doc(db, "categories", payload.id));
+        const recipesIDlist = docSnap.data().recipes
+        if (recipesIDlist.length != 0) {
+          for (let x in recipesIDlist) {
+            const docSnap = await getDoc(doc(db, "all_recipes", recipesIDlist[x]))
+            this.filteredRecipes.push(docSnap.data());
+          }
+        }
       }
-
     }
 
   }
