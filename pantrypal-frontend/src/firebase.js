@@ -19,4 +19,15 @@ const storage = getStorage(app);
 const auth = getAuth(app);
 const db = getFirestore(app); 
 
-export { auth, app, db ,storage};
+const USERS_COLLECTION = 'users'
+
+async function getUserInfoFromID (uid) {
+  const docRef = doc(db, USERS_COLLECTION, uid);
+  const docSnap = await getDoc(docRef);
+console.log(docSnap.data())
+  return docSnap.data();
+}
+
+
+export { auth, app, db ,storage, getUserInfoFromID};
+

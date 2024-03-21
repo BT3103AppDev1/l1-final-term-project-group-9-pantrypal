@@ -1,5 +1,6 @@
 <template>
   <div class="recipeGenerator">
+    <TopBar :ifFeed=false />
     <h1>Recipe Generator</h1>
     <InputLeftover />
     <CircleButton logo="src/assets/chefbot-button.png" @click="toggleChefBot" />
@@ -11,6 +12,7 @@
 import ChefBot from "@/components/ChefBot.vue";
 import CircleButton from "@/components/CircleButton.vue";
 import InputLeftover from "@/components/InputLeftover.vue";
+import TopBar from "@/components/TopBar.vue";
 
 export default {
   name: "Recipe Generator",
@@ -18,6 +20,7 @@ export default {
     ChefBot,
     CircleButton,
     InputLeftover,
+    TopBar,
   },
   data() {
     return {

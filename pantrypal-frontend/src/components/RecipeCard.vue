@@ -1,17 +1,13 @@
 <template>
   <div class="recipe-card" @click="toggleRecipeDetails">
     <div class="recipe-image">
-      <img :src="recipe.recipe_img_url" :alt="recipe.recipe_name" />
+      <RecipeImage :path="recipe.recipe_img_url" :ifCard=true />
+
     </div>
     <div class="recipe-details">
       <h2>{{ recipe.recipe_name }}</h2>
       <div class="info">
-        <span
-          v-for="(category, index) in recipe.categories"
-          :key="index"
-          class="category-bubble"
-          >{{ category }}</span
-        >
+        <span v-for="(category, index) in recipe.categories" :key="index" class="category-bubble">{{ category }}</span>
       </div>
       <div class="user-id">
         <p>@{{ recipe.user_id }}</p>
@@ -21,7 +17,11 @@
 </template>
 
 <script>
+import RecipeImage from './RecipeImage.vue';
 export default {
+  components: {
+    RecipeImage
+  },
   props: {
     recipe: {
       type: Object,

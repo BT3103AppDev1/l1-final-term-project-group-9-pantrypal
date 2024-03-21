@@ -1,9 +1,7 @@
 <template>
 
   <div class="community-page">
-    <TopBar />
-
-
+    <TopBar :ifFeed=true />
     <div class="filterBar">
       <div class="search-bar">
         <input type="text" class="search-input" placeholder="Search name or ingredients...">
@@ -18,7 +16,7 @@
 
         <div class="dropdown-container">
           <dropdown class="my-dropdown-toggle" :options="arrayOfCategories" :selected="category" :placeholder="'All'"
-            :closeOnOutsideClick="true">
+            :closeOnOutsideClick="true" v-on:updateOption="filterUsingCategory">
           </dropdown>
         </div>
       </div>
@@ -39,20 +37,12 @@
 
     <!-- recipe card list -->
     <div class="recipe-list">
-      <RecipeCard
-        v-for="recipe in filteredRecipes"
-        :key="recipe.recipe_id"
-        :recipe="recipe"
-        @toggle="toggleRecipeDetails"
-      />
+      <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe"
+        @toggle="toggleRecipeDetails" />
     </div>
 
-    <RecipeDetailsWindow
-      v-if="selectedRecipe"
-      :selectedRecipe="selectedRecipe"
-      :selectedIngredients="selectedIngredients"
-      :closeModal="closeModal"
-    />
+    <RecipeDetailsWindow v-if="selectedRecipe" :selectedRecipe="selectedRecipe"
+      :selectedIngredients="selectedIngredients" :closeModal="closeModal" />
   </div>
 </template>
 
@@ -60,7 +50,7 @@
 import RecipeCard from "../components/RecipeCard.vue";
 import RecipeDetailsWindow from "../components/RecipeDetailsWindow.vue";
 import { db } from "../firebase.js";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, getDoc, doc } from "firebase/firestore";
 import TopBar from '@/components/TopBar.vue';
 import dropdown from 'vue-dropdowns';
 import RecipeImage from "@/components/RecipeImage.vue";
@@ -75,14 +65,14 @@ export default {
   },
   data() {
     return {
-      arrayOfCategories: [{ name: 'All' }, { name: 'chinese' }, { name: 'western' },],
+      arrayOfCategories: [{ name: 'All', id: '0' }, { name: 'pasta', id: "7tn1kUcL0nScw1y5xI0b" }, { name: "others", id: 'T0i47UNmqh1hj93UppUi' },],
       category: {
       },
       arrayOfSorts: [{ name: 'Most Recent' }, { name: 'Most Liked' }],
       sort: {
       },
 
-
+      filteredRecipes: [],
       recipes: [],
       searchQuery: "",
       selectedRecipe: null,
@@ -97,6 +87,7 @@ export default {
       const querySnapshot = await getDocs(collection(db, "all_recipes"));
       querySnapshot.forEach((doc) => {
         this.recipes.push(doc.data());
+        this.filteredRecipes.push(doc.data());
       });
 
     },
@@ -119,9 +110,26 @@ export default {
         });
       },
     },
+    async filterUsingCategory(payload) {
+      this.category = payload;
+      if (this.category.name == 'All') {
+        this.filteredRecipes = this.recipes;
+      } else {
+        this.filteredRecipes = []
+        const docSnap = await getDoc(doc(db, "categories", payload.id));
+        const recipesIDlist = docSnap.data().recipes
+        if (recipesIDlist.length != 0) {
+          for (let x in recipesIDlist) {
+            const docSnap = await getDoc(doc(db, "all_recipes", recipesIDlist[x]))
+            this.filteredRecipes.push(docSnap.data());
+          }
+        }
+      }
+    }
+
   }
-};
-console.log("test")
+}
+
 </script>
 
 <style scoped>
@@ -215,53 +223,11 @@ console.log("test")
 }
 
 .recipe-list {
+  margin: 60px;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-around;
-}
+  align-self: flex-start;
+  flex-direction: row;
 
-.popout-recipe {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgb(255, 255, 255);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.popout-recipe-content {
-  background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-  max-width: 80%;
-  max-height: 80%;
-  overflow-y: auto;
-}
-
-.checkbox-list {
-  list-style-type: none;
-  padding: 0;
-}
-
-.checkbox-list li {
-  display: flex;
-  align-items: center;
-  margin-bottom: 5px;
-}
-
-.checkbox-list li input[type="checkbox"] {
-  margin-right: 10px;
-}
-
-.recipe-section ol {
-  padding-left: 20px;
-}
-
-.recipe-section ol li {
-  position: relative;
-  padding-left: 10px;
 }
 </style>
