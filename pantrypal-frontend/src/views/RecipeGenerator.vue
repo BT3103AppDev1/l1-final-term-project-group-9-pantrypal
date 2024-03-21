@@ -2,6 +2,7 @@
   <div class="recipeGenerator">
     <TopBar :ifFeed=false />
     <h1>Recipe Generator</h1>
+    <InputLeftover />
     <CircleButton logo="src/assets/chefbot-button.png" @click="toggleChefBot" />
     <ChefBot v-show="showChefBot" @close="showChefBot = false" />
   </div>
@@ -10,6 +11,7 @@
 <script>
 import ChefBot from "@/components/ChefBot.vue";
 import CircleButton from "@/components/CircleButton.vue";
+import InputLeftover from "@/components/InputLeftover.vue";
 import TopBar from "@/components/TopBar.vue";
 
 export default {
@@ -17,7 +19,8 @@ export default {
   components: {
     ChefBot,
     CircleButton,
-    TopBar
+    InputLeftover,
+    TopBar,
   },
   data() {
     return {
@@ -35,3 +38,5 @@ export default {
 <style scoped>
 /* Add your scoped styles here */
 </style>
+
+<style src="vue-multiselect/dist/vue-multiselect.css"></style>
