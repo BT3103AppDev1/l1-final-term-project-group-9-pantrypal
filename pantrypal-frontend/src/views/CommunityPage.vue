@@ -17,7 +17,7 @@
 
         <div class="dropdown-container">
           <dropdown class="my-dropdown-toggle" :options="arrayOfCategories" :selected="category" :placeholder="'All'"
-            :closeOnOutsideClick="true">
+            :closeOnOutsideClick="true" v-on:updateOption="filterUsingCategory">
           </dropdown>
         </div>
       </div>
@@ -66,7 +66,7 @@ export default {
   },
   data() {
     return {
-      arrayOfCategories: [{ name: 'All' }, { name: 'chinese' }, { name: 'western' },],
+      arrayOfCategories: [{ name: 'All', id: '0' }, { name: 'pasta', id: "7tn1kUcL0nScw1y5xI0b" }, { name: "others", id: 'T0i47UNmqh1hj93UppUi' },],
       category: {
       },
       arrayOfSorts: [{ name: 'Most Recent' }, { name: 'Most Liked' }],
@@ -111,8 +111,19 @@ export default {
         });
       },
     },
+    filterUsingCategory(payload) {
+      this.category = payload;
+      if (this.category.name === 'All') {
+        this.filteredRecipes = this.recipes;
+      } else {
+        this.filteredRecipes = this.recipes.filter(recipe => recipe.categories.includes(this.category.name));
+      }
+
+    }
+
   }
-};
+}
+
 </script>
 
 <style scoped>
