@@ -12,7 +12,7 @@
             </button>
         </div>
         <div class="thirdContainer">
-            <button class="logOutButton" @click="">
+            <button class="logOutButton" @click="logout">
                 <p class="logOutButton-text">Log out</p>
             </button>
             <button type="button" class="profileButton">
@@ -23,10 +23,20 @@
 </template>
 
 <script>
+import { auth } from '../firebase.js'; 
+import { signOut } from 'firebase/auth';
+
 export default {
     methods: {
         goToCommunityPage() { },
         goToCreateNewRecipePage() { },
+        logout() {
+            signOut(auth).then(() => {
+                this.$router.push('/'); 
+            }).catch((error) => {
+                console.error("Logout Error:", error);
+            });
+        }
     },
 };
 </script>
