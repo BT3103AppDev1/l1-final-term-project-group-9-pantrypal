@@ -28,6 +28,7 @@
             </button>
         </div>
     </div>
+    <hr>
 </template>
 
 <script>
@@ -58,17 +59,17 @@ export default {
 </script>
 <style>
 .topBar {
-    margin-top: 20px;
+    margin: 15px 0px;
     display: flex;
     flex-direction: row;
     align-items: center;
     padding: 0 5rem;
     background-color: #fff;
-    height: 80px;
+    height: 60px;
 }
 
 .logo {
-    height: 80px;
+    height: 90px;
 }
 
 .custom-button {
@@ -148,5 +149,11 @@ export default {
 .profile {
     border-radius: 50%;
     height: 50px;
+}
+
+hr {
+    margin: 0;
+    border: 0;
+    border-top: 1.4px solid #DDDDDD;
 }
 </style>
