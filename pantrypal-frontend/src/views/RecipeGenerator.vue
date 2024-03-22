@@ -1,22 +1,16 @@
 <template>
   <div class="recipeGenerator">
     <TopBar :ifFeed=false />
-    <div class="view-container">
+    <div class="content-container">
         <RecipeGeneratorSidebar :selected="selected"/>
-        <div class="main-view-container">
-        <div class="main-view">
-            <div v-show="selected === 'input'">
-                <InputLeftover @generateRecipe="generateRecipe"/>
-            </div>
-            <div v-show="selected === 'generate'">
-                <GenerateLoading :ingredients="ingredients"/>
-            </div>
+        <div class="view-container">
+            <InputLeftover v-if="selected === 'input'" @generateRecipe="generateRecipe"/>
+            <GenerateLoading v-if="selected === 'generate'" :ingredients="ingredients"/>
             <div v-show="selected === 'save'">
                 <CircleButton logo="src/assets/chefbot-button.png" @click="toggleChefBot" />
                 <ChefBot v-show="showChefBot" @close="showChefBot = false" />
             </div>
         </div>
-    </div>
     </div>
   </div>
 </template>
@@ -63,13 +57,15 @@ export default {
 </script>
 
 <style scoped>
-.main-view-container {
+.content-container {
     display: flex;
-    justify-content: center;
-    width: 100%;
 }
+
 .view-container {
     display: flex;
-    height: 100vh;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
 }
+
 </style>

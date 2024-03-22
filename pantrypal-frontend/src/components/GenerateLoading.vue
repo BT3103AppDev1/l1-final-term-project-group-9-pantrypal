@@ -12,6 +12,7 @@
             </span>
         </div>
     </div>
+    <img src="@/assets/loading.gif" height="40px"/>
 </div>
 </template>
 
@@ -30,7 +31,7 @@ export default {
     }
 
     .generate-container {
-        padding: 3rem 0rem;
+        padding: 8rem 0rem;
         text-align: center;
         width: 600px;
     }
@@ -45,5 +46,9 @@ export default {
         background-color: #ECECEC;
         padding: 1rem 2rem;
         border-radius: 10px;
+    }
+
+    img {
+        padding: 2rem;
     }
 </style>
