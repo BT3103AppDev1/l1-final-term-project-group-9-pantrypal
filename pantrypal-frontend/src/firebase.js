@@ -28,6 +28,5 @@ console.log(docSnap.data())
   return docSnap.data();
 }
 
-
 export { auth, app, db ,storage, getUserInfoFromID};
 
