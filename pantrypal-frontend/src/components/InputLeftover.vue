@@ -18,7 +18,7 @@
                 rows ="5"
             />
         </div>
-        <div class="column">
+        <div class="column2">
             <div class="ingredient-container" v-for="(ingredient, index) in ingredients">
                 <div class="one-ingredient-container">
                     <label>Name of leftover #{{index + 1}}</label>
@@ -33,23 +33,23 @@
                     type="text"
                     placeholder="e.g. 10g"/></div>
                 </div>
-            <div class="button-container">
-                <button
-                type="submit"
-                class="add-button"
-                @click="addIngredient"
-                >+ Add more</button>
-            </div>
-            <div class="button-container">
-                <button
-                type="submit"
-                class="generate-button"
-                @click="generateRecipe">
-                    Generate Recipe
-                </button>
-            </div>
-            
+                <div class="button-container">
+                    <button
+                    type="submit"
+                    class="add-button"
+                    @click="addIngredient"
+                    >+ Add more</button>
+                </div>
+                
         </div>
+    </div>
+    <div class="button-container">
+        <button
+        type="submit"
+        class="generate-button"
+        @click="generateRecipe">
+            Generate Recipe
+        </button>
     </div>
 </template>
 <script>
@@ -100,9 +100,10 @@ export default {
 .grid-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-gap: 5rem;
-    padding: 5rem 5rem 0rem;
-    max-height: 100vh;
+    grid-gap: 3rem;
+    padding: 4rem;
+    width: 100%;
+    box-sizing: border-box;
 }
 .dropdown-container {
     margin-bottom: 20px;
@@ -110,28 +111,32 @@ export default {
 
 .ingredient-container {
     display: flex;
-    gap: 2vw;
+    justify-content: space-around;
+    gap: 4rem;
 }
 
 .one-ingredient-container {
     margin-bottom: 25px;
+    width: 100%;
 }
 
 .button-container {
-    width: 46vw;
+    /* width: 46vw; */
     display: flex;
     justify-content: center;
 }
 
 label {
     display: block;
+    margin-bottom: 0.5rem;
 }
 
 input {
-    width: 20vw;
-    padding: 8px 10px;
+    width: 100%;
+    padding-left: 10px;
     border: 1px solid #e8e8e8;
     border-radius: 5px;
+    height: 40px;
 }
 
 textarea {
@@ -158,6 +163,9 @@ textarea {
     border-radius: 10px;
     padding: 8px 20px;
     cursor: pointer;
+}
+
+.column2 {
 }
 </style>
 

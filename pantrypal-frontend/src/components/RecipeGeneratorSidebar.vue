@@ -1,5 +1,5 @@
 <template>
-    <div class="sidebar">
+    <aside class="sidebar">
         <div class="menu-container">
             <div class="header" :class="{ 'selected': selected === 'input' }">
                 <h3>Input Leftovers</h3>
@@ -11,7 +11,7 @@
                 <h3>Save Recipe</h3>
             </div>
         </div>
-    </div>
+    </aside>
 </template>
 <script>
 export default {
@@ -30,7 +30,10 @@ export default {
     display: flex;
     justify-content: center;
     text-align: center;
-    max-height: 100vh;
+    position: sticky;
+    height: 100vh;
+    top: 0;
+    overflow-y: hidden;
 }
 
 .menu-container {
