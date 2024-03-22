@@ -36,10 +36,19 @@
             <div class="button-container">
                 <button
                 type="submit"
-                class="addButton"
+                class="add-button"
                 @click="addIngredient"
-                >Add</button>
+                >+ Add more</button>
             </div>
+            <div class="button-container">
+                <button
+                type="submit"
+                class="generate-button"
+                @click="generateRecipe">
+                    Generate Recipe
+                </button>
+            </div>
+            
         </div>
     </div>
 </template>
@@ -75,6 +84,14 @@ export default {
                 quantity: '',
             });
         },
+        generateRecipe() {
+            console.log('Generating recipe...');
+            this.$emit('generate-recipe', {
+                cuisines: this.value,
+                dietaryRestrictions: this.dietaryRestrictions,
+                ingredients: this.ingredients,
+            })
+        },
     },
 };
 </script> 
@@ -84,8 +101,8 @@ export default {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-gap: 5rem;
-    margin-bottom: 20px;
-    padding: 5rem;
+    padding: 5rem 5rem 0rem;
+    max-height: 100vh;
 }
 .dropdown-container {
     margin-bottom: 20px;
@@ -121,5 +138,27 @@ textarea {
     width: 95%;
     padding: 5px 10px;
     font-family: inherit;
+    border: 1px solid #e8e8e8;
+    border-radius: 5px;
+}
+
+.add-button {
+    background-color: white;
+    text-decoration: underline;
+    border: none;
+    padding: 8px 20px;
+    cursor: pointer;
+}
+
+.generate-button {
+    background-color: #3C1F11;
+    color: #CBDF99;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 20px;
+    cursor: pointer;
 }
 </style>
+
+<style src="vue-multiselect/dist/vue-multiselect.css"></style>
