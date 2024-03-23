@@ -17,7 +17,7 @@
         <p>@{{ recipe.user_id }}</p>
       </div>
     </div>
-    <div class="like-button">
+    <div class="like">
       <button class="like-button" @click.stop="toggleLikeRecipe">
         <i
           class="fa"
@@ -219,12 +219,22 @@ export default {
   font-size: 0.75rem;
 }
 
+.like {
+  padding-left: 15px;
+  padding-bottom: 10px;
+  display: inline-flex;
+  align-items: center;
+  border: none;
+  cursor: pointer;
+  background-color: #cbdf99;
+}
+
 .like-button {
   display: inline-flex;
   align-items: center;
-  background: none;
   border: none;
   cursor: pointer;
+  background-color: #cbdf99;
 }
 
 .like-button .fa {
