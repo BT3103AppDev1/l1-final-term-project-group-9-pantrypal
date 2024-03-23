@@ -41,9 +41,16 @@
       <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe"
         @toggle="toggleRecipeDetails" />
     </div>
-
     <RecipeDetailsWindow v-if="selectedRecipe" :selectedRecipe="selectedRecipe"
       :selectedIngredients="selectedIngredients" :closeModal="closeModal" />
+
+    <!-- Toggle button for the create recipe modal -->
+    <div class="plus-icon-container" @click="showCreateRecipe = true">
+      <img src="../assets/plus-icon.png" alt="Add Recipe">
+    </div>
+    
+    <!-- CreateRecipe modal -->
+    <CreateRecipe v-if="showCreateRecipe" @close="showCreateRecipe = false" />
   </div>
 </template>
 
@@ -55,6 +62,7 @@ import { collection, getDocs } from "firebase/firestore";
 import TopBar from '@/components/TopBar.vue';
 import dropdown from 'vue-dropdowns';
 import RecipeImage from "@/components/RecipeImage.vue";
+import CreateRecipe from "@/components/CreateRecipe.vue";
 
 export default {
   components: {
@@ -62,7 +70,8 @@ export default {
     RecipeDetailsWindow,
     TopBar,
     dropdown,
-    RecipeImage
+    RecipeImage,
+    CreateRecipe,
   },
   data() {
     return {
@@ -78,6 +87,7 @@ export default {
       searchQuery: "",
       selectedRecipe: null,
       selectedIngredients: [],
+      showCreateRecipe: false,
     };
   },
   created() {
@@ -212,5 +222,12 @@ export default {
   align-self: flex-start;
   flex-direction: row;
 
+}
+
+.plus-icon-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  /* Additional styles for your plus icon */
 }
 </style>
