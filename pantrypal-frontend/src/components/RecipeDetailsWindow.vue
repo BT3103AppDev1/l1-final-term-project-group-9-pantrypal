@@ -23,18 +23,8 @@
             }}
           </p>
 
-          <p>{{ selectedRecipe.description }}</p>
-          <p>
-            <b>SERVING SIZE:</b> {{ selectedRecipe.serving_size }} | <b>COOK TIME:</b>
-            {{ selectedRecipe.cook_time }}
-          </p>
-          <span class="allergens-container">
-            <p><b>CONTAINS:</b></p>
-            <template v-for="(allergen, index) in selectedRecipe.allergens" :key="index">
-              <span>{{ allergen }}</span>
-              <p v-if="index < selectedRecipe.allergens.length - 1">,</p>
-            </template>
-          </span>
+          <p>Serving size: {{ selectedRecipe.serving_size }}</p>
+          <p>Description: {{ selectedRecipe.description }}</p>
           <span
             v-for="(category, index) in selectedRecipe.categories"
             :key="index"
@@ -122,7 +112,7 @@ export default {
 
 .popout-recipe-content {
   background-color: white;
-  /* padding: 20px; */
+  padding: 20px;
   border-radius: 8px;
   width: 80%;
   height: 90%;
@@ -180,14 +170,5 @@ export default {
   border-radius: 20px;
   margin-right: 5px;
   font-size: 0.75rem;
-}
-
-.allergens-container {
-  display: flex;
-  align-items: baseline;
-}
-
-.allergens-container p {
-  margin-right: 5px;
 }
 </style>
