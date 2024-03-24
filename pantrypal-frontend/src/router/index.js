@@ -7,6 +7,7 @@ import SignUp from '@/views/SignUp.vue'
 import Login from '@/views/Login.vue'
 import RecipeGenerator from '@/views/RecipeGenerator.vue'
 import CommunityPage from '@/views/CommunityPage.vue'
+import NotFound from '@/views/NotFound.vue';
 
 
 const routes = [
@@ -37,9 +38,11 @@ const routes = [
         component: CommunityPage,
         meta: { requiresAuth: true}
     },
-
-    
-    
+    {
+        path: '/:catchAll(.*)',
+        name: 'NotFound',
+        component: NotFound
+    },
 ]
 
 const router = createRouter({
