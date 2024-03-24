@@ -17,10 +17,28 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
     name: 'Generator Loading',
     props: {
-        ingredients: [],
+        ingredients: Array,
+        categories: Array,
+        dietaryRestrictions: String,
+    },
+    async mounted() {
+        console.log("mounted..");
+        await axios
+            .post('http://localhost:3000/initial-recipe', {
+                ingredients: this.ingredients,
+                categories: this.categories,
+                dietaryRestrictions: this.dietaryRestrictions,
+            })
+            .then((response) => {
+                this.$emit('recipeGenerated', {
+                    generatedRecipe: JSON.parse(response.data.content),
+                })
+            });
     },
 };
 </script>

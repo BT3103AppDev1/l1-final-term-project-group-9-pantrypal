@@ -86,8 +86,9 @@ export default {
         },
         generateRecipe() {
             console.log('Generating recipe...');
+            console.log(this.value);
             this.$emit('generate-recipe', {
-                cuisines: this.value,
+                categories: this.value,
                 dietaryRestrictions: this.dietaryRestrictions,
                 ingredients: this.ingredients,
             })
@@ -159,14 +160,13 @@ textarea {
     background-color: #3C1F11;
     color: #CBDF99;
     font-weight: bold;
+    font-size: large;
     border: none;
-    border-radius: 10px;
+    border-radius: 15px;
     padding: 8px 20px;
     cursor: pointer;
 }
 
-.column2 {
-}
 </style>
 
 <style src="vue-multiselect/dist/vue-multiselect.css"></style>
