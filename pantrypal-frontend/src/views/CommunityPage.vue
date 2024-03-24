@@ -263,6 +263,9 @@ export default {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  /* Additional styles for your plus icon */
+}
+.plus-icon-container img {
+  width: 60px; 
+  height: 60px; 
 }
 </style>

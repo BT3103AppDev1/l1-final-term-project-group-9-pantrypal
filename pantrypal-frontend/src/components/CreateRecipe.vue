@@ -3,8 +3,8 @@
       <div class="recipe-form">
         <div class="recipe-form-content">
   
-          <div class="horizontalRow">
-            <div class="first-first">
+          <div class="createRecipeRow">
+            <div class="first1">
                 <input type="file" id="recipeImage" ref="fileInput" style="display: none" @change="handleImageUpload">
                 <div class="plus-icon-container" @click="chooseFile">
                 <img class="upload-image" src="../assets/image-upload.png" alt="Upload Image">
@@ -17,7 +17,7 @@
                     <label for="publishToCommunity">Publish to Community</label>
                     </div>
             </div>
-            <div class="second">
+            <div class="first2">
               <label for="recipeName">Title:</label>
               <input type="text" id="recipeName" v-model="recipeData.recipe_name" />
   
@@ -32,9 +32,9 @@
                 <div class="input-group">
                 <label for="cookTime">Cook Time:</label>
                 <div class="time-input-group">
-                    <input type="number" id="cookTimeHours" v-model="recipeData.cook_time_hours" />
+                    <input type="number" id="cookTimeHours" v-model="recipeData.cook_time_hours" min="0" />
                     <span>hours</span>
-                    <input type="number" id="cookTimeMins" v-model="recipeData.cook_time_minutes" />
+                    <input type="number" id="cookTimeMins" v-model="recipeData.cook_time_minutes" min="0" />
                     <span>mins</span>
                 </div>
                 </div>
@@ -47,14 +47,14 @@
                 </div>
                 <div class="input-group">
                   <label for="servingSize">Serving Size:</label>
-                  <input type="number" id="servingSize" v-model="recipeData.serving_size" />
+                  <input type="number" id="servingSize" v-model="recipeData.serving_size" min="0" />
                 </div>
               </div>
             </div>
           </div>
   
-          <div class="horizontalRow">
-            <div class="first">
+          <div class="createRecipeRow">
+            <div class="second1">
               <!-- Ingredients -->
               <div class="recipe-section">
                 <label for="ingredients">Ingredients:</label>
@@ -63,13 +63,16 @@
                   <input type="text" v-model="recipeData.ingredients[index]" placeholder="e.g. 10g Apple"/>
                   <!-- <button @click="removeIngredient(index)">Remove</button> -->
                 </div>
+                <div class="button-group">
+                <button class="remove-button" @click="removeIngredient(index)">REMOVE</button>
                 <button class="add-more-button" @click="addIngredient">+ ADD MORE</button>
+                </div>
               </div>
             </div>
             </div>
   
             <!-- Directions -->
-            <div class="second">
+            <div class="second2">
             <div class="recipe-section">
                 <label for="directions">Directions:</label>
                 <div class="directions-container">
@@ -77,15 +80,18 @@
                     <label :for="'direction' + direction.stepNumber">Step {{ direction.stepNumber }}</label>
                     <textarea :id="'direction' + direction.stepNumber" v-model="direction.text"></textarea>
                 </div>
+                <div class="button-group">
+                <button class="remove-button" @click="removeDirection(index)">REMOVE</button>
                 <button class="add-more-button" @click="addDirection">+ ADD MORE</button>
+                </div>
                 </div>
             </div>
             </div>
           </div>
-          <div class="button-container">
+        </div>
+        <div class="button-container">
           <button class="cancel-button" @click="close">Cancel</button>
           <button class="save-recipe-button" @click="submitRecipe">Save Recipe</button>
-        </div>
         </div>
       </div>
     </div>
@@ -129,21 +135,17 @@
         removeDirection(index) {
           this.recipeData.directions.splice(index, 1);
         },
-        submitRecipe() {
-          // Handle recipe submission
-        },
         close() {
           this.$emit('close');
+        },
+        submitRecipe() {
+          // Handle recipe submission
         },
       },
     };
   </script>
 
 <style>
-.upload-image {
-  width: 100%;
-}
-
 .create-recipe-modal {
   position: fixed;
   top: 100px;
@@ -155,6 +157,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow-y: auto;
 }
 
 .recipe-form {
@@ -167,18 +170,18 @@
   overflow-y: auto;
 }
 
-.horizontalRow {
+.recipe-form label {
+  margin-bottom: 5px;
+}
+
+.createRecipeRow {
   display: flex;
   flex-direction: row;
   flex: 1;
+  margin-bottom: 0px;
 }
 
-.first {
-  flex: 0.3;
-  margin-right: 50px; 
-}
-
-.first-first {
+.first1 {
   flex: 0.3;
   margin-right: 50px;
   display: flex;
@@ -187,149 +190,14 @@
   align-items: center;
 }
 
-.first input {
+.upload-image {
   width: 100%;
-  padding: 8px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
-  margin-top: 5px;
-  margin-bottom: 10px;
-}
-
-.second {
-  flex: 0.7;
-  flex-direction: column;
-}
-
-.horizontalRow {
-    margin-bottom: 20px;
-}
-
-.second label {
-  margin-bottom: 5px;
-}
-
-.second input,
-.second textarea {
-  width: 100%;
-  padding: 8px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
-  margin-top: 5px;
-  margin-bottom: 10px;
-}
-
-.close {
-  /* Styling for your close button */
-  position: absolute;
-  top: 20px;
-  right: 40px;
-  font-size: 50px;
-  font-weight: bold;
-  cursor: pointer;
-  color: red;
-}
-
-.save-recipe-button {
-    background-color: #60ce64;
-    border: none;
-    text-decoration: none;
-    color: white;
-    padding: 0;
-    cursor: pointer;
-    border-radius: 15px;
-    width: 90px;
-    height: 32px;
-    margin: 0 20px;
-}
-
-.additional-info {
-  display: flex;
-  justify-content: space-between;
-}
-
-.input-group {
-  display: flex;
-  flex-direction: column;
-  margin-right: 10px; /* Adjust as needed */
-}
-
-.input-group label {
-    margin-bottom: 5px;
-}
-
-.input-group select,
-.input-group input[type="number"] {
-  padding: 8px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
-  margin-bottom: 10px;
-}
-
-input[type="text"],
-input[type="number"],
-textarea,
-select {
-  background-color: #ececec;
-  resize: vertical;
-}
-
-input[type="number"] {
-    width: 65px;
-}
-
-#cookTimeMins {
-  margin-left: 10px; /* Add margin-right to create a gap */
-}
-
-.save-recipe-button {
-  background-color: #A7BF6A;
-  border: none;
-  color: white;
-  padding: 10px 15px;
-  cursor: pointer;
-  border-radius: 15px;
-  width: auto; /* Remove the fixed width to allow padding */
-  height: auto; /* Remove the fixed height to allow padding */
-  margin: 0 20px;
-  font-size: 14px; /* Adjust font size as needed */
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Optional: Adds a subtle shadow */
-}
-
-.save-recipe-button:hover {
-  background-color: #596639; /* Slightly darker green on hover */
-}
-
-/* Additional styles for close button if needed */
-
-.recipe-form label {
-  margin-bottom: 5px;
-}
-
-.time-input-group {
-  display: flex;
-  align-items: center;
-}
-
-.time-input-group input {
-  padding: 8px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
-  margin-bottom: 10px;
-}
-
-.time-input-group span {
-  margin-left: 5px;
 }
 
 .switch-container {
   display: flex;
   align-items: center;
-  margin-bottom: 10px; /* Add some margin for spacing */
+  margin-bottom: 10px;
 }
 
 .switch-container .switch {
@@ -351,8 +219,8 @@ input[type="number"] {
   cursor: pointer;
   top: 50%;
   transform: translateY(-50%);
-  width: 40px; /* Increased width */
-  height: 20px; /* Reduced height */
+  width: 40px; 
+  height: 20px; 
   background-color: #ccc;
   transition: .4s;
   border-radius: 34px;
@@ -361,8 +229,8 @@ input[type="number"] {
 .switch-container .slider:before {
   position: absolute;
   content: "";
-  height: 16px; /* Increased size */
-  width: 16px; /* Increased size */
+  height: 16px; 
+  width: 16px;
   left: 2px;
   bottom: 2px;
   background-color: white;
@@ -375,22 +243,121 @@ input[type="number"] {
 }
 
 .switch-container input:checked + .slider:before {
-  transform: translateX(20px); /* Adjust according to circle size */
+  transform: translateX(20px); 
 }
 
-.add-more-button {
-    background-color: transparent; /* Remove the button background */
-    border: none; /* Remove any border */
-    color: #8F8E8E; 
-    padding: 0;
-    cursor: pointer;
-    text-decoration: underline; /* Underline the text */
-    font-size: 14px; /* Match the font size to your design */
-    margin: 10px 0; /* Add some margin at the top and bottom */
+.first2 {
+  flex: 0.7;
+  flex-direction: column;
 }
 
-.add-more-button:hover {
-    color: #6B6969;
+.first2 label {
+  margin-bottom: 5px;
+}
+
+.first2 input,
+.first2 textarea {
+  width: 100%;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+.second2 {
+  flex: 0.7;
+  flex-direction: column;
+}
+
+.second2 label {
+  margin-bottom: 5px;
+}
+
+.second2 input,
+.second2 textarea {
+  width: 100%;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+.additional-info {
+  display: flex;
+  justify-content: space-between;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  margin-right: 10px;
+}
+
+.input-group label {
+    margin-bottom: 5px;
+}
+
+.input-group select,
+.input-group input[type="number"] {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+.time-input-group {
+  display: flex;
+  align-items: center;
+}
+
+.time-input-group input {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+
+.time-input-group span {
+  margin-left: 5px;
+}
+
+#cookTimeMins {
+  margin-left: 10px; 
+}
+
+input[type="number"] {
+    width: 65px;
+}
+
+input[type="text"],
+input[type="number"],
+textarea,
+select {
+  background-color: #ececec;
+  resize: vertical;
+  padding: 8px;
+}
+
+.second1 {
+  flex: 0.3;
+  margin-right: 50px; 
+}
+
+.second1 input {
+  width: 100%;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  margin-top: 5px;
+  margin-bottom: 10px;
 }
 
 .ingredients-container {
@@ -398,8 +365,45 @@ input[type="number"] {
   flex-direction: column;
 }
 
-.ingredients-container .add-more-button {
-  margin: 0 auto; /* Center the button horizontally */
+
+.ingredients-container .remove-button .add-more-button {
+  margin: 0 auto;
+}
+
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 20px; 
+}
+
+.add-more-button {
+    background-color: transparent; 
+    border: none; 
+    color: #8F8E8E; 
+    padding: 0;
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: 14px; 
+    margin: 10px 0; 
+}
+
+.remove-button {
+    background-color: transparent; 
+    border: none; 
+    color: #8F8E8E; 
+    padding: 0;
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: 14px; 
+    margin: 10px 0; 
+}
+
+.add-more-button:hover {
+    color: #6B6969;
+}
+
+.remove-button:hover {
+    color: #6B6969;
 }
 
 .directions-container {
@@ -407,8 +411,22 @@ input[type="number"] {
   flex-direction: column;
 }
 
-.directions-container .add-more-button {
-  margin: 0 auto; /* Center the button horizontally */
+.directions-container .remove-button .add-more-button {
+  margin: 0 auto; 
+}
+
+.direction-step label {
+  display: block; 
+  font-weight: bold; 
+  margin-top: 20px; 
+  margin-bottom: 5px; 
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  align-items: center;
 }
 
 .cancel-button {
@@ -426,31 +444,35 @@ input[type="number"] {
   color: #6B6969;
 }
 
-.button-container {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 20px;
-  align-items: center;
+.save-recipe-button {
+    background-color: #60ce64;
+    border: none;
+    text-decoration: none;
+    color: white;
+    padding: 0;
+    cursor: pointer;
+    border-radius: 15px;
+    width: 90px;
+    height: 32px;
+    margin: 0 20px;
 }
 
 .save-recipe-button {
-  position: absolute;
-  right: 20px;
+  background-color: #A7BF6A;
+  border: none;
+  color: white;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 15px;
+  width: auto; 
+  height: auto; 
+  margin: 0 20px;
+  font-size: 14px; 
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2); 
 }
 
-.direction-step label {
-  display: block; /* Make sure the label is on its own line */
-  font-weight: bold; /* Optional: if you want the "Step" label to be bold */
-  margin-top: 20px; /* Add margin above the step labels */
-  margin-bottom: 5px; /* Space between label and textarea */
+.save-recipe-button:hover {
+  background-color: #596639; 
 }
-
-.horizontalRow {
-  display: flex;
-  flex-direction: row;
-  flex: 1;
-  margin-bottom: 0; /* Remove margin-bottom from .horizontalRow if necessary */
-}
-
 
 </style>
