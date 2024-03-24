@@ -7,6 +7,8 @@ import SignUp from '@/views/SignUp.vue'
 import Login from '@/views/Login.vue'
 import RecipeGenerator from '@/views/RecipeGenerator.vue'
 import CommunityPage from '@/views/CommunityPage.vue'
+import NotFound from '@/views/NotFound.vue';
+import Settings from '@/views/Settings.vue';
 
 
 const routes = [
@@ -37,9 +39,17 @@ const routes = [
         component: CommunityPage,
         meta: { requiresAuth: true}
     },
-
-    
-    
+    {
+        path: '/:catchAll(.*)',
+        name: 'NotFound',
+        component: NotFound
+    },
+    {
+        path: '/profile/settings',
+        name: 'Settings',
+        component: Settings,
+        meta: { requiresAuth: true}
+    },
 ]
 
 const router = createRouter({
@@ -53,7 +63,7 @@ router.beforeEach((to, from, next) => {
     onAuthStateChanged(auth, (user) => {
         console.log(user);
         if (requiresAuth && !user) {
-            next('/');
+            next({ path: '/', query: { redirected:'true' } });
         } else {
             next();
         }

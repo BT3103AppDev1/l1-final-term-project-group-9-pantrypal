@@ -78,13 +78,13 @@
     };
     </script>
     
-    <style scoped>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
-    
+    <style scoped>    
     .popup-container {
-        position: absolute;
+        position: fixed;
+        top: 0;
         height: 100%;
         width: 100%;
+        z-index: 1000;
     }
 
     .chatbox-container {

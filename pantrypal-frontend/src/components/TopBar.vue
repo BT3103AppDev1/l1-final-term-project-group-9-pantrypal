@@ -3,46 +3,76 @@
         <div class="firstContainer">
             <img src="../assets/logo.jpg" alt="PantryPal Logo" class="logo" />
         </div>
-        <div class="secondContainer">
+        <div v-if="ifFeed" class="secondContainer">
             <button class="custom-button" @click="goToCommunityPage()">
-                <p class="button-text">My Feed</p>
+                <p class="button-text-selected">My Feed</p>
             </button>
-            <button class="custom-button" @click="goToCreateNewRecipePage()">
+            <button class="custom-button" @click="goToRecipeGenerator()">
                 <p class="button-text">Smart Leftovers</p>
             </button>
         </div>
+        <div v-else class="secondContainer">
+            <button class="custom-button" @click="goToCommunityPage()">
+                <p class="button-text">My Feed</p>
+            </button>
+            <button class="custom-button" @click="goToRecipeGenerator()">
+                <p class="button-text-selected">Smart Leftovers</p>
+            </button>
+        </div>
         <div class="thirdContainer">
-            <button class="logOutButton" @click="">
+            <button class="logOutButton" @click="logout">
                 <p class="logOutButton-text">Log out</p>
             </button>
-            <button type="button" class="profileButton">
+            <button type="button" class="profileButton" @click="goToProfile()">
                 <img src="../assets/profile.svg" alt="profile pic" class="profile" />
             </button>
         </div>
     </div>
+    <hr>
 </template>
 
 <script>
+import { auth } from '../firebase.js';
+import { signOut } from 'firebase/auth';
+
 export default {
+    props: {
+        ifFeed: Boolean
+    },
     methods: {
-        goToCommunityPage() { },
-        goToCreateNewRecipePage() { },
+        goToCommunityPage() {
+            console.log("test")
+            this.$router.push('/community-page');
+        },
+        goToRecipeGenerator() {
+            this.$router.push('/recipe-generator');
+        },
+        goToProfile() {
+            this.$router.push('/profile/settings');
+        },
+        logout() {
+            signOut(auth).then(() => {
+                this.$router.push('/');
+            }).catch((error) => {
+                console.error("Logout Error:", error);
+            });
+        }
     },
 };
 </script>
 <style>
 .topBar {
-    margin-top: 20px;
+    margin: 15px 0px;
     display: flex;
     flex-direction: row;
     align-items: center;
     padding: 0 5rem;
     background-color: #fff;
-    height: 80px;
+    height: 60px;
 }
 
 .logo {
-    height: 80px;
+    height: 90px;
 }
 
 .custom-button {
@@ -52,6 +82,7 @@ export default {
     cursor: pointer;
 }
 
+
 .button-text {
     padding: 10px 20px;
     font-size: 20px;
@@ -60,6 +91,16 @@ export default {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+}
+
+.button-text-selected {
+    padding: 10px 20px;
+    font-size: 20px;
+    font-weight: 800;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    color: darkgreen;
 }
 
 .button-text:hover {
@@ -111,5 +152,11 @@ export default {
 .profile {
     border-radius: 50%;
     height: 50px;
+}
+
+hr {
+    margin: 0;
+    border: 0;
+    border-top: 1.4px solid #DDDDDD;
 }
 </style>
