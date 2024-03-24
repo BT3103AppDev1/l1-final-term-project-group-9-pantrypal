@@ -8,6 +8,7 @@ import Login from '@/views/Login.vue'
 import RecipeGenerator from '@/views/RecipeGenerator.vue'
 import CommunityPage from '@/views/CommunityPage.vue'
 import NotFound from '@/views/NotFound.vue';
+import Settings from '@/views/Settings.vue';
 
 
 const routes = [
@@ -42,6 +43,12 @@ const routes = [
         path: '/:catchAll(.*)',
         name: 'NotFound',
         component: NotFound
+    },
+    {
+        path: '/profile/settings',
+        name: 'Settings',
+        component: Settings,
+        meta: { requiresAuth: true}
     },
 ]
 
