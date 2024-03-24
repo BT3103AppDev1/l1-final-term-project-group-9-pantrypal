@@ -17,8 +17,14 @@
         <p>@{{ recipe.user_id }}</p>
       </div>
     </div>
-    <div class="like-button">
-      <button @click.stop="likeRecipe">Like</button>
+    <div class="like">
+      <button class="like-button" @click.stop="toggleLikeRecipe">
+        <i
+          class="fa"
+          :class="['fa-thumbs-up', { liked: !recipeIsLiked }]"
+          aria-hidden="true"
+        ></i>
+      </button>
       <span>{{ recipe.like_count }}</span>
     </div>
   </div>
@@ -26,8 +32,9 @@
 
 <script>
 import RecipeImage from "./RecipeImage.vue";
-import { db, auth, getUserInfoFromID } from "../firebase";
+import { db, auth } from "../firebase";
 import { doc, setDoc, getDoc } from "firebase/firestore";
+import "@fortawesome/fontawesome-free/css/all.min.css";
 
 export default {
   components: {
@@ -39,66 +46,111 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      recipeIsLiked: false,
+    };
+  },
+  async created() {
+    if (auth.currentUser) {
+      const userDocSnapshot = await getDoc(doc(db, "users", auth.currentUser.uid));
+      const userData = userDocSnapshot.data();
+      this.recipeIsLiked = userData.liked_recipes.includes(this.recipe.recipe_id);
+      // console.log(this.recipeIsLiked);
+      // console.log("created is working");
+    }
+  },
   methods: {
     toggleRecipeDetails() {
       this.$emit("toggle", this.recipe);
     },
-    async likeRecipe() {
+    async toggleLikeRecipe() {
       if (!auth.currentUser) {
         this.$router.push("/login");
         return;
       }
-
-      this.recipe.like_count++;
+      // console.log("liking recipe");
+      const user = auth.currentUser;
+      const recipeDocRef = doc(db, "all_recipes", this.recipe.recipe_id);
+      // console.log(recipeDocRef);
+      // console.log(this.recipeIsLiked);
 
       try {
-        const user = auth.currentUser;
-        const recipeDocRef = doc(db, "all_recipes", this.recipe.recipe_id);
-        await setDoc(recipeDocRef, {
-          recipe_id: this.recipe.recipe_id,
-          recipe_name: this.recipe.recipe_name,
-          description: this.recipe.description,
-          ingredients: this.recipe.ingredients,
-          allergens: this.recipe.allergens,
-          directions: this.recipe.directions,
-          cook_time: this.recipe.cook_time,
-          serving_size: this.recipe.serving_size,
-          like_count: this.recipe.like_count,
-          user_id: this.recipe.user_id,
-          categories: this.recipe.categories,
-          created_date: this.recipe.created_date,
-          recipe_img_url: this.recipe.recipe_img_url,
-          community: this.recipe.community,
-        });
+        if (this.recipeIsLiked) {
+          this.recipe.like_count--;
+          await setDoc(recipeDocRef, {
+            recipe_id: this.recipe.recipe_id,
+            recipe_name: this.recipe.recipe_name,
+            description: this.recipe.description,
+            ingredients: this.recipe.ingredients,
+            allergens: this.recipe.allergens,
+            directions: this.recipe.directions,
+            cook_time: this.recipe.cook_time,
+            serving_size: this.recipe.serving_size,
+            like_count: this.recipe.like_count,
+            user_id: this.recipe.user_id,
+            categories: this.recipe.categories,
+            created_date: this.recipe.created_date,
+            recipe_img_url: this.recipe.recipe_img_url,
+            community: this.recipe.community,
+          });
 
-        const userDocRef = doc(db, "users", auth.currentUser.uid);
-        const userDocSnapshot = await getDoc(doc(db, "users", auth.currentUser.uid));
-        const userData = userDocSnapshot.data();
+          const userDocRef = doc(db, "users", auth.currentUser.uid);
+          const userDocSnapshot = await getDoc(doc(db, "users", auth.currentUser.uid));
+          const userData = userDocSnapshot.data();
 
-        console.log(userData);
+          // console.log(userData);
 
-        await setDoc(userDocRef, {
-          email: userData.email,
-          liked_recipes: Array.isArray(userData.liked_recipes)
-            ? [...userData.liked_recipes, this.recipe.recipe_id]
-            : [this.recipe.recipe_id],
-          my_cookbook: Array.isArray(userData.my_cookbook) ? userData.my_cookbook : [],
-          profile_img_url: userData.profile_img_url,
-          user_id: userData.user_id,
-          username: userData.username,
-        });
+          await setDoc(userDocRef, {
+            email: userData.email,
+            liked_recipes: Array.isArray(userData.liked_recipes)
+              ? userData.liked_recipes.filter((id) => id !== this.recipe.recipe_id)
+              : [],
+            my_cookbook: Array.isArray(userData.my_cookbook) ? userData.my_cookbook : [],
+            profile_img_url: userData.profile_img_url,
+            user_id: userData.user_id,
+            username: userData.username,
+          });
+        } else {
+          this.recipe.like_count++;
+          await setDoc(recipeDocRef, {
+            recipe_id: this.recipe.recipe_id,
+            recipe_name: this.recipe.recipe_name,
+            description: this.recipe.description,
+            ingredients: this.recipe.ingredients,
+            allergens: this.recipe.allergens,
+            directions: this.recipe.directions,
+            cook_time: this.recipe.cook_time,
+            serving_size: this.recipe.serving_size,
+            like_count: this.recipe.like_count,
+            user_id: this.recipe.user_id,
+            categories: this.recipe.categories,
+            created_date: this.recipe.created_date,
+            recipe_img_url: this.recipe.recipe_img_url,
+            community: this.recipe.community,
+          });
 
-        // await setDoc(userDocRef, {
-        //   email: "test@test.com",
-        //   liked_recipes: [this.recipe.recipe_id],
-        //   my_cookbook: [],
-        //   profile_img_url: "",
-        //   user_id: auth.currentUser.uid,
-        //   username: "test",
-        // });
+          const userDocRef = doc(db, "users", auth.currentUser.uid);
+          const userDocSnapshot = await getDoc(doc(db, "users", auth.currentUser.uid));
+          const userData = userDocSnapshot.data();
+
+          // console.log(userData);
+
+          await setDoc(userDocRef, {
+            email: userData.email,
+            liked_recipes: Array.isArray(userData.liked_recipes)
+              ? [...userData.liked_recipes, this.recipe.recipe_id]
+              : [this.recipe.recipe_id],
+            my_cookbook: Array.isArray(userData.my_cookbook) ? userData.my_cookbook : [],
+            profile_img_url: userData.profile_img_url,
+            user_id: userData.user_id,
+            username: userData.username,
+          });
+        }
+
+        this.recipeIsLiked = !this.recipeIsLiked;
       } catch (error) {
-        console.error("Error liking recipe:", error);
-        this.recipe.like_count--;
+        console.error("Error toggling recipe like:", error);
       }
     },
   },
@@ -149,7 +201,7 @@ export default {
 
 .info {
   display: flex;
-  justify-content: space-between;
+  /* justify-content: space-between; */
 }
 
 .category-bubble {
@@ -165,5 +217,43 @@ export default {
 .user-id {
   font-style: italic;
   font-size: 0.75rem;
+}
+
+.like {
+  padding-left: 15px;
+  padding-bottom: 10px;
+  display: inline-flex;
+  align-items: center;
+  border: none;
+  cursor: pointer;
+  background-color: #cbdf99;
+}
+
+.like-button {
+  display: inline-flex;
+  align-items: center;
+  border: none;
+  cursor: pointer;
+  background-color: #cbdf99;
+}
+
+.like-button .fa {
+  font-size: 1rem;
+  margin-right: 5px;
+  transition: color 0.3s;
+  background: none;
+  border: none;
+}
+
+.like-button .fa.liked {
+  color: grey;
+  background: none;
+  border: none;
+}
+
+.like-button span {
+  font-size: 1rem;
+  background: none;
+  border: none;
 }
 </style>

@@ -1,48 +1,75 @@
 <template>
-
   <div class="community-page">
-    <TopBar :ifFeed=true />
+    <TopBar :ifFeed="true" />
     <div class="filterBar">
       <div class="search-bar">
-        <input type="text" class="search-input" placeholder="Search name or ingredients...">
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Search name or ingredients..."
+        />
         <button type="button" class="search-button">
-          <img src="../assets/search-icon.svg" alt="Search Icon">
+          <img src="../assets/search-icon.svg" alt="Search Icon" />
         </button>
       </div>
       <div class="category-bar-text">
-        <p>Category: </p>
+        <p>Category:</p>
       </div>
       <div class="category-bar-dropdown">
-
         <div class="dropdown-container">
-          <dropdown class="my-dropdown-toggle" :options="arrayOfCategories" :selected="category" :placeholder="'All'"
-            :closeOnOutsideClick="true" v-on:updateOption="filterUsingCategory">
+          <dropdown
+            class="my-dropdown-toggle"
+            :options="arrayOfCategories"
+            :selected="category"
+            :placeholder="'All'"
+            :closeOnOutsideClick="true"
+            v-on:updateOption="filterUsingCategory"
+          >
           </dropdown>
         </div>
       </div>
       <div class="sortby-bar-text">
-        <p>Sort By: </p>
+        <p>Sort By:</p>
       </div>
       <div class="category-bar-dropdown">
         <div class="dropdown-container">
-          <dropdown class="my-dropdown-toggle" :options="arrayOfSorts" :selected="sort" :placeholder="'Most Recent'"
-            :closeOnOutsideClick="true">
+          <dropdown
+            class="my-dropdown-toggle"
+            :options="arrayOfSorts"
+            :selected="sort"
+            :placeholder="'Most Recent'"
+            :closeOnOutsideClick="true"
+          >
           </dropdown>
         </div>
       </div>
     </div>
-
 
     <!-- RecipeCards######### -->
 
     <!-- recipe card list -->
     <div class="recipe-list">
-      <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe"
-        @toggle="toggleRecipeDetails" />
+      <RecipeCard
+        v-for="recipe in filteredRecipes"
+        :key="recipe.recipe_id"
+        :recipe="recipe"
+        @toggle="toggleRecipeDetails"
+      />
     </div>
+     <RecipeDetailsWindow
+      v-if="selectedRecipe"
+      :selectedRecipe="selectedRecipe"
+      :selectedIngredients="selectedIngredients"
+      :closeModal="closeModal"
+    />
 
-    <RecipeDetailsWindow v-if="selectedRecipe" :selectedRecipe="selectedRecipe"
-      :selectedIngredients="selectedIngredients" :closeModal="closeModal" />
+    <!-- Toggle button for the create recipe modal -->
+    <div class="plus-icon-container" @click="showCreateRecipe = true">
+      <img src="../assets/plus-icon.png" alt="Add Recipe">
+    </div>
+    
+    <!-- CreateRecipe modal -->
+    <CreateRecipe v-if="showCreateRecipe" @close="showCreateRecipe = false" />
   </div>
 </template>
 
@@ -51,9 +78,10 @@ import RecipeCard from "../components/RecipeCard.vue";
 import RecipeDetailsWindow from "../components/RecipeDetailsWindow.vue";
 import { db } from "../firebase.js";
 import { collection, getDocs, getDoc, doc } from "firebase/firestore";
-import TopBar from '@/components/TopBar.vue';
-import dropdown from 'vue-dropdowns';
+import TopBar from "@/components/TopBar.vue";
+import dropdown from "vue-dropdowns";
 import RecipeImage from "@/components/RecipeImage.vue";
+import CreateRecipe from "@/components/CreateRecipe.vue";
 
 export default {
   components: {
@@ -61,22 +89,26 @@ export default {
     RecipeDetailsWindow,
     TopBar,
     dropdown,
-    RecipeImage
+    RecipeImage,
+    CreateRecipe,
   },
   data() {
     return {
-      arrayOfCategories: [{ name: 'All', id: '0' }, { name: 'pasta', id: "7tn1kUcL0nScw1y5xI0b" }, { name: "others", id: 'T0i47UNmqh1hj93UppUi' },],
-      category: {
-      },
-      arrayOfSorts: [{ name: 'Most Recent' }, { name: 'Most Liked' }],
-      sort: {
-      },
+      arrayOfCategories: [
+        { name: "All", id: "0" },
+        { name: "pasta", id: "7tn1kUcL0nScw1y5xI0b" },
+        { name: "others", id: "T0i47UNmqh1hj93UppUi" },
+      ],
+      category: {},
+      arrayOfSorts: [{ name: "Most Recent" }, { name: "Most Liked" }],
+      sort: {},
 
       filteredRecipes: [],
       recipes: [],
       searchQuery: "",
       selectedRecipe: null,
       selectedIngredients: [],
+      showCreateRecipe: false,
     };
   },
   created() {
@@ -89,7 +121,6 @@ export default {
         this.recipes.push(doc.data());
         this.filteredRecipes.push(doc.data());
       });
-
     },
     toggleRecipeDetails(recipe) {
       recipe.showDetails = !recipe.showDetails;
@@ -112,24 +143,22 @@ export default {
     },
     async filterUsingCategory(payload) {
       this.category = payload;
-      if (this.category.name == 'All') {
+      if (this.category.name == "All") {
         this.filteredRecipes = this.recipes;
       } else {
-        this.filteredRecipes = []
+        this.filteredRecipes = [];
         const docSnap = await getDoc(doc(db, "categories", payload.id));
-        const recipesIDlist = docSnap.data().recipes
+        const recipesIDlist = docSnap.data().recipes;
         if (recipesIDlist.length != 0) {
           for (let x in recipesIDlist) {
-            const docSnap = await getDoc(doc(db, "all_recipes", recipesIDlist[x]))
+            const docSnap = await getDoc(doc(db, "all_recipes", recipesIDlist[x]));
             this.filteredRecipes.push(docSnap.data());
           }
         }
       }
-    }
-
-  }
-}
-
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -160,7 +189,7 @@ export default {
   outline: none;
   padding: 10px;
   font-size: 16px;
-  background-color: inherit
+  background-color: inherit;
 }
 
 .search-button {
@@ -228,6 +257,12 @@ export default {
   flex-wrap: wrap;
   align-self: flex-start;
   flex-direction: row;
+}
 
+.plus-icon-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  /* Additional styles for your plus icon */
 }
 </style>
