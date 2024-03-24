@@ -56,7 +56,7 @@ router.beforeEach((to, from, next) => {
     onAuthStateChanged(auth, (user) => {
         console.log(user);
         if (requiresAuth && !user) {
-            next('/');
+            next({ path: '/', query: { redirected:'true' } });
         } else {
             next();
         }
