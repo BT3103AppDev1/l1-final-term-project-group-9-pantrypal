@@ -23,7 +23,7 @@
             <button class="logOutButton" @click="logout">
                 <p class="logOutButton-text">Log out</p>
             </button>
-            <button type="button" class="profileButton">
+            <button type="button" class="profileButton" @click="goToProfile()">
                 <img src="../assets/profile.svg" alt="profile pic" class="profile" />
             </button>
         </div>
@@ -46,6 +46,9 @@ export default {
         },
         goToRecipeGenerator() {
             this.$router.push('/recipe-generator');
+        },
+        goToProfile() {
+            this.$router.push('/profile/settings');
         },
         logout() {
             signOut(auth).then(() => {

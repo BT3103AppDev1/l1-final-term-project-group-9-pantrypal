@@ -53,7 +53,13 @@ export default {
                     console.log('No such user document');
                 }
             });
-        }
+        },
+        goToLikedPage() {
+            this.$router.push('/profile/liked');
+        },
+        goToCookbookPage() {
+            this.$router.push('/profile/cookbook');
+        },
     }
 };
 </script>
