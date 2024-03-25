@@ -8,6 +8,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 app.post('/chatbot', chatGptController.askToChatGpt);
+app.post('/initial-recipe', chatGptController.generateInitialRecipe);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

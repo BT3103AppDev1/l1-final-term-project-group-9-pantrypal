@@ -1,4 +1,3 @@
-
 <template>
     <div class="popup-container" @mousedown.self.prevent="this.$emit('close')">
         <div class="chatbox-container">

@@ -25,17 +25,19 @@ const askToChatGpt = async function (req, res) {
             data: repliedMessage, 
             conversationHistory: conversationHistory 
         });
-        } catch (error) {
+    } catch (error) {
         console.log("Error ", error);
         res.status(500).send({ error: "Internal Server Error" });
-        }
+    }
   };
   
-const generateInitialRecipe = async (conversationHistory, recipeDetails, openai) => {
+const generateInitialRecipe = async (req, res) => {
+    const openai = _createOpenAIInstance();
+    console.log(req.body);
     const prompt = `Generate a recipe based on the following details: 
-        Cuisine: ${recipeDetails.cuisine}, 
-        Leftovers: ${recipeDetails.leftovers}, 
-        Dietary Restrictions: ${recipeDetails.dietaryRestrictions}.
+        Cuisine: ${req.body.categories}, 
+        Leftovers: ${req.body.ingredients}, 
+        Dietary Restrictions: ${req.body.dietaryRestrictions}.
 
         Please return the recipe in the example FORMAT BELOW, note that the information below are just examples:
 
@@ -61,26 +63,25 @@ const generateInitialRecipe = async (conversationHistory, recipeDetails, openai)
     });
 
     const recipe = completion.choices[0].message.content;
-    const recipeObject = JSON.parse(recipe);
+    // const recipeObject = JSON.parse(recipe);
 
-    const imageResponse = await openai.createImage({
-        model: "dall-e-3",
-        prompt: recipeObject.description, 
-        n: 1,
-        size: "1024x1024",
-    });
+    // const imageResponse = await openai.createImage({
+    //     model: "dall-e-3",
+    //     prompt: recipeObject.description, 
+    //     n: 1,
+    //     size: "1024x1024",
+    // });
 
-    const imageUrl = imageResponse.data.data[0].url;
+    // const imageUrl = imageResponse.data.data[0].url;
 
-    const recipeWithImage = {
-        ...recipeObject, 
-        imageUrl: imageUrl
-    };
+    // const recipeWithImage = {
+    //     ...recipeObject, 
+    //     imageUrl: imageUrl
+    // };
 
     // Add the generated recipe to the conversation history
-    conversationHistory.push({ role: "system", content: JSON.stringify(recipeWithImage) });
-
-    return conversationHistory;
+    res.send({ role: "system", content: JSON.stringify(recipe) });
+    console.log("Generated Recipe: ", recipe);
 };
 
 const _createOpenAIInstance = () => {
@@ -92,4 +93,5 @@ const _createOpenAIInstance = () => {
 
 module.exports = {
     askToChatGpt,
+    generateInitialRecipe,
 };

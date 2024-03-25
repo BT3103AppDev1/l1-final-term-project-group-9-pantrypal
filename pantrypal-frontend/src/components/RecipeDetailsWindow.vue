@@ -5,13 +5,13 @@
 
       <div class="horizontalRow">
         <div class="first">
-          <RecipeImage :path="selectedRecipe.recipe_img_url" :ifCard="false" />
+          <!-- <RecipeImage :path="selectedRecipe.recipe_img_url" :ifCard="false" /> -->
         </div>
         <div class="second">
           <h1>{{ selectedRecipe.recipe_name }}</h1>
           <p>
             By @{{ selectedRecipe.user_id }},
-            {{
+            <!-- {{
               new Date(selectedRecipe.created_date.seconds * 1000).toLocaleDateString(
                 "en-GB",
                 {
@@ -20,7 +20,7 @@
                   day: "numeric",
                 }
               )
-            }}
+            }} -->
           </p>
 
           <p>{{ selectedRecipe.description }}</p>
@@ -99,8 +99,7 @@ export default {
       required: true,
     },
     closeModal: {
-      type: Function,
-      required: true,
+      type: Function
     },
   },
 };
