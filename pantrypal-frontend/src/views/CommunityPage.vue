@@ -3,28 +3,20 @@
     <TopBar :ifFeed="true" />
     <div class="filterBar">
       <div class="search-bar">
-        <input
-          type="text"
-          class="search-input"
-          placeholder="Search name or ingredients..."
-        />
-        <button type="button" class="search-button">
+        <input type="text" class="search-input" placeholder="Search name or ingredients..." v-model="searchQuery" />
+        <!-- dunnid button anymore
+        <button type="button" class="search-button" @click="filterByNameOrIngredients">
           <img src="../assets/search-icon.svg" alt="Search Icon" />
         </button>
+         -->
       </div>
       <div class="category-bar-text">
         <p>Category:</p>
       </div>
       <div class="category-bar-dropdown">
         <div class="dropdown-container">
-          <dropdown
-            class="my-dropdown-toggle"
-            :options="arrayOfCategories"
-            :selected="category"
-            :placeholder="'All'"
-            :closeOnOutsideClick="true"
-            v-on:updateOption="filterUsingCategory"
-          >
+          <dropdown class="my-dropdown-toggle" :options="arrayOfCategories" :selected="category" :placeholder="'All'"
+            :closeOnOutsideClick="true" v-on:updateOption="filterUsingCategory">
           </dropdown>
         </div>
       </div>
@@ -33,13 +25,8 @@
       </div>
       <div class="category-bar-dropdown">
         <div class="dropdown-container">
-          <dropdown
-            class="my-dropdown-toggle"
-            :options="arrayOfSorts"
-            :selected="sort"
-            :placeholder="'Most Recent'"
-            :closeOnOutsideClick="true"
-          >
+          <dropdown class="my-dropdown-toggle" :options="arrayOfSorts" :selected="sort" :placeholder="'Most Recent'"
+            :closeOnOutsideClick="true" v-on:updateOption="filterUsingSort">
           </dropdown>
         </div>
       </div>
@@ -49,25 +36,17 @@
 
     <!-- recipe card list -->
     <div class="recipe-list">
-      <RecipeCard
-        v-for="recipe in filteredRecipes"
-        :key="recipe.recipe_id"
-        :recipe="recipe"
-        @toggle="toggleRecipeDetails"
-      />
+      <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe"
+        @toggle="toggleRecipeDetails" />
     </div>
-     <RecipeDetailsWindow
-      v-if="selectedRecipe"
-      :selectedRecipe="selectedRecipe"
-      :selectedIngredients="selectedIngredients"
-      :closeModal="closeModal"
-    />
+    <RecipeDetailsWindow v-if="selectedRecipe" :selectedRecipe="selectedRecipe"
+      :selectedIngredients="selectedIngredients" :closeModal="closeModal" />
 
     <!-- Toggle button for the create recipe modal -->
     <div class="plus-icon-container" @click="showCreateRecipe = true">
       <img src="../assets/plus-icon.png" alt="Add Recipe">
     </div>
-    
+
     <!-- CreateRecipe modal -->
     <CreateRecipe v-if="showCreateRecipe" @close="showCreateRecipe = false" />
   </div>
@@ -95,33 +74,55 @@ export default {
   data() {
     return {
       arrayOfCategories: [
-        { name: "All", id: "0" },
-        { name: "pasta", id: "7tn1kUcL0nScw1y5xI0b" },
-        { name: "others", id: "T0i47UNmqh1hj93UppUi" },
+        { name: "All", id: "00" },
+        { name: "Asian Cuisine", id: "01" },
+        { name: "Western Cuisine", id: "02" },
+        { name: "Local Delights", id: "03" },
+        { name: "Healthy Choices", id: "04" },
+        { name: "Fast Food", id: "05" },
+        { name: "Desserts and Snacks", id: "06" },
+        { name: "Beverages", id: "07" },
+        { name: "Specialty Cuisine", id: "08" },
+        { name: "International Cuisine", id: "09" },
+        { name: "Breakfast and Brunch", id: "10" },
+        { name: "Late-night Eats", id: "11" },
+        { name: "Others", id: "12" },
       ],
       category: {},
       arrayOfSorts: [{ name: "Most Recent" }, { name: "Most Liked" }],
       sort: {},
-
+      allCommunityRecipes: [],
       filteredRecipes: [],
-      recipes: [],
+      allRecipes: [],
       searchQuery: "",
       selectedRecipe: null,
       selectedIngredients: [],
       showCreateRecipe: false,
     };
   },
+  watch: {
+    searchQuery(value) {
+      this.filterByNameOrIngredients()
+    },
+  },
   created() {
     this.fetchRecipes();
+
   },
+
   methods: {
     async fetchRecipes() {
       const querySnapshot = await getDocs(collection(db, "all_recipes"));
       querySnapshot.forEach((doc) => {
-        this.recipes.push(doc.data());
-        this.filteredRecipes.push(doc.data());
+        this.allRecipes.push(doc.data());
+        if (doc.data().community) {
+          this.allCommunityRecipes.push(doc.data())
+          this.filteredRecipes.push(doc.data());
+        }
       });
+      this.sortByMostRecent()
     },
+
     toggleRecipeDetails(recipe) {
       recipe.showDetails = !recipe.showDetails;
       this.selectedRecipe = recipe;
@@ -131,16 +132,21 @@ export default {
       this.selectedIngredients = [];
     },
 
-    computed: {
-      filteredRecipes() {
-        return this.recipes.filter((recipe) => {
-          const nameMatch = recipe.recipe_name
-            .toLowerCase()
-            .includes(this.searchQuery.toLowerCase());
-          return nameMatch;
+    filterByNameOrIngredients() {
+      this.filteredRecipes = this.allCommunityRecipes.filter((recipe) => {
+        const nameMatch = recipe.recipe_name
+          .toLowerCase()
+          .includes(this.searchQuery.toLowerCase());
+        let ingredientsMatch = false;
+        recipe.ingredients.forEach((ingredient) => {
+          if (ingredient.toLowerCase().includes(this.searchQuery.toLowerCase())) {
+            ingredientsMatch = true;
+          }
         });
-      },
+        return nameMatch || ingredientsMatch;
+      });
     },
+
     async filterUsingCategory(payload) {
       this.category = payload;
       if (this.category.name == "All") {
@@ -157,6 +163,25 @@ export default {
         }
       }
     },
+    filterUsingSort(payload) {
+      this.sort = payload;
+      if (payload.name == "Most Recent") {
+        this.sortByMostRecent()
+      } else {
+        this.sortByMostLiked()
+      }
+    },
+    sortByMostRecent() {
+      this.filteredRecipes = this.filteredRecipes.sort((a, b) => {
+        return b.created_date.toDate() - a.created_date.toDate();
+      })
+    },
+    sortByMostLiked() {
+      this.filteredRecipes = this.filteredRecipes.sort((a, b) => {
+        return b.like_count - a.like_count;
+      })
+    },
+
   },
 };
 </script>
