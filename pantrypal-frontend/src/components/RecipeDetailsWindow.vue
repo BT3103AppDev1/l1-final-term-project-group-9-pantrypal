@@ -9,6 +9,7 @@
         </div>
         <div class="second">
           <h1>{{ selectedRecipe.recipe_name }}</h1>
+
           <p>
             By @{{ selectedRecipe.user_id }},
             <!-- {{
@@ -75,14 +76,17 @@
         </div>
       </div>
     </div>
+    <!-- <LikeButton :recipe="recipe" /> -->
   </div>
 </template>
 
 <script>
 import RecipeImage from "./RecipeImage.vue";
+import LikeButton from "./LikeButton.vue";
 export default {
   components: {
     RecipeImage,
+    LikeButton,
   },
   data() {
     return {
@@ -99,7 +103,7 @@ export default {
       required: true,
     },
     closeModal: {
-      type: Function
+      type: Function,
     },
   },
 };
