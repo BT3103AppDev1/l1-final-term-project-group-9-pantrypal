@@ -5,22 +5,27 @@
 
       <div class="horizontalRow">
         <div class="first">
-          <!-- <RecipeImage :path="selectedRecipe.recipe_img_url" :ifCard="false" /> -->
+          <RecipeImage :path="selectedRecipe.recipe_img_url" :ifCard="false" />
         </div>
         <div class="second">
-          <h1>{{ selectedRecipe.recipe_name }}</h1>
+          <div class="title-row">
+            <h1>{{ selectedRecipe.recipe_name }}</h1>
+            <LikeButton :recipe="selectedRecipe" />
+          </div>
           <p>
-            By @{{ selectedRecipe.user_id }},
-            <!-- {{
-              new Date(selectedRecipe.created_date.seconds * 1000).toLocaleDateString(
-                "en-GB",
-                {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                }
-              )
-            }} -->
+            <i>
+              By @{{ selectedRecipe.user_id }},
+              {{
+                new Date(selectedRecipe.created_date.seconds * 1000).toLocaleDateString(
+                  "en-GB",
+                  {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  }
+                )
+              }}
+            </i>
           </p>
 
           <p>{{ selectedRecipe.description }}</p>
@@ -80,9 +85,11 @@
 
 <script>
 import RecipeImage from "./RecipeImage.vue";
+import LikeButton from "./LikeButton.vue";
 export default {
   components: {
     RecipeImage,
+    LikeButton,
   },
   data() {
     return {
@@ -99,7 +106,7 @@ export default {
       required: true,
     },
     closeModal: {
-      type: Function
+      type: Function,
     },
   },
 };
@@ -188,5 +195,11 @@ export default {
 
 .allergens-container p {
   margin-right: 5px;
+}
+
+.title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 </style>
