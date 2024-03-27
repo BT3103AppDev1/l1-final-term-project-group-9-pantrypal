@@ -48,7 +48,7 @@ export default {
             this.$router.push('/recipe-generator');
         },
         goToProfile() {
-            this.$router.push('/profile/settings');
+            this.$router.push('/profile');
         },
         logout() {
             signOut(auth).then(() => {

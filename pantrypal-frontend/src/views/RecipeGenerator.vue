@@ -2,16 +2,17 @@
   <div class="recipeGenerator">
     <TopBar :ifFeed=false />
     <div class="content-container">
-        <RecipeGeneratorSidebar :selected="selected"/>
-        <div class="view-container">
-            <InputLeftover v-if="selected === 'input'" @generateRecipe="generateRecipe"/>
-            <GenerateLoading v-if="selected === 'generate'" :ingredients="ingredients" :categories="categories" :dietaryRestrictions="dietaryRestrictions" @recipeGenerated="recipeGenerated"/>
-            <div v-show="selected === 'save'">
-                <RecipeDetailsWindow :selectedRecipe="recipe" :selectedIngredients="selectedIngredients"/>
-                <CircleButton logo="src/assets/chefbot-button.png" @click="toggleChefBot" />
-                <ChefBot v-show="showChefBot" @close="showChefBot = false" />
-            </div>
+      <RecipeGeneratorSidebar :selected="selected" />
+      <div class="view-container">
+        <InputLeftover v-if="selected === 'input'" @generateRecipe="generateRecipe" />
+        <GenerateLoading v-if="selected === 'generate'" :ingredients="ingredients" :categories="categories"
+          :dietaryRestrictions="dietaryRestrictions" @recipeGenerated="recipeGenerated" />
+        <div v-show="selected === 'save'">
+          <RecipeDetailsWindow :selectedRecipe="recipe" :selectedIngredients="selectedIngredients" />
+          <CircleButton logo="src/assets/chefbot-button.png" @click="toggleChefBot" />
+          <ChefBot v-show="showChefBot" @close="showChefBot = false" />
         </div>
+      </div>
     </div>
   </div>
 </template>
@@ -38,13 +39,13 @@ export default {
   },
   data() {
     return {
-        showChefBot: false,
-        selected: "input",
-        categories: null,
-        dietaryRestrictions: '',
-        ingredients: [],
-        recipe: null,
-        selectedIngredients: [],
+      showChefBot: false,
+      selected: "input",
+      categories: null,
+      dietaryRestrictions: '',
+      ingredients: [],
+      recipe: null,
+      selectedIngredients: [],
     };
   },
   methods: {
@@ -52,33 +53,33 @@ export default {
       this.showChefBot = !this.showChefBot;
     },
     generateRecipe(props) {
-        this.categories = props.categories;
-        this.dietaryRestrictions = props.dietaryRestrictions;
-        this.ingredients = props.ingredients;
-        this.selected = "generate";
-        console.log(this.categories);
-        console.log(this.dietaryRestrictions);
+      this.categories = props.categories;
+      this.dietaryRestrictions = props.dietaryRestrictions;
+      this.ingredients = props.ingredients;
+      this.selected = "generate";
+      console.log(this.categories);
+      console.log(this.dietaryRestrictions);
     },
     recipeGenerated(props) {
-        console.log("recipegenerated :)");
-        console.log(props.generatedRecipe);
-        // Preprocess the JSON string to ensure it's in a parseable format
-        let preprocessJSONString = props.generatedRecipe
-            .replace(/(\r\n|\n|\r)/gm, " ") // Replace newlines with space
-            .replace(/\s+/g, " ") // Replace multiple spaces with a single space
-            .trim(); // Trim leading and trailing spaces
+      console.log("recipegenerated :)");
+      console.log(props.generatedRecipe);
+      // Preprocess the JSON string to ensure it's in a parseable format
+      let preprocessJSONString = props.generatedRecipe
+        .replace(/(\r\n|\n|\r)/gm, " ") // Replace newlines with space
+        .replace(/\s+/g, " ") // Replace multiple spaces with a single space
+        .trim(); // Trim leading and trailing spaces
 
-        try {
-            this.recipe = JSON.parse(preprocessJSONString);
-            let user_id = 'chefbot'; 
-            this.recipe.user_id = user_id;
-            this.selectedIngredients = this.recipe.ingredients;
-            this.selected = "save";
-            console.log(this.recipe);
-            console.log(typeof this.recipe);
-        } catch (error) {
-            console.error("Error parsing JSON:", error);
-        }
+      try {
+        this.recipe = JSON.parse(preprocessJSONString);
+        let user_id = 'chefbot';
+        this.recipe.user_id = user_id;
+        this.selectedIngredients = this.recipe.ingredients;
+        this.selected = "save";
+        console.log(this.recipe);
+        console.log(typeof this.recipe);
+      } catch (error) {
+        console.error("Error parsing JSON:", error);
+      }
     },
   },
 };
@@ -86,14 +87,13 @@ export default {
 
 <style scoped>
 .content-container {
-    display: flex;
+  display: flex;
 }
 
 .view-container {
-    display: flex;
-    width: 100%;
-    flex-direction: column;
-    align-items: center;
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
 }
-
 </style>

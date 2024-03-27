@@ -2,83 +2,7 @@
   <div v-if="selectedRecipe" class="popout-recipe">
     <div class="popout-recipe-content">
       <span class="close" @click="closeModal">&times;</span>
-
-      <div class="horizontalRow">
-        <div class="first">
-          <RecipeImage :path="selectedRecipe.recipe_img_url" :ifCard="false" />
-        </div>
-        <div class="second">
-          <div class="title-row">
-            <h1>{{ selectedRecipe.recipe_name }}</h1>
-            <LikeButton :recipe="selectedRecipe" />
-          </div>
-          <p>
-            <i>
-              By @{{ selectedRecipe.user_id }},
-              {{
-                new Date(selectedRecipe.created_date.seconds * 1000).toLocaleDateString(
-                  "en-GB",
-                  {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  }
-                )
-              }}
-            </i>
-          </p>
-
-          <p>{{ selectedRecipe.description }}</p>
-          <p>
-            <b>SERVING SIZE:</b> {{ selectedRecipe.serving_size }} | <b>COOK TIME:</b>
-            {{ selectedRecipe.cook_time }}
-          </p>
-          <span class="allergens-container">
-            <p><b>CONTAINS:</b></p>
-            <template v-for="(allergen, index) in selectedRecipe.allergens" :key="index">
-              <span>{{ allergen }}</span>
-              <p v-if="index < selectedRecipe.allergens.length - 1">,</p>
-            </template>
-          </span>
-          <span
-            v-for="(category, index) in selectedRecipe.categories"
-            :key="index"
-            class="category-bubble"
-            >{{ category }}</span
-          >
-        </div>
-      </div>
-
-      <div class="horizontalRow">
-        <div class="first">
-          <!-- Ingredients -->
-          <div class="recipe-section">
-            <h3>Ingredients:</h3>
-            <ul class="checkbox-list">
-              <li v-for="(ingredient, index) in selectedRecipe.ingredients" :key="index">
-                <input
-                  type="checkbox"
-                  :id="'ingredient' + index"
-                  v-model="selectedIngredients[index]"
-                />
-                <label :for="'ingredient' + index">{{ ingredient }}</label>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- Directions -->
-        <div class="second">
-          <div class="recipe-section">
-            <h3>Directions:</h3>
-            <ol>
-              <li v-for="(step, index) in selectedRecipe.directions" :key="index">
-                {{ step }}
-              </li>
-            </ol>
-          </div>
-        </div>
-      </div>
+      <RecipeDetails :selectedRecipe="selectedRecipe" :selectedIngredients="selectedIngredients" />
     </div>
   </div>
 </template>
@@ -86,10 +10,12 @@
 <script>
 import RecipeImage from "./RecipeImage.vue";
 import LikeButton from "./LikeButton.vue";
+import RecipeDetails from "./RecipeDetails.vue"
 export default {
   components: {
     RecipeImage,
     LikeButton,
+    RecipeDetails
   },
   data() {
     return {
