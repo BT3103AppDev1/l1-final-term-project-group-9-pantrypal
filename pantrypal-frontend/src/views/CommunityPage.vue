@@ -4,11 +4,8 @@
     <div class="filterBar">
       <div class="search-bar">
         <input type="text" class="search-input" placeholder="Search name or ingredients..." v-model="searchQuery" />
-        <!-- dunnid button anymore
-        <button type="button" class="search-button" @click="filterByNameOrIngredients">
-          <img src="../assets/search-icon.svg" alt="Search Icon" />
-        </button>
-         -->
+        <img class="search-button" src="../assets/search-icon.svg" alt="Search Icon" />
+
       </div>
       <div class="category-bar-text">
         <p>Category:</p>
@@ -222,10 +219,6 @@ export default {
   background-color: transparent;
   cursor: pointer;
   padding: 0;
-}
-
-.search-button img {
-  width: 20px;
   height: 20px;
 }
 
@@ -289,8 +282,9 @@ export default {
   bottom: 20px;
   right: 20px;
 }
+
 .plus-icon-container img {
-  width: 60px; 
-  height: 60px; 
+  width: 60px;
+  height: 60px;
 }
 </style>

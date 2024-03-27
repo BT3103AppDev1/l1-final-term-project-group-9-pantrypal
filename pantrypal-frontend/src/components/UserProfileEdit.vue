@@ -1,137 +1,130 @@
 <template>
-    <div class="user-profile-edit">
-      <form @submit.prevent="saveChanges" class="user-form">
-        <div class="form-group">
-          <label for="email">Email Address</label>
-          <input type="email" id="email" v-model="email" disabled class="input-field non-editable" />
-        </div>
-  
-        <div class="form-group">
-          <label for="username">Username</label>
-          <input type="text" id="username" v-model="username" class="input-field" />
-        </div>
+  <div class="user-profile-edit">
+    <form @submit.prevent="saveChanges" class="user-form">
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" v-model="email" disabled class="input-field non-editable" />
+      </div>
 
-        <div class="form-group">
-          <label for="newPassword">New Password</label>
-          <input type="password" id="newPassword" v-model="newPassword" class="input-field" />
-        </div>
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" v-model="username" class="input-field" />
+      </div>
 
-        <div class="form-group">
-          <label for="confirmPassword">Confirm New Password</label>
-          <input type="password" id="confirmPassword" v-model="confirmPassword" class="input-field" />
-        </div>
-        <div class="save-changes-btn-container">
-            <button type="submit" class="save-changes-btn">Save Changes</button>
-        </div>
-      </form>
-    </div>
-  </template>
-  
-  <script>
-  import { getAuth, onAuthStateChanged, reauthenticateWithCredential, EmailAuthProvider, updatePassword } from 'firebase/auth';
-  import { getFirestore, doc, updateDoc, getDoc } from 'firebase/firestore';
-  
-  export default {
-    name: 'UserProfileEdit',
-    data() {
-      return {
-        email: '',
-        username: '',
-        newPassword: '',
-        confirmPassword:'',
-        user: null
-      }
+      <div class="form-group">
+        <label for="newPassword">New Password</label>
+        <input type="password" id="newPassword" v-model="newPassword" class="input-field" />
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirm New Password</label>
+        <input type="password" id="confirmPassword" v-model="confirmPassword" class="input-field" />
+      </div>
+      <div class="save-changes-btn-container">
+        <button type="submit" class="save-changes-btn">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</template>
+
+<script>
+import { reauthenticateWithCredential, EmailAuthProvider, updatePassword } from 'firebase/auth';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db, auth } from "../firebase";
+
+export default {
+  name: 'UserProfileEdit',
+  props: {
+    userData: { type: Object, required: true }
+  },
+  data() {
+    return {
+      email: '',
+      username: '',
+      newPassword: '',
+      confirmPassword: '',
+      user: null
+    }
+  },
+  watch: {
+    userData(value) {
+      this.email = this.userData.email;
+      this.username = this.userData.username;
     },
-    mounted() {
-      this.fetchUserData();
-    },
-    methods: {
-      async fetchUserData() {
-        const auth = getAuth();
-        onAuthStateChanged(auth, async (user) => {
-          if (user) {
-            const db = getFirestore();
-            const userRef = doc(db, 'users', user.uid);
-            const userSnap = await getDoc(userRef);
-            if (userSnap.exists()) {
-                this.user = user;
-                this.email = user.email;
-                this.username = userSnap.data().username; 
-            }
-          }
-        });
-      },
+  },
+  mounted() {
+    this.email = this.userData.email;
+    this.username = this.userData.username;
+  },
+  methods: {
     async saveChanges() {
-        try {
-        const db = getFirestore();
-        const user = getAuth().currentUser;
-
+      try {
+        const user = auth.currentUser;
         if (this.newPassword) {
-            if (this.newPassword !== this.confirmPassword) {
-                alert("The new passwords do not match.");
-                return;
-            }
-            await this.changePassword(this.newPassword);
+          if (this.newPassword !== this.confirmPassword) {
+            alert("The new passwords do not match.");
+            return;
+          }
+          await this.changePassword(this.newPassword);
         }
 
         if (user) {
-            const userRef = doc(db, 'users', user.uid);
-            await updateDoc(userRef, {
-                username: this.username,
-            });
+          const userRef = doc(db, 'users', user.uid);
+          await updateDoc(userRef, {
+            username: this.username,
+          });
 
-            alert('Profile updated successfully.');
+          alert('Profile updated successfully.');
         }
-        } catch (error) {
-            console.error("Error updating profile:", error);
-            alert(error.message);
-        }
+      } catch (error) {
+        console.error("Error updating profile:", error);
+        alert(error.message);
+      }
     },
-      async changePassword() {
-        if (this.newPassword !== this.confirmPassword) {
-            alert("Passwords do not match.");
-            return;
+    async changePassword() {
+      if (this.newPassword !== this.confirmPassword) {
+        alert("Passwords do not match.");
+        return;
+      }
+      if (!this.newPassword) {
+        alert("New password must not be empty.");
+        return;
+      }
+      try {
+        const user = auth.currentUser;
+        if (user) {
+          const currentPassword = prompt("Please enter your current password:");
+          const credential = EmailAuthProvider.credential(user.email, currentPassword);
+          await reauthenticateWithCredential(user, credential);
+          await updatePassword(user, this.newPassword);
+          alert('Details updated successfully.');
+          this.newPassword = '';
+          this.confirmPassword = '';
         }
-        if (!this.newPassword) {
-            alert("New password must not be empty.");
-            return;
-        }
-        try {
-            const auth = getAuth();
-            const user = auth.currentUser;
-            if (user) {
-                const currentPassword = prompt("Please enter your current password:");
-                const credential = EmailAuthProvider.credential(user.email, currentPassword);
-                await reauthenticateWithCredential(user, credential);
-                await updatePassword(user, this.newPassword);
-                alert('Details updated successfully.');
-                this.newPassword = '';
-                this.confirmPassword = '';
-            }
-        } catch (error) {
-            console.error("Error updating password:", error);
-            alert(error.message);
-            }
-        }
+      } catch (error) {
+        console.error("Error updating password:", error);
+        alert(error.message);
+      }
     }
   }
-  </script>
-  
-  <style scoped>
+}
+</script>
+
+<style scoped>
 .user-profile-edit {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width:100%;
-    margin-bottom: 90px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 90px;
 }
 
 .user-form {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); 
-    grid-gap: 1rem; 
-    max-width: 600px; 
-    margin: auto; 
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 1rem;
+  max-width: 600px;
+  margin: auto;
 }
 
 .user-profile-edit .form-group {
@@ -169,14 +162,14 @@
 }
 
 .save-changes-btn-container {
-  grid-column: 1 / -1; 
+  grid-column: 1 / -1;
   display: flex;
-  justify-content: center; 
+  justify-content: center;
 }
 
-@media (max-width: 768px) { 
+@media (max-width: 768px) {
   .user-profile-edit {
-    grid-template-columns: 1fr; 
+    grid-template-columns: 1fr;
   }
 }
 </style>

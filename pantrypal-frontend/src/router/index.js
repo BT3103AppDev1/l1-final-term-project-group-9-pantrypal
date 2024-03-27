@@ -8,7 +8,8 @@ import Login from '@/views/Login.vue'
 import RecipeGenerator from '@/views/RecipeGenerator.vue'
 import CommunityPage from '@/views/CommunityPage.vue'
 import NotFound from '@/views/NotFound.vue';
-import Settings from '@/views/Settings.vue';
+import Profile from '@/views/Profile.vue';
+
 
 
 const routes = [
@@ -45,9 +46,9 @@ const routes = [
         component: NotFound
     },
     {
-        path: '/profile/settings',
-        name: 'Settings',
-        component: Settings,
+        path: '/profile',
+        name: 'Profile',
+        component: Profile,
         meta: { requiresAuth: true}
     },
 ]
