@@ -36,7 +36,7 @@ export default {
             })
             .then((response) => {
                 this.$emit('recipeGenerated', {
-                    generatedRecipe: JSON.parse(response.data.content),
+                    generatedRecipe: response.data.content,
                 })
             });
     },

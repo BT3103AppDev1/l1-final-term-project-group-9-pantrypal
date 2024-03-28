@@ -63,16 +63,12 @@ export default {
     recipeGenerated(props) {
       console.log("recipegenerated :)");
       console.log(props.generatedRecipe);
-      // Preprocess the JSON string to ensure it's in a parseable format
-      let preprocessJSONString = props.generatedRecipe
-        .replace(/(\r\n|\n|\r)/gm, " ") // Replace newlines with space
-        .replace(/\s+/g, " ") // Replace multiple spaces with a single space
-        .trim(); // Trim leading and trailing spaces
 
       try {
-        this.recipe = JSON.parse(preprocessJSONString);
+        this.recipe = props.generatedRecipe;
         let user_id = 'chefbot';
         this.recipe.user_id = user_id;
+        this.recipe.created_date = new Date();
         this.selectedIngredients = this.recipe.ingredients;
         this.selected = "save";
         console.log(this.recipe);
