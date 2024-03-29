@@ -3,17 +3,27 @@
     <TopBar :ifFeed="true" />
     <div class="filterBar">
       <div class="search-bar">
-        <input type="text" class="search-input" placeholder="Search name or ingredients..." v-model="searchQuery" />
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Search name or ingredients..."
+          v-model="searchQuery"
+        />
         <img class="search-button" src="../assets/search-icon.svg" alt="Search Icon" />
-
       </div>
       <div class="category-bar-text">
         <p>Category:</p>
       </div>
       <div class="category-bar-dropdown">
         <div class="dropdown-container">
-          <dropdown class="my-dropdown-toggle" :options="arrayOfCategories" :selected="category" :placeholder="'All'"
-            :closeOnOutsideClick="true" v-on:updateOption="filterUsingCategory">
+          <dropdown
+            class="my-dropdown-toggle"
+            :options="arrayOfCategories"
+            :selected="category"
+            :placeholder="'All'"
+            :closeOnOutsideClick="true"
+            v-on:updateOption="filterUsingCategory"
+          >
           </dropdown>
         </div>
       </div>
@@ -22,8 +32,14 @@
       </div>
       <div class="category-bar-dropdown">
         <div class="dropdown-container">
-          <dropdown class="my-dropdown-toggle" :options="arrayOfSorts" :selected="sort" :placeholder="'Most Recent'"
-            :closeOnOutsideClick="true" v-on:updateOption="filterUsingSort">
+          <dropdown
+            class="my-dropdown-toggle"
+            :options="arrayOfSorts"
+            :selected="sort"
+            :placeholder="'Most Recent'"
+            :closeOnOutsideClick="true"
+            v-on:updateOption="filterUsingSort"
+          >
           </dropdown>
         </div>
       </div>
@@ -33,13 +49,21 @@
 
     <!-- recipe card list -->
     <div class="recipe-list">
-      <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe"
-        @toggle="toggleRecipeDetails" />
+      <RecipeCard
+        v-for="recipe in filteredRecipes"
+        :key="recipe.recipe_id"
+        :recipe="recipe"
+        @toggle="toggleRecipeDetails"
+      />
     </div>
-    <RecipeDetailsWindow v-if="selectedRecipe" :selectedRecipe="selectedRecipe"
-      :selectedIngredients="selectedIngredients" :closeModal="closeModal" />
+    <RecipeDetailsWindow
+      v-if="selectedRecipe"
+      :selectedRecipe="selectedRecipe"
+      :selectedIngredients="selectedIngredients"
+      :closeModal="closeModal"
+    />
 
-    <CircleButton logo="src/assets/plus-icon.png" @click="toggleCreateRecipe"/>
+    <CircleButton logo="src/assets/plus-icon.png" @click="toggleCreateRecipe" />
     <CreateRecipe v-if="showCreateRecipe" @close="showCreateRecipe = false" />
   </div>
 </template>
@@ -96,12 +120,11 @@ export default {
   },
   watch: {
     searchQuery(value) {
-      this.filterByNameOrIngredients()
+      this.filterByNameOrIngredients();
     },
   },
   created() {
     this.fetchRecipes();
-
   },
 
   methods: {
@@ -109,12 +132,13 @@ export default {
       const querySnapshot = await getDocs(collection(db, "all_recipes"));
       querySnapshot.forEach((doc) => {
         this.allRecipes.push(doc.data());
-        if (doc.data().community) {
-          this.allCommunityRecipes.push(doc.data())
+        if (doc.data().community && doc.data().community === true) {
+          this.allCommunityRecipes.push(doc.data());
           this.filteredRecipes.push(doc.data());
         }
       });
-      this.sortByMostRecent()
+      this.sortByMostRecent();
+      this.sortAllByMostRecent();
     },
     toggleCreateRecipe() {
       this.showCreateRecipe = !this.showCreateRecipe;
@@ -147,7 +171,7 @@ export default {
     async filterUsingCategory(payload) {
       this.category = payload;
       if (this.category.name == "All") {
-        this.filteredRecipes = this.recipes;
+        this.filteredRecipes = this.allCommunityRecipes;
       } else {
         this.filteredRecipes = [];
         const docSnap = await getDoc(doc(db, "categories", payload.id));
@@ -163,22 +187,26 @@ export default {
     filterUsingSort(payload) {
       this.sort = payload;
       if (payload.name == "Most Recent") {
-        this.sortByMostRecent()
+        this.sortByMostRecent();
       } else {
-        this.sortByMostLiked()
+        this.sortByMostLiked();
       }
+    },
+    sortAllByMostRecent() {
+      this.allCommunityRecipes = this.allCommunityRecipes.sort((a, b) => {
+        return b.created_date.toDate() - a.created_date.toDate();
+      });
     },
     sortByMostRecent() {
       this.filteredRecipes = this.filteredRecipes.sort((a, b) => {
         return b.created_date.toDate() - a.created_date.toDate();
-      })
+      });
     },
     sortByMostLiked() {
       this.filteredRecipes = this.filteredRecipes.sort((a, b) => {
         return b.like_count - a.like_count;
-      })
+      });
     },
-
   },
 };
 </script>
@@ -284,7 +312,7 @@ export default {
 }
 
 .plus-icon-container img {
-  width: 60px;
-  height: 60px;
+  width: 30px;
+  height: 30px;
 }
 </style>
