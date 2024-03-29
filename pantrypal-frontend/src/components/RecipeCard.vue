@@ -6,12 +6,7 @@
     <div class="recipe-details">
       <h2>{{ recipe.recipe_name }}</h2>
       <div class="info">
-        <span
-          v-for="(category, index) in recipe.categories"
-          :key="index"
-          class="category-bubble"
-          >{{ category }}</span
-        >
+        <span v-for="(category, index) in recipe.categories" :key="index" class="category-bubble">{{ category }}</span>
       </div>
       <div class="user-id">
         <p>@{{ recipe.user_id }}</p>
@@ -163,8 +158,8 @@ export default {
 
 <style scoped>
 .recipe-card {
-  width: calc(33.33% - 20px);
-  height: 40vh;
+  width: 350px;
+  height: 300px;
   border: 1px solid #ccc;
   border-radius: 8px;
   overflow: hidden;
@@ -173,6 +168,7 @@ export default {
   line-height: 1;
   display: flex;
   flex-direction: column;
+  margin: 20px;
 }
 
 .recipe-card:hover {
@@ -192,7 +188,7 @@ export default {
 }
 
 .recipe-details {
-  padding: 15px;
+  padding-left: 20px;
   background-color: #cbdf99;
   flex: 0.5;
 }
