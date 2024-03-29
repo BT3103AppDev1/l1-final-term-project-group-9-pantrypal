@@ -10,8 +10,8 @@
             </div>
             <p>
                 <i v-if="likeExists">
-                    By @{{ selectedRecipe.user_id }},
-                    {{ 
+                    By @{{ username }},
+                    {{
                 new Date(selectedRecipe.created_date.seconds * 1000).toLocaleDateString(
                     "en-GB",
                     {
@@ -20,11 +20,11 @@
                         day: "numeric",
                     }
                 )
-                }}
+            }}
                 </i>
                 <i v-else>
-                    By @{{ selectedRecipe.user_id }},
-                    {{ 
+                    By @{{ username }},
+                    {{
                 new Date(selectedRecipe.created_date).toLocaleDateString(
                     "en-GB",
                     {
@@ -33,14 +33,14 @@
                         day: "numeric",
                     }
                 )
-                }}
+            }}
                 </i>
             </p>
 
             <p>{{ selectedRecipe.description }}</p>
             <p>
                 <b>SERVING SIZE:</b> {{ selectedRecipe.serving_size }} | <b>COOK TIME:</b>
-                {{ selectedRecipe.cook_time }}
+                {{ cookingTimeInHrAndMin }}
             </p>
             <span class="allergens-container">
                 <p><b>CONTAINS:</b></p>
@@ -61,7 +61,9 @@
                 <h3>Ingredients:</h3>
                 <ul class="checkbox-list">
                     <li v-for="(ingredient, index) in selectedRecipe.ingredients" :key="index">
-                        <input type="checkbox" :id="'ingredient' + index" v-model="selectedIngredients[index]" />
+                        <!--using likeExists to remove checkbox-->
+                        <input v-if="!likeExists" type="checkbox" :id="'ingredient' + index"
+                            v-model="selectedIngredients[index]" />
                         <label :for="'ingredient' + index">{{ ingredient }}</label>
                     </li>
                 </ul>
@@ -86,6 +88,9 @@
 <script>
 import RecipeImage from "./RecipeImage.vue";
 import LikeButton from "./LikeButton.vue";
+
+import { db } from "../firebase";
+import { collection, query, where, getDocs } from "firebase/firestore";
 export default {
     components: {
         RecipeImage,
@@ -93,7 +98,8 @@ export default {
     },
     data() {
         return {
-            username: "NA",
+            username: "",
+            cookingTimeInHrAndMin: ""
         };
     },
     props: {
@@ -109,6 +115,38 @@ export default {
             type: Boolean,
         }
     },
+    mounted() {
+        this.fetchRecipeUsernameAndCookingTime()
+
+    },
+    methods: {
+        async fetchRecipeUsernameAndCookingTime() {
+            const userQuery = query(
+                collection(db, "users"),
+                where("user_id", "==", this.selectedRecipe.user_id)
+            );
+            const userQuerySnapshot = await getDocs(userQuery);
+            if (!userQuerySnapshot.empty) {
+                const userData = userQuerySnapshot.docs[0].data();
+                this.username = userData.username;
+            }
+            this.calculateCookingTime();
+        },
+
+        calculateCookingTime() {
+            const minutes = this.selectedRecipe.cook_time;
+            const hours = Math.floor(minutes / 60);
+            const remainingMinutes = minutes % 60;
+            let result = '';
+            if (hours > 0) {
+                result += `${hours}h`;
+            }
+            if (remainingMinutes > 0) {
+                result += `${remainingMinutes}mins`;
+            }
+            this.cookingTimeInHrAndMin = result || '0mins';
+        }
+    }
 };
 </script>
 
@@ -143,10 +181,12 @@ export default {
 
 .first {
     flex: 0.3;
+    padding-right: 10px;
 }
 
 .second {
     flex: 0.7;
+
 }
 
 .checkbox-list {

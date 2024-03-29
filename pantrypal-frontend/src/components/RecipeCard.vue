@@ -6,12 +6,7 @@
     <div class="recipe-details">
       <h2>{{ recipe.recipe_name }}</h2>
       <div class="info">
-        <span
-          v-for="(category, index) in recipe.categories"
-          :key="index"
-          class="category-bubble"
-          >{{ category }}</span
-        >
+        <span v-for="(category, index) in recipe.categories" :key="index" class="category-bubble">{{ category }}</span>
       </div>
       <div class="user-id">
         <p>@{{ userName }}</p>
@@ -30,6 +25,7 @@ import LikeButton from "./LikeButton.vue";
 import { db, auth } from "../firebase";
 import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+
 
 export default {
   components: {
@@ -66,7 +62,7 @@ export default {
   },
   methods: {
     toggleRecipeDetails() {
-      this.$emit("toggle", this.recipe);
+      this.$router.push({ name: "RecipeDetailsPage", params: { id: this.recipe.recipe_id }, props: { profile: "test" } });
     },
   },
 };

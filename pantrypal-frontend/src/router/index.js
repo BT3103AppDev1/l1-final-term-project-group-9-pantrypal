@@ -7,6 +7,7 @@ import SignUp from '@/views/SignUp.vue'
 import Login from '@/views/Login.vue'
 import RecipeGenerator from '@/views/RecipeGenerator.vue'
 import CommunityPage from '@/views/CommunityPage.vue'
+import RecipeDetailsPage from '@/views/RecipeDetailsPage.vue'
 import NotFound from '@/views/NotFound.vue';
 import Profile from '@/views/Profile.vue';
 
@@ -41,6 +42,13 @@ const routes = [
         meta: { requiresAuth: true}
     },
     {
+        path: '/community-page/:id',
+        name: 'RecipeDetailsPage',
+        component: RecipeDetailsPage,
+        meta: { requiresAuth: true},
+        props: true
+    },
+    {
         path: '/:catchAll(.*)',
         name: 'NotFound',
         component: NotFound
@@ -51,6 +59,7 @@ const routes = [
         component: Profile,
         meta: { requiresAuth: true}
     },
+   
 ]
 
 const router = createRouter({

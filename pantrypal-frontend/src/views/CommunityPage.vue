@@ -3,12 +3,7 @@
     <TopBar :ifFeed="true" />
     <div class="filterBar">
       <div class="search-bar">
-        <input
-          type="text"
-          class="search-input"
-          placeholder="Search name or ingredients..."
-          v-model="searchQuery"
-        />
+        <input type="text" class="search-input" placeholder="Search name or ingredients..." v-model="searchQuery" />
         <img class="search-button" src="../assets/search-icon.svg" alt="Search Icon" />
       </div>
       <div class="category-bar-text">
@@ -16,14 +11,8 @@
       </div>
       <div class="category-bar-dropdown">
         <div class="dropdown-container">
-          <dropdown
-            class="my-dropdown-toggle"
-            :options="arrayOfCategories"
-            :selected="category"
-            :placeholder="'All'"
-            :closeOnOutsideClick="true"
-            v-on:updateOption="filterUsingCategory"
-          >
+          <dropdown class="my-dropdown-toggle" :options="arrayOfCategories" :selected="category" :placeholder="'All'"
+            :closeOnOutsideClick="true" v-on:updateOption="filterUsingCategory">
           </dropdown>
         </div>
       </div>
@@ -32,14 +21,8 @@
       </div>
       <div class="category-bar-dropdown">
         <div class="dropdown-container">
-          <dropdown
-            class="my-dropdown-toggle"
-            :options="arrayOfSorts"
-            :selected="sort"
-            :placeholder="'Most Recent'"
-            :closeOnOutsideClick="true"
-            v-on:updateOption="filterUsingSort"
-          >
+          <dropdown class="my-dropdown-toggle" :options="arrayOfSorts" :selected="sort" :placeholder="'Most Recent'"
+            :closeOnOutsideClick="true" v-on:updateOption="filterUsingSort">
           </dropdown>
         </div>
       </div>
@@ -49,20 +32,13 @@
 
     <!-- recipe card list -->
     <div class="recipe-list">
-      <RecipeCard
-        v-for="recipe in filteredRecipes"
-        :key="recipe.recipe_id"
-        :recipe="recipe"
-        @toggle="toggleRecipeDetails"
-      />
+      <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe"
+        @toggle="toggleRecipeDetails" />
     </div>
-    <RecipeDetailsWindow
-      v-if="selectedRecipe"
-      :selectedRecipe="selectedRecipe"
-      :selectedIngredients="selectedIngredients"
-      :closeModal="closeModal"
-    />
-
+    <!--
+    <RecipeDetailsWindow v-if="selectedRecipe" :selectedRecipe="selectedRecipe"
+      :selectedIngredients="selectedIngredients" :closeModal="closeModal" />
+-->
     <CircleButton logo="src/assets/plus-icon.png" @click="toggleCreateRecipe" />
     <CreateRecipe v-if="showCreateRecipe" @close="showCreateRecipe = false" />
   </div>
@@ -93,18 +69,17 @@ export default {
     return {
       arrayOfCategories: [
         { name: "All", id: "00" },
-        { name: "Asian Cuisine", id: "01" },
-        { name: "Western Cuisine", id: "02" },
+        { name: "Asian", id: "01" },
+        { name: "Western", id: "02" },
         { name: "Local Delights", id: "03" },
         { name: "Healthy Choices", id: "04" },
         { name: "Fast Food", id: "05" },
         { name: "Desserts and Snacks", id: "06" },
         { name: "Beverages", id: "07" },
-        { name: "Specialty Cuisine", id: "08" },
-        { name: "International Cuisine", id: "09" },
-        { name: "Breakfast and Brunch", id: "10" },
-        { name: "Late-night Eats", id: "11" },
-        { name: "Others", id: "12" },
+        { name: "Specialty", id: "08" },
+        { name: "Breakfast and Brunch", id: "09" },
+        { name: "Late-night Eats", id: "10" },
+        { name: "Others", id: "11" },
       ],
       category: {},
       arrayOfSorts: [{ name: "Most Recent" }, { name: "Most Liked" }],
@@ -214,6 +189,7 @@ export default {
 <style scoped>
 .community-page {
   margin: 0 auto;
+  min-height: 1000px;
 }
 
 .filterBar {
