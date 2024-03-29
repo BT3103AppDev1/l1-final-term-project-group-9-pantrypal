@@ -18,29 +18,33 @@
                 rows ="5"
             />
         </div>
-        <div class="column2">
+        <div class="column">
             <div class="ingredient-container" v-for="(ingredient, index) in ingredients">
                 <div class="one-ingredient-container">
                     <label>Name of leftover #{{index + 1}}</label>
                     <input
                         v-model="ingredients[index].name"
                         type="text"
-                        placeholder="e.g. Apple"/></div>
+                        placeholder="e.g. Apple"/>
+                </div>
                 <div>
-                <label>Quantity</label>
-                <input
-                    v-model="ingredients[index].quantity"
-                    type="text"
-                    placeholder="e.g. 10g"/></div>
+                    <label>Quantity</label>
+                    <input
+                        v-model="ingredients[index].quantity"
+                        type="text"
+                        placeholder="e.g. 10g"/>
                 </div>
-                <div class="button-container">
-                    <button
-                    type="submit"
-                    class="add-button"
-                    @click="addIngredient"
-                    >+ Add more</button>
-                </div>
-                
+                <button type="button" class="remove-button" @click="removeIngredient(index)">
+                        x
+                </button>
+            </div>
+            <div class="button-container">
+                <button
+                type="submit"
+                class="add-button"
+                @click="addIngredient"
+                >+ ADD MORE</button>
+            </div>
         </div>
     </div>
     <div class="button-container">
@@ -84,6 +88,9 @@ export default {
                 quantity: '',
             });
         },
+        removeIngredient(index) {
+            this.ingredients.splice(index, 1);
+        },
         generateRecipe() {
             console.log('Generating recipe...');
             console.log(this.value);
@@ -99,13 +106,23 @@ export default {
 
 <style scoped>
 .grid-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-gap: 3rem;
+    display: block;
     padding: 4rem;
     width: 100%;
     box-sizing: border-box;
 }
+
+@media (min-width: 1024px) {
+    .grid-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-gap: 3rem;
+        padding: 4rem;
+        width: 100%;
+        box-sizing: border-box;
+    }
+}
+
 .dropdown-container {
     margin-bottom: 20px;
 }
@@ -113,7 +130,7 @@ export default {
 .ingredient-container {
     display: flex;
     justify-content: space-around;
-    gap: 4rem;
+    gap: 2rem;
 }
 
 .one-ingredient-container {
@@ -153,6 +170,12 @@ textarea {
     text-decoration: underline;
     border: none;
     padding: 8px 20px;
+    cursor: pointer;
+}
+
+.remove-button {
+    background-color: transparent;
+    border: none;
     cursor: pointer;
 }
 

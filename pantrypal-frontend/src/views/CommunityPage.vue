@@ -39,12 +39,7 @@
     <RecipeDetailsWindow v-if="selectedRecipe" :selectedRecipe="selectedRecipe"
       :selectedIngredients="selectedIngredients" :closeModal="closeModal" />
 
-    <!-- Toggle button for the create recipe modal -->
-    <div class="plus-icon-container" @click="showCreateRecipe = true">
-      <img src="../assets/plus-icon.png" alt="Add Recipe">
-    </div>
-
-    <!-- CreateRecipe modal -->
+    <CircleButton logo="src/assets/plus-icon.png" @click="toggleCreateRecipe"/>
     <CreateRecipe v-if="showCreateRecipe" @close="showCreateRecipe = false" />
   </div>
 </template>
@@ -58,6 +53,7 @@ import TopBar from "@/components/TopBar.vue";
 import dropdown from "vue-dropdowns";
 import RecipeImage from "@/components/RecipeImage.vue";
 import CreateRecipe from "@/components/CreateRecipe.vue";
+import CircleButton from "@/components/CircleButton.vue";
 
 export default {
   components: {
@@ -67,6 +63,7 @@ export default {
     dropdown,
     RecipeImage,
     CreateRecipe,
+    CircleButton,
   },
   data() {
     return {
@@ -118,6 +115,9 @@ export default {
         }
       });
       this.sortByMostRecent()
+    },
+    toggleCreateRecipe() {
+      this.showCreateRecipe = !this.showCreateRecipe;
     },
 
     toggleRecipeDetails(recipe) {
