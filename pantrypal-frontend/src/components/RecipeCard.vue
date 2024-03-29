@@ -33,6 +33,8 @@ import LikeButton from "./LikeButton.vue";
 import { db, auth } from "../firebase";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import router from "@/router";
+import RecipeDetailsPage from "@/views/RecipeDetailsPage.vue";
 
 export default {
   components: {
@@ -61,7 +63,7 @@ export default {
   },
   methods: {
     toggleRecipeDetails() {
-      this.$emit("toggle", this.recipe);
+      this.$router.push({ name: "RecipeDetailsPage", params: { id: this.recipe.recipe_id }, props: { profile: "test" } });
     },
     // async toggleLikeRecipe() {
     //   if (!auth.currentUser) {

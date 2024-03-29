@@ -35,21 +35,31 @@ export default {
       type: Function,
     },
   },
+  computed: {
+    bodyOverflowStyle() {
+      return this.selectedRecipe ? 'hidden' : 'auto';
+    }
+  },
+
+
 };
+
 </script>
 
 <style scoped>
 .popout-recipe {
-  position: fixed;
-  top: 100px;
+  position: absolute;
+  top: 0px;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: 500px;
   background-color: rgb(255, 255, 255);
   align-items: center;
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow-y: auto;
+  background-color: red;
 }
 
 .popout-recipe-content {
@@ -58,7 +68,6 @@ export default {
   border-radius: 8px;
   width: 80%;
   height: 90%;
-  overflow-y: auto;
 }
 
 .horizontalRow {

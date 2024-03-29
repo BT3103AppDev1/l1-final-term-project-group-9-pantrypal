@@ -192,6 +192,7 @@ export default {
 <style scoped>
 .community-page {
   margin: 0 auto;
+  min-height: 1000px;
 }
 
 .filterBar {

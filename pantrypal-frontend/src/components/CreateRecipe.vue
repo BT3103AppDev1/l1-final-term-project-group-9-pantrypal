@@ -1,149 +1,149 @@
 <template>
-    <div class="create-recipe-modal">
-      <div class="recipe-form">
-        <div class="recipe-form-content">
-  
-          <div class="createRecipeRow">
-            <div class="first1">
-                <input type="file" id="recipeImage" ref="fileInput" style="display: none" @change="handleImageUpload">
-                <div class="plus-icon-container" @click="chooseFile">
-                <img class="upload-image" src="../assets/image-upload.png" alt="Upload Image">
-                </div>
-                <div class="switch-container">
-                    <label class="switch">
-                        <input type="checkbox" id="publishToCommunity" v-model="recipeData.publish_to_community">
-                        <span class="slider"></span>
-                    </label>
-                    <label for="publishToCommunity">Publish to Community</label>
-                    </div>
+  <div class="create-recipe-modal">
+    <div class="recipe-form">
+      <div class="recipe-form-content">
+
+        <div class="createRecipeRow">
+          <div class="first1">
+            <input type="file" id="recipeImage" ref="fileInput" style="display: none" @change="handleImageUpload">
+            <div class="plus-icon-container" @click="chooseFile">
+              <img class="upload-image" src="../assets/image-upload.png" alt="Upload Image">
             </div>
-            <div class="first2">
-              <label for="recipeName">Title:</label>
-              <input type="text" id="recipeName" v-model="recipeData.recipe_name" />
-  
-              <label for="recipeDescription">Description:</label>
-              <textarea id="recipeDescription" v-model="recipeData.description"></textarea>
-  
-              <label for="allergenInfo">Allergen Information:</label>
-              <textarea id="allergenInfo" v-model="recipeData.allergen_info"></textarea>
-  
-              <!-- Added Cook Time, Category and Serving Size -->
-              <div class="additional-info">
-                <div class="input-group">
+            <div class="switch-container">
+              <label class="switch">
+                <input type="checkbox" id="publishToCommunity" v-model="recipeData.publish_to_community">
+                <span class="slider"></span>
+              </label>
+              <label for="publishToCommunity">Publish to Community</label>
+            </div>
+          </div>
+          <div class="first2">
+            <label for="recipeName">Title:</label>
+            <input type="text" id="recipeName" v-model="recipeData.recipe_name" />
+
+            <label for="recipeDescription">Description:</label>
+            <textarea id="recipeDescription" v-model="recipeData.description"></textarea>
+
+            <label for="allergenInfo">Allergen Information:</label>
+            <textarea id="allergenInfo" v-model="recipeData.allergen_info"></textarea>
+
+            <!-- Added Cook Time, Category and Serving Size -->
+            <div class="additional-info">
+              <div class="input-group">
                 <label for="cookTime">Cook Time:</label>
                 <div class="time-input-group">
-                    <input type="number" id="cookTimeHours" v-model="recipeData.cook_time_hours" min="0" />
-                    <span>hours</span>
-                    <input type="number" id="cookTimeMins" v-model="recipeData.cook_time_minutes" min="0" />
-                    <span>mins</span>
+                  <input type="number" id="cookTimeHours" v-model="recipeData.cook_time_hours" min="0" />
+                  <span>hours</span>
+                  <input type="number" id="cookTimeMins" v-model="recipeData.cook_time_minutes" min="0" />
+                  <span>mins</span>
                 </div>
-                </div>
-                <div class="input-group">
-                  <label for="category">Category:</label>
-                  <select id="category" v-model="recipeData.category">
-                    <option disabled value="">Select</option>
-                    <!-- options -->
-                  </select>
-                </div>
-                <div class="input-group">
-                  <label for="servingSize">Serving Size:</label>
-                  <input type="number" id="servingSize" v-model="recipeData.serving_size" min="0" />
-                </div>
+              </div>
+              <div class="input-group">
+                <label for="category">Category:</label>
+                <select id="category" v-model="recipeData.category">
+                  <option disabled value="">Select</option>
+                  <!-- options -->
+                </select>
+              </div>
+              <div class="input-group">
+                <label for="servingSize">Serving Size:</label>
+                <input type="number" id="servingSize" v-model="recipeData.serving_size" min="0" />
               </div>
             </div>
           </div>
-  
-          <div class="createRecipeRow">
-            <div class="second1">
-              <!-- Ingredients -->
-              <div class="recipe-section">
-                <label for="ingredients">Ingredients:</label>
-                <div class="ingredients-container">
+        </div>
+
+        <div class="createRecipeRow">
+          <div class="second1">
+            <!-- Ingredients -->
+            <div class="recipe-section">
+              <label for="ingredients">Ingredients:</label>
+              <div class="ingredients-container">
                 <div v-for="(ingredient, index) in recipeData.ingredients" :key="index" class="ingredient-input">
-                  <input type="text" v-model="recipeData.ingredients[index]" placeholder="e.g. 10g Apple"/>
+                  <input type="text" v-model="recipeData.ingredients[index]" placeholder="e.g. 10g Apple" />
                   <!-- <button @click="removeIngredient(index)">Remove</button> -->
                 </div>
                 <div class="button-group">
-                <button class="remove-button" @click="removeIngredient(index)">REMOVE</button>
-                <button class="add-more-button" @click="addIngredient">+ ADD MORE</button>
+                  <button class="remove-button" @click="removeIngredient(index)">REMOVE</button>
+                  <button class="add-more-button" @click="addIngredient">+ ADD MORE</button>
                 </div>
               </div>
             </div>
-            </div>
-  
-            <!-- Directions -->
-            <div class="second2">
+          </div>
+
+          <!-- Directions -->
+          <div class="second2">
             <div class="recipe-section">
-                <label for="directions">Directions:</label>
-                <div class="directions-container">
+              <label for="directions">Directions:</label>
+              <div class="directions-container">
                 <div v-for="(direction, index) in recipeData.directions" :key="index" class="direction-step">
-                    <label :for="'direction' + direction.stepNumber">Step {{ direction.stepNumber }}</label>
-                    <textarea :id="'direction' + direction.stepNumber" v-model="direction.text"></textarea>
+                  <label :for="'direction' + direction.stepNumber">Step {{ direction.stepNumber }}</label>
+                  <textarea :id="'direction' + direction.stepNumber" v-model="direction.text"></textarea>
                 </div>
                 <div class="button-group">
-                <button class="remove-button" @click="removeDirection(index)">REMOVE</button>
-                <button class="add-more-button" @click="addDirection">+ ADD MORE</button>
+                  <button class="remove-button" @click="removeDirection(index)">REMOVE</button>
+                  <button class="add-more-button" @click="addDirection">+ ADD MORE</button>
                 </div>
-                </div>
-            </div>
+              </div>
             </div>
           </div>
         </div>
-        <div class="button-container">
-          <button class="cancel-button" @click="close">Cancel</button>
-          <button class="save-recipe-button" @click="submitRecipe">Save Recipe</button>
-        </div>
+      </div>
+      <div class="button-container">
+        <button class="cancel-button" @click="close">Cancel</button>
+        <button class="save-recipe-button" @click="submitRecipe">Save Recipe</button>
       </div>
     </div>
-  </template>
-  
-  <script>
-  export default {
-    data() {
-      return {
-        recipeData: {
-          recipe_name: '',
-          serving_size: '',
-          description: '',
-          allergen_info: '',
-          cook_time_hours: '',
-          cook_time_minutes: '',
-          category: '',
-          ingredients: [''],
-          directions: [{ stepNumber: 1, text: '' }],
-        }
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      recipeData: {
+        recipe_name: '',
+        serving_size: '',
+        description: '',
+        allergen_info: '',
+        cook_time_hours: '',
+        cook_time_minutes: '',
+        category: '',
+        ingredients: [''],
+        directions: [{ stepNumber: 1, text: '' }],
       }
+    }
+  },
+  methods: {
+    chooseFile() {
+      this.$refs.fileInput.click();
     },
-      methods: {
-        chooseFile() {
-            this.$refs.fileInput.click();
-        },
-        handleImageUpload(event) {
-          // Handle image upload
-        },
-        addIngredient() {
-          this.recipeData.ingredients.push('');
-        },
-        removeIngredient(index) {
-          this.recipeData.ingredients.splice(index, 1);
-        },
-        addDirection() {
-            // Add a new direction with the next step number
-            const nextStepNumber = this.recipeData.directions.length + 1;
-            this.recipeData.directions.push({ stepNumber: nextStepNumber, text: '' });
-        },
-        removeDirection(index) {
-          this.recipeData.directions.splice(index, 1);
-        },
-        close() {
-          this.$emit('close');
-        },
-        submitRecipe() {
-          // Handle recipe submission
-        },
-      },
-    };
-  </script>
+    handleImageUpload(event) {
+      // Handle image upload
+    },
+    addIngredient() {
+      this.recipeData.ingredients.push('');
+    },
+    removeIngredient(index) {
+      this.recipeData.ingredients.splice(index, 1);
+    },
+    addDirection() {
+      // Add a new direction with the next step number
+      const nextStepNumber = this.recipeData.directions.length + 1;
+      this.recipeData.directions.push({ stepNumber: nextStepNumber, text: '' });
+    },
+    removeDirection(index) {
+      this.recipeData.directions.splice(index, 1);
+    },
+    close() {
+      this.$emit('close');
+    },
+    submitRecipe() {
+      // Handle recipe submission
+    },
+  },
+};
+</script>
 
 <style scoped>
 .create-recipe-modal {
@@ -158,6 +158,7 @@
   justify-content: center;
   align-items: center;
   overflow-y: auto;
+
 }
 
 .recipe-form {
@@ -168,6 +169,7 @@
   width: 80%;
   height: 90%;
   overflow-y: auto;
+  background-color: red;
 }
 
 .recipe-form label {
@@ -219,8 +221,8 @@
   cursor: pointer;
   top: 50%;
   transform: translateY(-50%);
-  width: 40px; 
-  height: 20px; 
+  width: 40px;
+  height: 20px;
   background-color: #ccc;
   transition: .4s;
   border-radius: 34px;
@@ -229,7 +231,7 @@
 .switch-container .slider:before {
   position: absolute;
   content: "";
-  height: 16px; 
+  height: 16px;
   width: 16px;
   left: 2px;
   bottom: 2px;
@@ -238,12 +240,12 @@
   border-radius: 50%;
 }
 
-.switch-container input:checked + .slider {
+.switch-container input:checked+.slider {
   background-color: black;
 }
 
-.switch-container input:checked + .slider:before {
-  transform: translateX(20px); 
+.switch-container input:checked+.slider:before {
+  transform: translateX(20px);
 }
 
 .first2 {
@@ -298,7 +300,7 @@
 }
 
 .input-group label {
-    margin-bottom: 5px;
+  margin-bottom: 5px;
 }
 
 .input-group select,
@@ -329,11 +331,11 @@
 }
 
 #cookTimeMins {
-  margin-left: 10px; 
+  margin-left: 10px;
 }
 
 input[type="number"] {
-    width: 65px;
+  width: 65px;
 }
 
 input[type="text"],
@@ -347,7 +349,7 @@ select {
 
 .second1 {
   flex: 0.3;
-  margin-right: 50px; 
+  margin-right: 50px;
 }
 
 .second1 input {
@@ -373,37 +375,37 @@ select {
 .button-group {
   display: flex;
   justify-content: center;
-  gap: 20px; 
+  gap: 20px;
 }
 
 .add-more-button {
-    background-color: transparent; 
-    border: none; 
-    color: #8F8E8E; 
-    padding: 0;
-    cursor: pointer;
-    text-decoration: underline;
-    font-size: 14px; 
-    margin: 10px 0; 
+  background-color: transparent;
+  border: none;
+  color: #8F8E8E;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 14px;
+  margin: 10px 0;
 }
 
 .remove-button {
-    background-color: transparent; 
-    border: none; 
-    color: #8F8E8E; 
-    padding: 0;
-    cursor: pointer;
-    text-decoration: underline;
-    font-size: 14px; 
-    margin: 10px 0; 
+  background-color: transparent;
+  border: none;
+  color: #8F8E8E;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 14px;
+  margin: 10px 0;
 }
 
 .add-more-button:hover {
-    color: #6B6969;
+  color: #6B6969;
 }
 
 .remove-button:hover {
-    color: #6B6969;
+  color: #6B6969;
 }
 
 .directions-container {
@@ -412,14 +414,14 @@ select {
 }
 
 .directions-container .remove-button .add-more-button {
-  margin: 0 auto; 
+  margin: 0 auto;
 }
 
 .direction-step label {
-  display: block; 
-  font-weight: bold; 
-  margin-top: 20px; 
-  margin-bottom: 5px; 
+  display: block;
+  font-weight: bold;
+  margin-top: 20px;
+  margin-bottom: 5px;
 }
 
 .button-container {
@@ -445,16 +447,16 @@ select {
 }
 
 .save-recipe-button {
-    background-color: #60ce64;
-    border: none;
-    text-decoration: none;
-    color: white;
-    padding: 0;
-    cursor: pointer;
-    border-radius: 15px;
-    width: 90px;
-    height: 32px;
-    margin: 0 20px;
+  background-color: #60ce64;
+  border: none;
+  text-decoration: none;
+  color: white;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 15px;
+  width: 90px;
+  height: 32px;
+  margin: 0 20px;
 }
 
 .save-recipe-button {
@@ -464,15 +466,14 @@ select {
   padding: 10px 15px;
   cursor: pointer;
   border-radius: 15px;
-  width: auto; 
-  height: auto; 
+  width: auto;
+  height: auto;
   margin: 0 20px;
-  font-size: 14px; 
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2); 
+  font-size: 14px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .save-recipe-button:hover {
-  background-color: #596639; 
+  background-color: #596639;
 }
-
 </style>

@@ -127,10 +127,12 @@ export default {
 
 .first {
     flex: 0.3;
+    padding-right: 10px;
 }
 
 .second {
     flex: 0.7;
+
 }
 
 .checkbox-list {
