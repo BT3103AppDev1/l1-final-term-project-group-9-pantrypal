@@ -24,7 +24,7 @@
                 <p class="logOutButton-text">Log out</p>
             </button>
             <button type="button" class="profileButton" @click="goToProfile()">
-                <img src="../assets/profile.svg" alt="profile pic" class="profile" />
+                <img :src="userData.profile_img_url || '../assets/profile.svg'" alt="profile pic" class="profile" />
             </button>
         </div>
     </div>
@@ -32,12 +32,26 @@
 </template>
 
 <script>
-import { auth } from '../firebase.js';
+import { db, auth } from '../firebase.js';
 import { signOut } from 'firebase/auth';
+import { doc, getDoc } from "firebase/firestore";
 
 export default {
     props: {
         ifFeed: Boolean
+    },
+    data() {
+        return {
+        userData: {}
+        };
+    },
+    mounted() {
+        let localUserData = localStorage.getItem('userData');
+        if (localUserData) {
+            this.userData = JSON.parse(localUserData);
+        } else {
+            this.fetchUserData();
+        }
     },
     methods: {
         goToCommunityPage() {
@@ -56,6 +70,13 @@ export default {
             }).catch((error) => {
                 console.error("Logout Error:", error);
             });
+        },
+        async fetchUserData() {
+            if (auth.currentUser) {
+                const userDocSnapshot = await getDoc(doc(db, "users", auth.currentUser.uid));
+                this.userData = userDocSnapshot.data();
+                localStorage.setItem('userData', JSON.stringify(this.userData));
+            }
         }
     },
 };
@@ -159,7 +180,8 @@ export default {
 
 .profile {
     border-radius: 50%;
-    height: 50px;
+    height: 60px;
+    width: 60px;
 }
 
 hr {

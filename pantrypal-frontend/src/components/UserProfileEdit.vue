@@ -1,5 +1,6 @@
 <template>
   <div class="user-profile-edit">
+    <PasswordConfirmationModal :isVisible="showPasswordModal" @update:isVisible="showPasswordModal = $event" @confirm="handlePasswordConfirm" />
     <form @submit.prevent="saveChanges" class="user-form">
       <div class="form-group">
         <label for="email">Email Address</label>
@@ -31,11 +32,15 @@
 import { reauthenticateWithCredential, EmailAuthProvider, updatePassword } from 'firebase/auth';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db, auth } from "../firebase";
+import PasswordConfirmationModal from './PasswordConfirmationModal.vue';
 
 export default {
   name: 'UserProfileEdit',
   props: {
     userData: { type: Object, required: true }
+  },
+  components: {
+    PasswordConfirmationModal,
   },
   data() {
     return {
@@ -43,7 +48,9 @@ export default {
       username: '',
       newPassword: '',
       confirmPassword: '',
-
+      user: null,
+      showPasswordModal: false,
+      passwordUpdateComplete: true,
     }
   },
 
@@ -58,11 +65,16 @@ export default {
       try {
         const user = auth.currentUser;
         if (this.newPassword) {
-          if (this.newPassword !== this.confirmPassword) {
-            alert("The new passwords do not match.");
-            return;
-          }
           await this.changePassword(this.newPassword);
+        }
+
+        if (this.newPassword && !this.passwordUpdateComplete) {
+            alert("Please complete the password update process first.");
+            const userRef = doc(db, 'users', user.uid);
+            await updateDoc(userRef, {
+                username: this.username,
+            });
+            return;
         }
 
         if (user) {
@@ -80,30 +92,33 @@ export default {
       }
     },
     async changePassword() {
-      if (this.newPassword !== this.confirmPassword) {
-        alert("Passwords do not match.");
-        return;
-      }
-      if (!this.newPassword) {
-        alert("New password must not be empty.");
-        return;
-      }
-      try {
-        const user = auth.currentUser;
-        if (user) {
-          const currentPassword = prompt("Please enter your current password:");
-          const credential = EmailAuthProvider.credential(user.email, currentPassword);
-          await reauthenticateWithCredential(user, credential);
-          await updatePassword(user, this.newPassword);
-          alert('Details updated successfully.');
-          this.newPassword = '';
-          this.confirmPassword = '';
+        if (this.newPassword !== this.confirmPassword) {
+            alert("Passwords do not match.");
+            return;
         }
-      } catch (error) {
-        console.error("Error updating password:", error);
-        alert(error.message);
-      }
-    }
+        if (!this.newPassword) {
+            alert("New password must not be empty.");
+            return;
+        }
+        this.showPasswordModal = true;
+        this.passwordUpdateComplete = false;
+    },
+    async handlePasswordConfirm(currentPassword) {
+        try {
+            const user = auth.currentUser;
+            const credential = EmailAuthProvider.credential(user.email, currentPassword);
+            await reauthenticateWithCredential(user, credential);
+            await updatePassword(user, this.newPassword);
+            this.passwordUpdateComplete = true;
+            alert('Password updated successfully.');
+            this.newPassword = '';
+            this.confirmPassword = '';
+        } catch (error) {
+            console.error("Error updating password:", error);
+            alert("Invalid Credentials");
+            this.passwordUpdateComplete = true;
+        }
+    },
   }
 }
 </script>
