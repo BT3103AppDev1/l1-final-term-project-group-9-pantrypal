@@ -312,7 +312,7 @@ export default {
 }
 
 .plus-icon-container img {
-  width: 60px;
-  height: 60px;
+  width: 30px;
+  height: 30px;
 }
 </style>
