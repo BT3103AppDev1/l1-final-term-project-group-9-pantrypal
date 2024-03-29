@@ -28,7 +28,7 @@ export default {
     };
   },
   async created() {
-    console.log("like button started");
+    // console.log("like button started");
     if (auth.currentUser) {
       const userDocSnapshot = await getDoc(doc(db, "users", auth.currentUser.uid));
       const userData = userDocSnapshot.data();

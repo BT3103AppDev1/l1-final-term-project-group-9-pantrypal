@@ -52,7 +52,7 @@ export default {
       const userDocSnapshot = await getDoc(doc(db, "users", auth.currentUser.uid));
       const userData = userDocSnapshot.data();
       this.recipeIsLiked = userData.liked_recipes.includes(this.recipe.recipe_id);
-      console.log(this.recipeIsLiked);
+      // console.log(this.recipeIsLiked);
     }
   },
   methods: {
