@@ -1,8 +1,8 @@
 <template>
     <div class="topBar">
-        <div class="firstContainer">
+        <button class="firstContainer" @click="goToCommunityPage()">
             <img src="../assets/logo.jpg" alt="PantryPal Logo" class="logo" />
-        </div>
+        </button>
         <div v-if="ifFeed" class="secondContainer">
             <button class="custom-button" @click="goToCommunityPage()">
                 <p class="button-text-selected">My Feed</p>
@@ -84,23 +84,25 @@ export default {
 
 
 .button-text {
-    padding: 10px 20px;
+    padding: 0px 20px;
     font-size: 20px;
     font-weight: 800;
     color: rgb(126, 216, 108);
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    margin: 5px 0px;
 }
 
 .button-text-selected {
-    padding: 10px 20px;
+    padding: 0px 20px;
     font-size: 20px;
     font-weight: 800;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
     color: darkgreen;
+    margin: 5px 0px;
 }
 
 .button-text:hover {
@@ -109,6 +111,12 @@ export default {
 
 .firstContainer {
     flex: 0.3;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    text-align: left;
 }
 
 .secondContainer {
@@ -124,12 +132,12 @@ export default {
 }
 
 .logOutButton {
-    background-color: #60ce64;
+    background-color: #a7bf6a;
     border: none;
     text-decoration: none;
     padding: 0;
     cursor: pointer;
-    border-radius: 15px;
+    border-radius: 10px;
     width: 90px;
     height: 32px;
     margin: 0 20px;
