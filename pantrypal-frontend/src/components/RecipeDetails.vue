@@ -9,9 +9,9 @@
                 <LikeButton v-if="likeExists" :recipe="selectedRecipe" />
             </div>
             <p>
-                <i>
+                <i v-if="likeExists">
                     By @{{ selectedRecipe.user_id }},
-                    <!-- {{
+                    {{ 
                 new Date(selectedRecipe.created_date.seconds * 1000).toLocaleDateString(
                     "en-GB",
                     {
@@ -20,7 +20,20 @@
                         day: "numeric",
                     }
                 )
-            }} -->
+                }}
+                </i>
+                <i v-else>
+                    By @{{ selectedRecipe.user_id }},
+                    {{ 
+                new Date(selectedRecipe.created_date).toLocaleDateString(
+                    "en-GB",
+                    {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                    }
+                )
+                }}
                 </i>
             </p>
 
