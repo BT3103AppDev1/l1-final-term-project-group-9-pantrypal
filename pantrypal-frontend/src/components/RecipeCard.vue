@@ -6,21 +6,18 @@
     <div class="recipe-details">
       <h2>{{ recipe.recipe_name }}</h2>
       <div class="info">
-        <span v-for="(category, index) in recipe.categories" :key="index" class="category-bubble">{{ category }}</span>
+        <span
+          v-for="(category, index) in recipe.categories"
+          :key="index"
+          class="category-bubble"
+          >{{ category }}</span
+        >
       </div>
       <div class="user-id">
         <p>@{{ recipe.user_id }}</p>
       </div>
     </div>
     <div class="like">
-      <!-- <button class="like-button" @click.stop="toggleLikeRecipe">
-        <i
-          class="fa"
-          :class="['fa-thumbs-up', { liked: !recipeIsLiked }]"
-          aria-hidden="true"
-        ></i>
-      </button>
-      <span>{{ recipe.like_count }}</span> -->
       <LikeButton :recipe="recipe" />
     </div>
   </div>
@@ -55,103 +52,13 @@ export default {
       const userDocSnapshot = await getDoc(doc(db, "users", auth.currentUser.uid));
       const userData = userDocSnapshot.data();
       this.recipeIsLiked = userData.liked_recipes.includes(this.recipe.recipe_id);
-      console.log(this.recipeIsLiked);
-      // console.log("created is working");
+      // console.log(this.recipeIsLiked);
     }
   },
   methods: {
     toggleRecipeDetails() {
       this.$emit("toggle", this.recipe);
     },
-    // async toggleLikeRecipe() {
-    //   if (!auth.currentUser) {
-    //     this.$router.push("/login");
-    //     return;
-    //   }
-    //   // console.log("liking recipe");
-    //   const user = auth.currentUser;
-    //   const recipeDocRef = doc(db, "all_recipes", this.recipe.recipe_id);
-    //   // console.log(recipeDocRef);
-    //   // console.log(this.recipeIsLiked);
-
-    //   try {
-    //     if (this.recipeIsLiked) {
-    //       this.recipe.like_count--;
-    //       await setDoc(recipeDocRef, {
-    //         recipe_id: this.recipe.recipe_id,
-    //         recipe_name: this.recipe.recipe_name,
-    //         description: this.recipe.description,
-    //         ingredients: this.recipe.ingredients,
-    //         allergens: this.recipe.allergens,
-    //         directions: this.recipe.directions,
-    //         cook_time: this.recipe.cook_time,
-    //         serving_size: this.recipe.serving_size,
-    //         like_count: this.recipe.like_count,
-    //         user_id: this.recipe.user_id,
-    //         categories: this.recipe.categories,
-    //         created_date: this.recipe.created_date,
-    //         recipe_img_url: this.recipe.recipe_img_url,
-    //         community: this.recipe.community,
-    //       });
-
-    //       const userDocRef = doc(db, "users", auth.currentUser.uid);
-    //       const userDocSnapshot = await getDoc(doc(db, "users", auth.currentUser.uid));
-    //       const userData = userDocSnapshot.data();
-
-    //       // console.log(userData);
-
-    //       await setDoc(userDocRef, {
-    //         email: userData.email,
-    //         liked_recipes: Array.isArray(userData.liked_recipes)
-    //           ? userData.liked_recipes.filter((id) => id !== this.recipe.recipe_id)
-    //           : [],
-    //         my_cookbook: Array.isArray(userData.my_cookbook) ? userData.my_cookbook : [],
-    //         profile_img_url: userData.profile_img_url,
-    //         user_id: userData.user_id,
-    //         username: userData.username,
-    //       });
-    //     } else {
-    //       this.recipe.like_count++;
-    //       await setDoc(recipeDocRef, {
-    //         recipe_id: this.recipe.recipe_id,
-    //         recipe_name: this.recipe.recipe_name,
-    //         description: this.recipe.description,
-    //         ingredients: this.recipe.ingredients,
-    //         allergens: this.recipe.allergens,
-    //         directions: this.recipe.directions,
-    //         cook_time: this.recipe.cook_time,
-    //         serving_size: this.recipe.serving_size,
-    //         like_count: this.recipe.like_count,
-    //         user_id: this.recipe.user_id,
-    //         categories: this.recipe.categories,
-    //         created_date: this.recipe.created_date,
-    //         recipe_img_url: this.recipe.recipe_img_url,
-    //         community: this.recipe.community,
-    //       });
-
-    //       const userDocRef = doc(db, "users", auth.currentUser.uid);
-    //       const userDocSnapshot = await getDoc(doc(db, "users", auth.currentUser.uid));
-    //       const userData = userDocSnapshot.data();
-
-    //       // console.log(userData);
-
-    //       await setDoc(userDocRef, {
-    //         email: userData.email,
-    //         liked_recipes: Array.isArray(userData.liked_recipes)
-    //           ? [...userData.liked_recipes, this.recipe.recipe_id]
-    //           : [this.recipe.recipe_id],
-    //         my_cookbook: Array.isArray(userData.my_cookbook) ? userData.my_cookbook : [],
-    //         profile_img_url: userData.profile_img_url,
-    //         user_id: userData.user_id,
-    //         username: userData.username,
-    //       });
-    //     }
-
-    //     this.recipeIsLiked = !this.recipeIsLiked;
-    //   } catch (error) {
-    //     console.error("Error toggling recipe like:", error);
-    //   }
-    // },
   },
 };
 </script>
@@ -201,7 +108,6 @@ export default {
 
 .info {
   display: flex;
-  /* justify-content: space-between; */
 }
 
 .category-bubble {
@@ -220,7 +126,6 @@ export default {
 }
 
 .like {
-  /* padding-left: 15px; */
   padding-bottom: 10px;
   display: inline-flex;
   align-items: center;

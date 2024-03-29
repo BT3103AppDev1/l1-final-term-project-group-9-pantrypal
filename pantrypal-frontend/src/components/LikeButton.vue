@@ -28,7 +28,7 @@ export default {
     };
   },
   async created() {
-    console.log("like button started");
+    // console.log("like button started");
     if (auth.currentUser) {
       const userDocSnapshot = await getDoc(doc(db, "users", auth.currentUser.uid));
       const userData = userDocSnapshot.data();
@@ -98,7 +98,6 @@ export default {
   border: none;
   cursor: pointer;
   background: none;
-  /* background-color: #cbdf99; */
 }
 
 .like-button {
@@ -107,7 +106,6 @@ export default {
   border: none;
   cursor: pointer;
   background: none;
-  /* background-color: #cbdf99; */
 }
 
 .like-button span {

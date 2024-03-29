@@ -2,7 +2,10 @@
   <div v-if="selectedRecipe" class="popout-recipe">
     <div class="popout-recipe-content">
       <span class="close" @click="closeModal">&times;</span>
-      <RecipeDetails :selectedRecipe="selectedRecipe" :selectedIngredients="selectedIngredients" />
+      <RecipeDetails
+        :selectedRecipe="selectedRecipe"
+        :selectedIngredients="selectedIngredients"
+      />
     </div>
   </div>
 </template>
@@ -10,12 +13,12 @@
 <script>
 import RecipeImage from "./RecipeImage.vue";
 import LikeButton from "./LikeButton.vue";
-import RecipeDetails from "./RecipeDetails.vue"
+import RecipeDetails from "./RecipeDetails.vue";
 export default {
   components: {
     RecipeImage,
     LikeButton,
-    RecipeDetails
+    RecipeDetails,
   },
   data() {
     return {
@@ -41,7 +44,7 @@ export default {
 <style scoped>
 .popout-recipe {
   position: fixed;
-  top: 100px;
+  top: 91px;
   left: 0;
   width: 100%;
   height: 100%;
@@ -54,7 +57,6 @@ export default {
 
 .popout-recipe-content {
   background-color: white;
-  /* padding: 20px; */
   border-radius: 8px;
   width: 80%;
   height: 90%;
