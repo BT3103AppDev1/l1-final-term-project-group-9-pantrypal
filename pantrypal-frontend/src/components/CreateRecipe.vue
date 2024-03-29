@@ -145,7 +145,7 @@
     };
   </script>
 
-<style>
+<style scoped>
 .create-recipe-modal {
   position: fixed;
   top: 100px;

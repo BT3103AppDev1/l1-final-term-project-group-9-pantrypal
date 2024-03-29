@@ -53,14 +53,14 @@
   }
   
   .login-link a {
-    color: #1fd655;
+    color: #a7bf6a;
   }
   
   .btn-signup {
     display: block;
     width: 100%;
     padding: 1rem;
-    background-color: #1fd655; /* Button color */
+    background-color: #a7bf6a; /* Button color */
     color: white;
     border: none;
     border-radius: 5px;
