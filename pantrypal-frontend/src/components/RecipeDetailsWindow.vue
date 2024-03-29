@@ -2,7 +2,7 @@
   <div v-if="selectedRecipe" class="popout-recipe">
     <div class="popout-recipe-content">
       <span class="close" @click="closeModal">&times;</span>
-      <RecipeDetails :selectedRecipe="selectedRecipe" :selectedIngredients="selectedIngredients" />
+      <RecipeDetails :selectedRecipe="selectedRecipe" :selectedIngredients="selectedIngredients" :likeExists="true"/>
     </div>
   </div>
 </template>

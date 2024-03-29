@@ -6,12 +6,12 @@
         <div class="second">
             <div class="title-row">
                 <h1>{{ selectedRecipe.recipe_name }}</h1>
-                <LikeButton :recipe="selectedRecipe" />
+                <LikeButton v-if="likeExists" :recipe="selectedRecipe" />
             </div>
             <p>
                 <i>
                     By @{{ selectedRecipe.user_id }},
-                    {{
+                    <!-- {{
                 new Date(selectedRecipe.created_date.seconds * 1000).toLocaleDateString(
                     "en-GB",
                     {
@@ -20,7 +20,7 @@
                         day: "numeric",
                     }
                 )
-            }}
+            }} -->
                 </i>
             </p>
 
@@ -61,7 +61,7 @@
                 <h3>Directions:</h3>
                 <ol>
                     <li v-for="(step, index) in selectedRecipe.directions" :key="index">
-                        {{ step }}
+                        {{ index + 1 }}. {{ step }}
                     </li>
                 </ol>
             </div>
@@ -92,6 +92,9 @@ export default {
             type: Array,
             required: true,
         },
+        likeExists: {
+            type: Boolean,
+        }
     },
 };
 </script>
