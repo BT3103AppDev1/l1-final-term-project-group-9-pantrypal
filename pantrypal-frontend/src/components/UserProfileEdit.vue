@@ -53,13 +53,10 @@ export default {
       passwordUpdateComplete: true,
     }
   },
-  watch: {
-    userData(value) {
-      this.email = this.userData.email;
-      this.username = this.userData.username;
-    },
-  },
-  mounted() {
+
+
+
+  created() {
     this.email = this.userData.email;
     this.username = this.userData.username;
   },
@@ -86,6 +83,8 @@ export default {
             username: this.username,
           });
           alert('Profile updated successfully.');
+          this.$emit('userData', { ...this.userData, username: this.username })
+
         }
       } catch (error) {
         console.error("Error updating profile:", error);

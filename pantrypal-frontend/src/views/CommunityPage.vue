@@ -39,7 +39,7 @@
     <RecipeDetailsWindow v-if="selectedRecipe" :selectedRecipe="selectedRecipe"
       :selectedIngredients="selectedIngredients" :closeModal="closeModal" />
 
-    <CircleButton logo="src/assets/plus-icon.png" @click="toggleCreateRecipe"/>
+    <CircleButton logo="src/assets/plus-icon.png" @click="toggleCreateRecipe" />
     <CreateRecipe v-if="showCreateRecipe" @close="showCreateRecipe = false" />
   </div>
 </template>
@@ -115,6 +115,7 @@ export default {
         }
       });
       this.sortByMostRecent()
+      this.sortAllByMostRecent()
     },
     toggleCreateRecipe() {
       this.showCreateRecipe = !this.showCreateRecipe;
@@ -147,7 +148,7 @@ export default {
     async filterUsingCategory(payload) {
       this.category = payload;
       if (this.category.name == "All") {
-        this.filteredRecipes = this.recipes;
+        this.filteredRecipes = this.allCommunityRecipes;
       } else {
         this.filteredRecipes = [];
         const docSnap = await getDoc(doc(db, "categories", payload.id));
@@ -167,6 +168,11 @@ export default {
       } else {
         this.sortByMostLiked()
       }
+    },
+    sortAllByMostRecent() {
+      this.allCommunityRecipes = this.allCommunityRecipes.sort((a, b) => {
+        return b.created_date.toDate() - a.created_date.toDate();
+      })
     },
     sortByMostRecent() {
       this.filteredRecipes = this.filteredRecipes.sort((a, b) => {
