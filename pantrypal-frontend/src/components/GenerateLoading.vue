@@ -1,5 +1,6 @@
 <template>
 <div class="generate-container">
+    <GenerateErrorModal :isVisible="showErrorModal" @update:isVisible="showErrorModal = $event" @back="handleModalClose"/>
     <h1>We are cooking up your recipe!</h1>
     <h1>Give us a few seconds...</h1>
     <div v-for="(ingredient, index) in ingredients">
@@ -18,9 +19,18 @@
 
 <script>
 import axios from 'axios';
+import GenerateErrorModal from './GenerateErrorModal.vue';
 
 export default {
     name: 'Generator Loading',
+    components: {
+        GenerateErrorModal,
+    },
+    data() {
+        return {
+        showErrorModal: false,
+        };
+    },
     props: {
         ingredients: Array,
         categories: Array,
@@ -28,18 +38,33 @@ export default {
     },
     async mounted() {
         console.log("mounted..");
-        await axios
-            .post('http://localhost:3000/initial-recipe', {
+        await this.fetchRecipe();
+    },
+    methods: {
+        fetchRecipe() {
+            axios.post('http://localhost:3000/initial-recipe', {
                 ingredients: this.ingredients,
                 categories: this.categories,
                 dietaryRestrictions: this.dietaryRestrictions,
-            })
-            .then((response) => {
-                this.$emit('recipeGenerated', {
-                    generatedRecipe: response.data.content,
-                })
+            }).then(response => {
+                if (response.status === 400) {
+                    this.showErrorModal = true;
+                } else {
+                    this.$emit('recipeGenerated', {
+                        generatedRecipe: response.data.content,
+                    });
+                }
+            }).catch(error => {
+                this.showErrorModal = true;
+                console.error("Error fetching recipe:", error);
+                console.log(this.showErrorModal + "hi");
             });
-    },
+        },
+        handleModalClose() {
+            this.showErrorModal = false;
+            this.$emit('back'); 
+        }
+    }
 };
 </script>
 

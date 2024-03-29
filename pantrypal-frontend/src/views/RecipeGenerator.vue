@@ -6,7 +6,7 @@
       <div class="view-container">
         <InputLeftover v-if="selected === 'input'" @generateRecipe="generateRecipe" />
         <GenerateLoading v-if="selected === 'generate'" :ingredients="ingredients" :categories="categories"
-          :dietaryRestrictions="dietaryRestrictions" @recipeGenerated="recipeGenerated" />
+          :dietaryRestrictions="dietaryRestrictions" @recipeGenerated="recipeGenerated" @back="handleBack" />
         <div class="recipe-details-container" v-show="selected === 'save'">
           <RecipeDetails :selectedRecipe="recipe" :selectedIngredients="selectedIngredients" :likeExists="false"/>
           <CircleButton logo="src/assets/chefbot-button.png" @click="toggleChefBot" />
@@ -51,6 +51,9 @@ export default {
   methods: {
     toggleChefBot() {
       this.showChefBot = !this.showChefBot;
+    },
+    handleBack() {
+      this.selected = "input";
     },
     generateRecipe(props) {
       this.categories = props.categories;

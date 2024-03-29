@@ -5,29 +5,34 @@ const askToChatGpt = async function (req, res) {
     const openai = _createOpenAIInstance();
   
     try {
-        const conversationHistory = req.body.conversationHistory || [];
+        let conversationHistory = req.body.conversationHistory || [];
     
         if (conversationHistory.length === 0 && req.body.recipeDetails) {
-            conversationHistory = await generateInitialRecipe(conversationHistory, req.body.recipeDetails, openai);
+            const generatedRecipe = await generateInitialRecipe(conversationHistory, req.body.recipeDetails, openai);
+            conversationHistory.push(generatedRecipe);
         } else {
             conversationHistory.push({ role: "user", content: req.body.message });
+            const completion = await openai.chat.completions.create({
+                model: "gpt-4-1106-preview",
+                messages: conversationHistory,
+            });
+            conversationHistory.push({ role: "system", content: completion.choices[0].message.content });
         }
-    
-        const completion = await openai.chat.completions.create({
-            model: "gpt-4-1106-preview",
-            messages: conversationHistory,
-        });
-    
-        const repliedMessage = completion.choices[0].message.content;
     
         res.send({ 
             from: "chatGpt", 
-            data: repliedMessage, 
+            data: conversationHistory.at(-1).content, 
             conversationHistory: conversationHistory 
         });
     } catch (error) {
-        console.log("Error ", error);
-        res.status(500).send({ error: "Internal Server Error" });
+        console.log("Error caught:", error.message);
+        if (error.message === "ERROR") {
+            console.log("correct thrown");
+            res.status(400).send({ error: "ERROR" });
+        } else {
+            console.log("wrong thrown");
+            res.status(500).send({ error: "Internal Server Error" });
+        }
     }
   };
   
@@ -74,6 +79,10 @@ const generateInitialRecipe = async (req, res) => {
 
     const recipe = completion.choices[0].message.content;
 
+    if (recipe.trim().toUpperCase() === "ERROR") {
+        return res.status(400).json({ error: "ERROR" });
+    }
+
     const recipeObject = JSON.parse(recipe
         .replace(/(\r\n|\n|\r)/gm, " ") 
         .replace(/\s+/g, " ") 
@@ -99,7 +108,7 @@ const generateInitialRecipe = async (req, res) => {
 
     // Add the generated recipe to the conversation history
     res.send({ role: "system", content: recipeWithImage });
-    console.log("Generated Recipe: ", recipe);
+    console.log("Generated Recipe: ", recipeWithImage);
 };
 
 const _createOpenAIInstance = () => {
