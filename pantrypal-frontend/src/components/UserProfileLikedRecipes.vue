@@ -292,15 +292,4 @@ export default {
   align-self: flex-start;
   flex-direction: row;
 }
-
-.plus-icon-container {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-}
-
-.plus-icon-container img {
-  width: 30px;
-  height: 30px;
-}
 </style>

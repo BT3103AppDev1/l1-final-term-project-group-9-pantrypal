@@ -14,7 +14,7 @@
         >
       </div>
       <div class="user-id">
-        <p>@{{ recipe.user_id }}</p>
+        <p>@{{ userName }}</p>
       </div>
     </div>
     <div class="like">
@@ -28,7 +28,7 @@ import RecipeImage from "./RecipeImage.vue";
 import LikeButton from "./LikeButton.vue";
 
 import { db, auth } from "../firebase";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
 export default {
@@ -45,6 +45,7 @@ export default {
   data() {
     return {
       recipeIsLiked: false,
+      userName: "",
     };
   },
   async created() {
@@ -52,7 +53,15 @@ export default {
       const userDocSnapshot = await getDoc(doc(db, "users", auth.currentUser.uid));
       const userData = userDocSnapshot.data();
       this.recipeIsLiked = userData.liked_recipes.includes(this.recipe.recipe_id);
-      // console.log(this.recipeIsLiked);
+      const userQuery = query(
+        collection(db, "users"),
+        where("user_id", "==", this.recipe.user_id)
+      );
+      const userQuerySnapshot = await getDocs(userQuery);
+      if (!userQuerySnapshot.empty) {
+        const userData = userQuerySnapshot.docs[0].data();
+        this.userName = userData.username;
+      }
     }
   },
   methods: {
