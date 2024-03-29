@@ -33,7 +33,7 @@ export default {
 .topBar {
   cursor: pointer;
   padding: 0;
-  background-color: transparent;
+  background-color: white;
   border: none;
   border-radius: 50%;
   height: 60px;
