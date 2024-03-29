@@ -4,7 +4,7 @@
         <TopBar :ifFeed="true" />
         <div class="recipe-content">
             <RecipeDetails v-if="selectedRecipe" :selectedRecipe="selectedRecipe"
-                :selectedIngredients="selectedIngredients" />
+                :selectedIngredients="selectedIngredients" :likeExists="true" />
         </div>
     </div>
 </template>
@@ -27,7 +27,8 @@ export default {
     data() {
         return {
             selectedRecipe: null,
-            selectedIngredients: []
+            selectedIngredients: [],
+
         }
 
     },
@@ -39,7 +40,6 @@ export default {
         async fetchRecipeDetails() {
             const recipeDocSnapshot = await getDoc(doc(db, "all_recipes", this.id));
             this.selectedRecipe = recipeDocSnapshot.data();
-
         },
     }
 }
@@ -49,7 +49,6 @@ export default {
     background-color: white;
     /* padding: 20px; */
     border-radius: 8px;
-
     height: 90%;
     margin: 30px;
     margin-left: 70px;

@@ -169,7 +169,7 @@ export default {
   width: 80%;
   height: 90%;
   overflow-y: auto;
-  background-color: red;
+
 }
 
 .recipe-form label {

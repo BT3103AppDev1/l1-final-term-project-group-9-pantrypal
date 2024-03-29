@@ -6,13 +6,26 @@
         <div class="second">
             <div class="title-row">
                 <h1>{{ selectedRecipe.recipe_name }}</h1>
-                <LikeButton :recipe="selectedRecipe" />
+                <LikeButton v-if="likeExists" :recipe="selectedRecipe" />
             </div>
             <p>
-                <i>
-                    By @{{ selectedRecipe.user_id }},
+                <i v-if="likeExists">
+                    By @{{ username }},
                     {{
                 new Date(selectedRecipe.created_date.seconds * 1000).toLocaleDateString(
+                    "en-GB",
+                    {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                    }
+                )
+            }}
+                </i>
+                <i v-else>
+                    By @{{ username }},
+                    {{
+                new Date(selectedRecipe.created_date).toLocaleDateString(
                     "en-GB",
                     {
                         year: "numeric",
@@ -27,7 +40,7 @@
             <p>{{ selectedRecipe.description }}</p>
             <p>
                 <b>SERVING SIZE:</b> {{ selectedRecipe.serving_size }} | <b>COOK TIME:</b>
-                {{ selectedRecipe.cook_time }}
+                {{ cookingTimeInHrAndMin }}
             </p>
             <span class="allergens-container">
                 <p><b>CONTAINS:</b></p>
@@ -48,7 +61,9 @@
                 <h3>Ingredients:</h3>
                 <ul class="checkbox-list">
                     <li v-for="(ingredient, index) in selectedRecipe.ingredients" :key="index">
-                        <input type="checkbox" :id="'ingredient' + index" v-model="selectedIngredients[index]" />
+                        <!--using likeExists to remove checkbox-->
+                        <input v-if="!likeExists" type="checkbox" :id="'ingredient' + index"
+                            v-model="selectedIngredients[index]" />
                         <label :for="'ingredient' + index">{{ ingredient }}</label>
                     </li>
                 </ul>
@@ -61,7 +76,7 @@
                 <h3>Directions:</h3>
                 <ol>
                     <li v-for="(step, index) in selectedRecipe.directions" :key="index">
-                        {{ step }}
+                        {{ index + 1 }}. {{ step }}
                     </li>
                 </ol>
             </div>
@@ -73,6 +88,9 @@
 <script>
 import RecipeImage from "./RecipeImage.vue";
 import LikeButton from "./LikeButton.vue";
+
+import { db } from "../firebase";
+import { collection, query, where, getDocs } from "firebase/firestore";
 export default {
     components: {
         RecipeImage,
@@ -80,7 +98,8 @@ export default {
     },
     data() {
         return {
-            username: "NA",
+            username: "",
+            cookingTimeInHrAndMin: ""
         };
     },
     props: {
@@ -92,7 +111,42 @@ export default {
             type: Array,
             required: true,
         },
+        likeExists: {
+            type: Boolean,
+        }
     },
+    mounted() {
+        this.fetchRecipeUsernameAndCookingTime()
+
+    },
+    methods: {
+        async fetchRecipeUsernameAndCookingTime() {
+            const userQuery = query(
+                collection(db, "users"),
+                where("user_id", "==", this.selectedRecipe.user_id)
+            );
+            const userQuerySnapshot = await getDocs(userQuery);
+            if (!userQuerySnapshot.empty) {
+                const userData = userQuerySnapshot.docs[0].data();
+                this.username = userData.username;
+            }
+            this.calculateCookingTime();
+        },
+
+        calculateCookingTime() {
+            const minutes = this.selectedRecipe.cook_time;
+            const hours = Math.floor(minutes / 60);
+            const remainingMinutes = minutes % 60;
+            let result = '';
+            if (hours > 0) {
+                result += `${hours}h`;
+            }
+            if (remainingMinutes > 0) {
+                result += `${remainingMinutes}mins`;
+            }
+            this.cookingTimeInHrAndMin = result || '0mins';
+        }
+    }
 };
 </script>
 

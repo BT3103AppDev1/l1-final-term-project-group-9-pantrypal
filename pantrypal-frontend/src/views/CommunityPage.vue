@@ -5,7 +5,6 @@
       <div class="search-bar">
         <input type="text" class="search-input" placeholder="Search name or ingredients..." v-model="searchQuery" />
         <img class="search-button" src="../assets/search-icon.svg" alt="Search Icon" />
-
       </div>
       <div class="category-bar-text">
         <p>Category:</p>
@@ -36,9 +35,10 @@
       <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe"
         @toggle="toggleRecipeDetails" />
     </div>
+    <!--
     <RecipeDetailsWindow v-if="selectedRecipe" :selectedRecipe="selectedRecipe"
       :selectedIngredients="selectedIngredients" :closeModal="closeModal" />
-
+-->
     <CircleButton logo="src/assets/plus-icon.png" @click="toggleCreateRecipe" />
     <CreateRecipe v-if="showCreateRecipe" @close="showCreateRecipe = false" />
   </div>
@@ -69,18 +69,17 @@ export default {
     return {
       arrayOfCategories: [
         { name: "All", id: "00" },
-        { name: "Asian Cuisine", id: "01" },
-        { name: "Western Cuisine", id: "02" },
+        { name: "Asian", id: "01" },
+        { name: "Western", id: "02" },
         { name: "Local Delights", id: "03" },
         { name: "Healthy Choices", id: "04" },
         { name: "Fast Food", id: "05" },
         { name: "Desserts and Snacks", id: "06" },
         { name: "Beverages", id: "07" },
-        { name: "Specialty Cuisine", id: "08" },
-        { name: "International Cuisine", id: "09" },
-        { name: "Breakfast and Brunch", id: "10" },
-        { name: "Late-night Eats", id: "11" },
-        { name: "Others", id: "12" },
+        { name: "Specialty", id: "08" },
+        { name: "Breakfast and Brunch", id: "09" },
+        { name: "Late-night Eats", id: "10" },
+        { name: "Others", id: "11" },
       ],
       category: {},
       arrayOfSorts: [{ name: "Most Recent" }, { name: "Most Liked" }],
@@ -96,12 +95,11 @@ export default {
   },
   watch: {
     searchQuery(value) {
-      this.filterByNameOrIngredients()
+      this.filterByNameOrIngredients();
     },
   },
   created() {
     this.fetchRecipes();
-
   },
 
   methods: {
@@ -109,13 +107,13 @@ export default {
       const querySnapshot = await getDocs(collection(db, "all_recipes"));
       querySnapshot.forEach((doc) => {
         this.allRecipes.push(doc.data());
-        if (doc.data().community) {
-          this.allCommunityRecipes.push(doc.data())
+        if (doc.data().community && doc.data().community === true) {
+          this.allCommunityRecipes.push(doc.data());
           this.filteredRecipes.push(doc.data());
         }
       });
-      this.sortByMostRecent()
-      this.sortAllByMostRecent()
+      this.sortByMostRecent();
+      this.sortAllByMostRecent();
     },
     toggleCreateRecipe() {
       this.showCreateRecipe = !this.showCreateRecipe;
@@ -164,27 +162,26 @@ export default {
     filterUsingSort(payload) {
       this.sort = payload;
       if (payload.name == "Most Recent") {
-        this.sortByMostRecent()
+        this.sortByMostRecent();
       } else {
-        this.sortByMostLiked()
+        this.sortByMostLiked();
       }
     },
     sortAllByMostRecent() {
       this.allCommunityRecipes = this.allCommunityRecipes.sort((a, b) => {
         return b.created_date.toDate() - a.created_date.toDate();
-      })
+      });
     },
     sortByMostRecent() {
       this.filteredRecipes = this.filteredRecipes.sort((a, b) => {
         return b.created_date.toDate() - a.created_date.toDate();
-      })
+      });
     },
     sortByMostLiked() {
       this.filteredRecipes = this.filteredRecipes.sort((a, b) => {
         return b.like_count - a.like_count;
-      })
+      });
     },
-
   },
 };
 </script>
@@ -291,7 +288,7 @@ export default {
 }
 
 .plus-icon-container img {
-  width: 60px;
-  height: 60px;
+  width: 30px;
+  height: 30px;
 }
 </style>
