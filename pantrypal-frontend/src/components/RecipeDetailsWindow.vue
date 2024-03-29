@@ -44,7 +44,7 @@ export default {
 <style scoped>
 .popout-recipe {
   position: fixed;
-  top: 100px;
+  top: 91px;
   left: 0;
   width: 100%;
   height: 100%;
