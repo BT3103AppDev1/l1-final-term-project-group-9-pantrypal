@@ -98,7 +98,6 @@ export default {
   border: none;
   cursor: pointer;
   background: none;
-  /* background-color: #cbdf99; */
 }
 
 .like-button {
@@ -107,7 +106,6 @@ export default {
   border: none;
   cursor: pointer;
   background: none;
-  /* background-color: #cbdf99; */
 }
 
 .like-button span {
