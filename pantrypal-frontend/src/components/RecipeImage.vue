@@ -18,13 +18,11 @@ export default {
     ifCard: Boolean,
   },
   created() {
-    try {
-      getDownloadURL(ref(storage, this.path)).then((url) => (this.url = url));
-    } catch {
-      this.url = this.path;
-    }
+    this.url = this.path;
   },
+
 };
+
 </script>
 
 <style scoped>
