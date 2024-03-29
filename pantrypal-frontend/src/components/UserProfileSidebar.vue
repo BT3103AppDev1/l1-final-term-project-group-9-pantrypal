@@ -2,7 +2,9 @@
     <aside class="sidebar">
         <div class="profile-container">
             <div class="profile-pic">
-                <img src="../assets/profile.svg" alt="profile pic" class="profile" />
+                <img :src="profilePicUrl || userData.profile_img_url || '../assets/profile.svg'" alt="profile pic" class="profile" />
+                <input type="file" @change="onFileSelected" hidden ref="fileInput" />
+                <button @click="triggerFileInput">Change Picture</button>
             </div>
             <div class="personal-details">
                 <h4 class="user-name">@{{ userData.username }}</h4>
@@ -23,14 +25,18 @@
         </div>
     </aside>
 </template>
-<script>
 
+<script>
+import { db, storage, auth } from '../firebase.js';
+import { doc, updateDoc } from 'firebase/firestore';
+import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 
 export default {
     name: 'Profile Sidebar',
 
     data() {
         return {
+            profilePicUrl: '',
         }
     },
     props: {
@@ -38,7 +44,6 @@ export default {
         selected: "",
         userData: {}
     },
-
     emits: ["selected"],
     methods: {
         selectedSettings() {
@@ -49,9 +54,54 @@ export default {
         },
         selectedMyCookbook() {
             this.$emit('selected', "myCookbook")
-        }
-    },
+        },
 
+        triggerFileInput() {
+            this.$refs.fileInput.click();
+        },
+        
+        onFileSelected(event) {
+            const file = event.target.files[0];
+            if (!file) {
+                return;
+            }
+            this.uploadImageToFirebase(file);
+        },
+
+        async uploadImageToFirebase(file) {
+            const storageRef = ref(storage, `profileImg/${file.name}`);
+            const uploadTask = uploadBytesResumable(storageRef, file);
+
+            uploadTask.on('state_changed', 
+                (snapshot) => {
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                }, 
+                (error) => {
+                    // Handle unsuccessful uploads
+                    console.error('Upload failed', error);
+                }, 
+                () => {
+                    // Handle successful uploads on complete
+                    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                        console.log('File available at', downloadURL);
+                        this.profilePicUrl = downloadURL;
+                        this.updateUserProfilePic(downloadURL);
+                    }).catch((error) => {
+                        console.error('Failed to get download URL', error);
+                    });
+                }
+            );
+        },
+
+        async updateUserProfilePic(url) {
+            const user = auth.currentUser;
+            const userRef = doc(db, 'users', user.uid);
+            await updateDoc(userRef, {
+                profile_img_url: url,
+            });
+            return;
+        },
+    }
 };
 </script>
 
