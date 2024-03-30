@@ -43,6 +43,20 @@
             messages: [],
             };
         },
+        props: {
+          selectedRecipe: {
+            type: Object,
+            required: true,
+          },
+        },
+        mounted() {
+          const initialMessage = `Welcome to ChefBot! Let's get cooking with your selected recipe: ${this.selectedRecipe.recipe_name}. Do you have any questions?`;
+
+          this.messages.push({
+              from: 'chatGpt',
+              data: initialMessage,
+          });
+        },
         methods: {
             async sendMessage() {
                 const message = this.currentMessage.trim();
@@ -65,6 +79,7 @@
                     .post('http://localhost:3000/chatbot', {
                         message,
                         conversationHistory, 
+                        selectedRecipe: this.selectedRecipe,
                     })
                 .then((response) => {
                     this.messages.push({

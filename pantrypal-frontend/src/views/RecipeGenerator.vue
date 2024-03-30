@@ -6,11 +6,11 @@
       <div class="view-container">
         <InputLeftover v-if="selected === 'input'" @generateRecipe="generateRecipe" />
         <GenerateLoading v-if="selected === 'generate'" :ingredients="ingredients" :categories="categories"
-          :dietaryRestrictions="dietaryRestrictions" @recipeGenerated="recipeGenerated" />
+          :dietaryRestrictions="dietaryRestrictions" @recipeGenerated="recipeGenerated" @back="handleBack" />
         <div class="recipe-details-container" v-show="selected === 'save'">
           <RecipeDetails :selectedRecipe="recipe" :selectedIngredients="selectedIngredients" :likeExists="false"/>
           <CircleButton logo="src/assets/chefbot-button.png" @click="toggleChefBot" />
-          <ChefBot v-show="showChefBot" @close="showChefBot = false" />
+          <ChefBot :key="componentKey" :selectedRecipe="recipe" v-if="recipe && showChefBot" @close="showChefBot = false" />
         </div>
       </div>
     </div>
@@ -52,6 +52,9 @@ export default {
     toggleChefBot() {
       this.showChefBot = !this.showChefBot;
     },
+    handleBack() {
+      this.selected = "input";
+    },
     generateRecipe(props) {
       this.categories = props.categories;
       this.dietaryRestrictions = props.dietaryRestrictions;
@@ -66,6 +69,7 @@ export default {
 
       try {
         this.recipe = props.generatedRecipe;
+        this.componentKey++;
         let user_id = 'chefbot';
         this.recipe.user_id = user_id;
         this.recipe.created_date = new Date();
