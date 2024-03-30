@@ -25,14 +25,20 @@
                     <input
                         v-model="ingredients[index].name"
                         type="text"
-                        placeholder="e.g. Apple"/>
+                        placeholder="e.g. Apple"
+                        :class="{'input-required': !ingredients[index].name.trim()}"
+                        required
+                    />
                 </div>
                 <div>
                     <label>Quantity</label>
                     <input
                         v-model="ingredients[index].quantity"
                         type="text"
-                        placeholder="e.g. 10g"/>
+                        placeholder="e.g. 10g"
+                        :class="{'input-required': !ingredients[index].quantity.trim()}"
+                        required
+                    />
                 </div>
                 <button type="button" class="remove-button" @click="removeIngredient(index)">
                         x
@@ -51,7 +57,8 @@
         <button
         type="submit"
         class="generate-button"
-        @click="generateRecipe">
+        @click="generateRecipe"
+        :disabled="!validateIngredients()">
             Generate Recipe
         </button>
     </div>
@@ -87,6 +94,9 @@ export default {
                 name: '',
                 quantity: '',
             });
+        },
+        validateIngredients() {
+            return this.ingredients.every(ingredient => ingredient.name.trim() && ingredient.quantity.trim());
         },
         removeIngredient(index) {
             this.ingredients.splice(index, 1);
@@ -188,6 +198,10 @@ textarea {
     border-radius: 15px;
     padding: 8px 20px;
     cursor: pointer;
+}
+
+.input-required {
+    border: 2px solid red;
 }
 
 </style>

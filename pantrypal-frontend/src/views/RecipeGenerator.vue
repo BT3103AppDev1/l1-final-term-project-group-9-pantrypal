@@ -10,7 +10,7 @@
         <div class="recipe-details-container" v-show="selected === 'save'">
           <RecipeDetails :selectedRecipe="recipe" :selectedIngredients="selectedIngredients" :likeExists="false"/>
           <CircleButton logo="src/assets/chefbot-button.png" @click="toggleChefBot" />
-          <ChefBot v-show="showChefBot" @close="showChefBot = false" />
+          <ChefBot :key="componentKey" :selectedRecipe="recipe" v-if="recipe && showChefBot" @close="showChefBot = false" />
         </div>
       </div>
     </div>
@@ -69,6 +69,7 @@ export default {
 
       try {
         this.recipe = props.generatedRecipe;
+        this.componentKey++;
         let user_id = 'chefbot';
         this.recipe.user_id = user_id;
         this.recipe.created_date = new Date();

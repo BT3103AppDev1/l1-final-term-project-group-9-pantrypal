@@ -3,38 +3,42 @@ require("dotenv").config();
 
 const askToChatGpt = async function (req, res) {
     const openai = _createOpenAIInstance();
-  
+
     try {
-        let conversationHistory = req.body.conversationHistory || [];
-    
-        if (conversationHistory.length === 0 && req.body.recipeDetails) {
-            const generatedRecipe = await generateInitialRecipe(conversationHistory, req.body.recipeDetails, openai);
-            conversationHistory.push(generatedRecipe);
-        } else {
-            conversationHistory.push({ role: "user", content: req.body.message });
-            const completion = await openai.chat.completions.create({
-                model: "gpt-4-1106-preview",
-                messages: conversationHistory,
-            });
-            conversationHistory.push({ role: "system", content: completion.choices[0].message.content });
+        const userConversationHistory = req.body.conversationHistory || [];
+        const recipeDetails = req.body.selectedRecipe;
+
+        const recipeContextMessage = {
+            role: "system",
+            content: `This is the given recipe: ${recipeDetails.recipe_name}. ${recipeDetails.description}. Ingredients: ${recipeDetails.ingredients.join(', ')}. Instructions: ${recipeDetails.directions}
+            When answering questions, please refer specifically to this recipe and not any other recipe. Any questions that cannot be answered directly from the recipe should 
+            be answered as per normal, do not mention how the given recipe does not contain this information.`
+        };
+
+        const apiConversationHistory = [recipeContextMessage, ...userConversationHistory];
+
+        if (req.body.message) {
+            apiConversationHistory.push({ role: "user", content: req.body.message });
         }
-    
+
+        const completion = await openai.chat.completions.create({
+            model: "gpt-4-1106-preview",
+            messages: apiConversationHistory,
+        });
+
+        userConversationHistory.push({ role: "assistant", content: completion.choices[0].message.content });
+
         res.send({ 
             from: "chatGpt", 
-            data: conversationHistory.at(-1).content, 
-            conversationHistory: conversationHistory 
+            data: userConversationHistory.at(-1).content, 
+            conversationHistory: userConversationHistory 
         });
     } catch (error) {
         console.log("Error caught:", error.message);
-        if (error.message === "ERROR") {
-            console.log("correct thrown");
-            res.status(400).send({ error: "ERROR" });
-        } else {
-            console.log("wrong thrown");
-            res.status(500).send({ error: "Internal Server Error" });
-        }
+        res.status(500).send({ error: "Internal Server Error" });
     }
-  };
+};
+
   
 const generateInitialRecipe = async (req, res) => {
     const openai = _createOpenAIInstance();
@@ -48,7 +52,7 @@ const generateInitialRecipe = async (req, res) => {
         Leftovers: ${ingredientsText}, 
         Dietary Restrictions: ${req.body.dietaryRestrictions}.
 
-        The recipe generation should strictly adhere to the provided ingredients and dietary restrictions. 
+        The recipe generation should strictly adhere to the provided ingredients, their estimated quantities and dietary restrictions. 
         If an ingredient is not suitable for consumption (for example, non-food items or inappropriate terms), 
         the system should return "ERROR" instead of a recipe. Suitable recipes should account for the cuisine type and any 
         dietary restrictions specified. If no specific cuisine or dietary restrictions are mentioned, those parameters should be 
@@ -65,7 +69,7 @@ const generateInitialRecipe = async (req, res) => {
                 generously coated in a luscious pesto sauce. Quick to prepare yet satisfying to savor,\n 
                 this dish strikes a perfect balance of savory and aromatic notes, making each bite a symphony of taste and texture.", 
             "directions": ["Cook pasta according to instructions", "Season the pasta", "eat it"], 
-            "ingredients": ["chicken", "pasta"],
+            "ingredients": ["100g chicken", "100g pasta"],
             "recipe_name": "Chicken Breast Pesto Pasta",
             "serving_size": 1
         }
@@ -77,7 +81,18 @@ const generateInitialRecipe = async (req, res) => {
         messages: [{ role: "system", content: prompt }],
     });
 
-    const recipe = completion.choices[0].message.content;
+    let recipe = completion.choices[0].message.content;
+
+    const startIndex = recipe.indexOf('{');
+
+    
+    const endIndex = recipe.lastIndexOf('}');
+
+  
+    if (startIndex !== -1 && endIndex !== -1 && endIndex > startIndex) { 
+        recipe = recipe.substring(startIndex, endIndex + 1);
+    }
+
 
     if (recipe.trim().toUpperCase() === "ERROR") {
         return res.status(400).json({ error: "ERROR" });
@@ -92,14 +107,15 @@ const generateInitialRecipe = async (req, res) => {
         throw new Error("Recipe description is missing");
     }
 
-    const imageResponse = await openai.images.generate({
-        model: "dall-e-3",
-        prompt: recipeObject.description, 
-        n: 1,
-        size: "1024x1024",
-    });
+    // const imageResponse = await openai.images.generate({
+    //     model: "dall-e-3",
+    //     prompt: recipeObject.description, 
+    //     n: 1,
+    //     size: "1024x1024",
+    // });
 
-    const imageUrl = imageResponse.data[0].url;
+    // const imageUrl = imageResponse.data[0].url;
+    const imageUrl = "https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1";
 
     const recipeWithImage = {
         ...recipeObject, 
