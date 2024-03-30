@@ -6,11 +6,12 @@
       <div class="view-container">
         <InputLeftover v-if="selected === 'input'" @generateRecipe="generateRecipe" />
         <GenerateLoading v-if="selected === 'generate'" :ingredients="ingredients" :categories="categories"
-          :dietaryRestrictions="dietaryRestrictions" @recipeGenerated="recipeGenerated" @back="handleBack" />
+          :dietaryRestrictions="dietaryRestrictions" :prev_recipe_name="prev_recipe_name" @recipeGenerated="recipeGenerated" @back="handleBack" />
         <div class="recipe-details-container" v-show="selected === 'save'">
           <RecipeDetails :selectedRecipe="recipe" :selectedIngredients="selectedIngredients" :likeExists="false"/>
-          <CircleButton logo="src/assets/chefbot-button.png" @click="toggleChefBot" />
+          <CircleButton logo="src/assets/chefbot-button.png" class="chefBotIcon" @click="toggleChefBot" />
           <ChefBot :key="componentKey" :selectedRecipe="recipe" v-if="recipe && showChefBot" @close="showChefBot = false" />
+          <button @click="regenerateRecipe" class="reloadButton">Regenerate</button>
         </div>
       </div>
     </div>
@@ -46,11 +47,15 @@ export default {
       ingredients: [],
       recipe: {},
       selectedIngredients: [],
+      prev_recipe_name: null,
     };
   },
   methods: {
     toggleChefBot() {
       this.showChefBot = !this.showChefBot;
+    },
+    regenerateRecipe() {
+      this.selected = 'generate';
     },
     handleBack() {
       this.selected = "input";
@@ -73,6 +78,7 @@ export default {
         let user_id = 'chefbot';
         this.recipe.user_id = user_id;
         this.recipe.created_date = new Date();
+        this.prev_recipe_name = this.recipe.recipe_name;
 
         this.selectedIngredients = this.recipe.ingredients.map(() => false);
 
@@ -117,4 +123,37 @@ export default {
 .recipe-details-container {
     padding: 2rem;
 }
+
+.recipe-details-container {
+  position: relative;
+  padding: 2rem;
+  min-height:400px;
+}
+
+.reloadButton {
+  background-color: #a7bf6a;
+  border: none;
+  text-decoration: none;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 10px;
+  width: 90px;
+  height: 32px;
+  position: absolute;
+  bottom: 0px;
+  right: 20px;
+  z-index: 10;
+}
+
+.reloadButton {
+  font-size: 15px;
+  color: white;
+  text-align: center;
+  line-height: 32px; 
+}
+
+.chefBotIcon {
+  z-index: 100;
+}
+
 </style>

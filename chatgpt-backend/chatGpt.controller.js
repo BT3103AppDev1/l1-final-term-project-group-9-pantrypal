@@ -47,35 +47,68 @@ const generateInitialRecipe = async (req, res) => {
         .filter(ingredient => ingredient.name)
         .map(ingredient => `${ingredient.name}${ingredient.quantity ? ` (${ingredient.quantity})` : ''}`)
         .join(", ");
-    const prompt = `Generate a recipe based on the following details: 
-        Cuisine: ${req.body.categories}, 
-        Leftovers: ${ingredientsText}, 
-        Dietary Restrictions: ${req.body.dietaryRestrictions}.
+    let prompt = ``;
+    if (req.body.first) {
+        prompt = `Generate a recipe based on the following details: 
+            Cuisine: ${req.body.categories}, 
+            Leftovers: ${ingredientsText}, 
+            Dietary Restrictions: ${req.body.dietaryRestrictions}.
 
-        The recipe generation should strictly adhere to the provided ingredients, their estimated quantities and dietary restrictions. 
-        If an ingredient is not suitable for consumption (for example, non-food items or inappropriate terms), 
-        the system should return "ERROR" instead of a recipe. Suitable recipes should account for the cuisine type and any 
-        dietary restrictions specified. If no specific cuisine or dietary restrictions are mentioned, those parameters should be 
-        considered as open.
+            The recipe generation should strictly adhere to the provided ingredients, their estimated quantities and dietary restrictions. 
+            If an ingredient is not suitable for consumption (for example, non-food items or inappropriate terms), 
+            the system should return "ERROR" instead of a recipe. Suitable recipes should account for the cuisine type and any 
+            dietary restrictions specified. If no specific cuisine or dietary restrictions are mentioned, those parameters should be 
+            considered as open. The recipe given just has to meet at least one of the categories and at least one of the ingredients.
 
-        The recipe should be formatted as shown below, with all elements filled according to the input details. The example provided 
-        is for illustrative purposes only and should not influence the generated recipe beyond the structure:
-        {
-            "allergens": ["Diary", "Nuts"], 
-            "categories": ["Italian", "Pasta"],
-            "cook_time": "30 minutes", 
-            "description": "Indulge in a delightful culinary creation with our Chicken Breast Pesto Pasta,\n 
-                crafted from simple yet flavorful ingredients. Tender slices of seasoned chicken breast mingle with al dente pasta,\n 
-                generously coated in a luscious pesto sauce. Quick to prepare yet satisfying to savor,\n 
-                this dish strikes a perfect balance of savory and aromatic notes, making each bite a symphony of taste and texture.", 
-            "directions": ["Cook pasta according to instructions", "Season the pasta", "eat it"], 
-            "ingredients": ["100g chicken", "100g pasta"],
-            "recipe_name": "Chicken Breast Pesto Pasta",
-            "serving_size": 1
-        }
+            The recipe should be formatted as shown below, with all elements filled according to the input details. The example provided 
+            is for illustrative purposes only and should not influence the generated recipe beyond the structure:
+            {
+                "allergens": ["Diary", "Nuts"], 
+                "categories": ["Italian", "Pasta"],
+                "cook_time": "30 minutes", 
+                "description": "Indulge in a delightful culinary creation with our Chicken Breast Pesto Pasta,\n 
+                    crafted from simple yet flavorful ingredients. Tender slices of seasoned chicken breast mingle with al dente pasta,\n 
+                    generously coated in a luscious pesto sauce. Quick to prepare yet satisfying to savor,\n 
+                    this dish strikes a perfect balance of savory and aromatic notes, making each bite a symphony of taste and texture.", 
+                "directions": ["Cook pasta according to instructions", "Season the pasta", "eat it"], 
+                "ingredients": ["100g chicken", "100g pasta"],
+                "recipe_name": "Chicken Breast Pesto Pasta",
+                "serving_size": 1
+            }
 
-        Strictly return the recipe in the JSON format above with no other text. If any ingredient provided is unsuitable for creating a recipe, return "ERROR".`;
+            Strictly return the recipe in the JSON format above with no other text. If any ingredient provided is unsuitable for creating a recipe, return "ERROR".`;
+    } else {
+        prompt = `Generate a recipe based on the following details: 
+            Cuisine: ${req.body.categories}, 
+            Leftovers: ${ingredientsText}, 
+            Dietary Restrictions: ${req.body.dietaryRestrictions}.
 
+            The recipe generation should strictly adhere to the provided ingredients, their estimated quantities and dietary restrictions. 
+            If an ingredient is not suitable for consumption (for example, non-food items or inappropriate terms), 
+            the system should return "ERROR" instead of a recipe. Suitable recipes should account for the cuisine type and any 
+            dietary restrictions specified. If no specific cuisine or dietary restrictions are mentioned, those parameters should be 
+            considered as open. The recipe given just has to meet at least one of the categories and at least one of the ingredients.
+
+            Do not generate the same recipe as this: ${req.body.prev_recipe_name}.
+
+            The recipe should be formatted as shown below, with all elements filled according to the input details. The example provided 
+            is for illustrative purposes only and should not influence the generated recipe beyond the structure:
+            {
+                "allergens": ["Diary", "Nuts"], 
+                "categories": ["Italian", "Pasta"],
+                "cook_time": "30 minutes", 
+                "description": "Indulge in a delightful culinary creation with our Chicken Breast Pesto Pasta,\n 
+                    crafted from simple yet flavorful ingredients. Tender slices of seasoned chicken breast mingle with al dente pasta,\n 
+                    generously coated in a luscious pesto sauce. Quick to prepare yet satisfying to savor,\n 
+                    this dish strikes a perfect balance of savory and aromatic notes, making each bite a symphony of taste and texture.", 
+                "directions": ["Cook pasta according to instructions", "Season the pasta", "eat it"], 
+                "ingredients": ["100g chicken", "100g pasta"],
+                "recipe_name": "Chicken Breast Pesto Pasta",
+                "serving_size": 1
+            }
+
+            Strictly return the recipe in the JSON format above with no other text. If any ingredient provided is unsuitable for creating a recipe, return "ERROR".`;
+    }
     const completion = await openai.chat.completions.create({
         model: "gpt-4-1106-preview",
         messages: [{ role: "system", content: prompt }],
