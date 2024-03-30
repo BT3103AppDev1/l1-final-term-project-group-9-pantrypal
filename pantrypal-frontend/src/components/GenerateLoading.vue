@@ -35,6 +35,10 @@ export default {
         ingredients: Array,
         categories: Array,
         dietaryRestrictions: String,
+        prev_recipe_name: {
+            type: String,
+            default: () => null, 
+        },
     },
     async mounted() {
         console.log("mounted..");
@@ -42,11 +46,18 @@ export default {
     },
     methods: {
         fetchRecipe() {
-            axios.post('http://localhost:3000/initial-recipe', {
+            const payload = {
                 ingredients: this.ingredients,
                 categories: this.categories,
                 dietaryRestrictions: this.dietaryRestrictions,
-            }).then(response => {
+            };
+            if (this.previousRecipe !== null) {
+                payload.prev_recipe_name = this.prev_recipe_name;
+                payload.first = false;
+            } else {
+                payload.first = true;
+            }
+            axios.post('http://localhost:3000/initial-recipe', payload).then(response => {
                 if (response.status === 400) {
                     this.showErrorModal = true;
                 } else {
