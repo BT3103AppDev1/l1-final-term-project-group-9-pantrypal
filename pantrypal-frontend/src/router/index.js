@@ -7,8 +7,10 @@ import SignUp from '@/views/SignUp.vue'
 import Login from '@/views/Login.vue'
 import RecipeGenerator from '@/views/RecipeGenerator.vue'
 import CommunityPage from '@/views/CommunityPage.vue'
+import RecipeDetailsPage from '@/views/RecipeDetailsPage.vue'
 import NotFound from '@/views/NotFound.vue';
-import Settings from '@/views/Settings.vue';
+import Profile from '@/views/Profile.vue';
+
 
 
 const routes = [
@@ -40,16 +42,24 @@ const routes = [
         meta: { requiresAuth: true}
     },
     {
+        path: '/community-page/:id',
+        name: 'RecipeDetailsPage',
+        component: RecipeDetailsPage,
+        meta: { requiresAuth: true},
+        props: true
+    },
+    {
         path: '/:catchAll(.*)',
         name: 'NotFound',
         component: NotFound
     },
     {
-        path: '/profile/settings',
-        name: 'Settings',
-        component: Settings,
+        path: '/profile',
+        name: 'Profile',
+        component: Profile,
         meta: { requiresAuth: true}
     },
+   
 ]
 
 const router = createRouter({

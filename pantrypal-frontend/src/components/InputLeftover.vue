@@ -18,36 +18,47 @@
                 rows ="5"
             />
         </div>
-        <div class="column2">
+        <div class="column">
             <div class="ingredient-container" v-for="(ingredient, index) in ingredients">
                 <div class="one-ingredient-container">
                     <label>Name of leftover #{{index + 1}}</label>
                     <input
                         v-model="ingredients[index].name"
                         type="text"
-                        placeholder="e.g. Apple"/></div>
+                        placeholder="e.g. Apple"
+                        :class="{'input-required': !ingredients[index].name.trim()}"
+                        required
+                    />
+                </div>
                 <div>
-                <label>Quantity</label>
-                <input
-                    v-model="ingredients[index].quantity"
-                    type="text"
-                    placeholder="e.g. 10g"/></div>
+                    <label>Quantity</label>
+                    <input
+                        v-model="ingredients[index].quantity"
+                        type="text"
+                        placeholder="e.g. 10g"
+                        :class="{'input-required': !ingredients[index].quantity.trim()}"
+                        required
+                    />
                 </div>
-                <div class="button-container">
-                    <button
-                    type="submit"
-                    class="add-button"
-                    @click="addIngredient"
-                    >+ Add more</button>
-                </div>
-                
+                <button type="button" class="remove-button" @click="removeIngredient(index)">
+                        x
+                </button>
+            </div>
+            <div class="button-container">
+                <button
+                type="submit"
+                class="add-button"
+                @click="addIngredient"
+                >+ ADD MORE</button>
+            </div>
         </div>
     </div>
     <div class="button-container">
         <button
         type="submit"
         class="generate-button"
-        @click="generateRecipe">
+        @click="generateRecipe"
+        :disabled="!validateIngredients()">
             Generate Recipe
         </button>
     </div>
@@ -84,10 +95,17 @@ export default {
                 quantity: '',
             });
         },
+        validateIngredients() {
+            return this.ingredients.every(ingredient => ingredient.name.trim() && ingredient.quantity.trim());
+        },
+        removeIngredient(index) {
+            this.ingredients.splice(index, 1);
+        },
         generateRecipe() {
             console.log('Generating recipe...');
+            console.log(this.value);
             this.$emit('generate-recipe', {
-                cuisines: this.value,
+                categories: this.value,
                 dietaryRestrictions: this.dietaryRestrictions,
                 ingredients: this.ingredients,
             })
@@ -98,13 +116,23 @@ export default {
 
 <style scoped>
 .grid-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-gap: 3rem;
+    display: block;
     padding: 4rem;
     width: 100%;
     box-sizing: border-box;
 }
+
+@media (min-width: 1024px) {
+    .grid-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-gap: 3rem;
+        padding: 4rem;
+        width: 100%;
+        box-sizing: border-box;
+    }
+}
+
 .dropdown-container {
     margin-bottom: 20px;
 }
@@ -112,7 +140,7 @@ export default {
 .ingredient-container {
     display: flex;
     justify-content: space-around;
-    gap: 4rem;
+    gap: 2rem;
 }
 
 .one-ingredient-container {
@@ -155,18 +183,27 @@ textarea {
     cursor: pointer;
 }
 
+.remove-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
 .generate-button {
     background-color: #3C1F11;
     color: #CBDF99;
     font-weight: bold;
+    font-size: large;
     border: none;
-    border-radius: 10px;
+    border-radius: 15px;
     padding: 8px 20px;
     cursor: pointer;
 }
 
-.column2 {
+.input-required {
+    border: 2px solid red;
 }
+
 </style>
 
 <style src="vue-multiselect/dist/vue-multiselect.css"></style>

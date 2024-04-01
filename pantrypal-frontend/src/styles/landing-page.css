@@ -23,18 +23,18 @@
   .btn-login, .btn-signup {
     padding: 0.6rem 0.9rem;
     border: none;
-    border-radius: 5px;
+    border-radius: 10px;
     cursor: pointer;
     color: #fff; 
   }
   
   .btn-login {
-    background-color: #1fd655; 
+    background-color: #a7bf6a; 
     font-size: 16px;
   }
   
   .btn-signup {
-    background-color: #1fd655; 
+    background-color: #a7bf6a; 
     font-size: 16px;
   }
   
@@ -44,7 +44,8 @@
   }
   
   h1 {
-    color: #006400; 
+    color: #596639; 
+    font-style: italic;
   }
   
   .gallery {
