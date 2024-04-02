@@ -1,8 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
-import { getStorage ,getDownloadURL,ref} from "firebase/storage";
-
+import { getFirestore, collection, getDocs, doc, getDoc, addDoc, updateDoc } from 'firebase/firestore';
+import { getStorage, getDownloadURL, ref } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCZ-HBufDf5JrElikOjjVwcVxeyLRd6BzU",
@@ -17,16 +16,26 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const storage = getStorage(app);
 const auth = getAuth(app);
-const db = getFirestore(app); 
+const db = getFirestore(app);
 
-const USERS_COLLECTION = 'users'
+const USERS_COLLECTION = 'users';
 
 async function getUserInfoFromID (uid) {
   const docRef = doc(db, USERS_COLLECTION, uid);
   const docSnap = await getDoc(docRef);
-console.log(docSnap.data())
   return docSnap.data();
 }
 
-export { auth, app, db ,storage, getUserInfoFromID};
+async function fetchCategories() {
+  try {
+    const querySnapshot = await getDocs(collection(db, "categories"));
+    const categories = querySnapshot.docs.map((doc) => doc.data());
+    console.log(categories.map((category) => category.category_name));
+    return categories.map((category) => category.category_name);
+  } catch (error) {
+    console.error("Error fetching categories: ", error);
+    return [];
+  }
+}
 
+export { auth, app, db, storage, getUserInfoFromID, fetchCategories };

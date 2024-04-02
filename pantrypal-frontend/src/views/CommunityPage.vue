@@ -3,16 +3,31 @@
     <TopBar :ifFeed="true" />
     <div class="filterBar">
       <div class="search-bar">
-        <input type="text" class="search-input" placeholder="Search name or ingredients..." v-model="searchQuery" />
-        <img class="search-button" src="../assets/search-icon.svg" alt="Search Icon" />
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Search name or ingredients..."
+          v-model="searchQuery"
+        />
+        <img
+          class="search-button"
+          src="../assets/search-icon.svg"
+          alt="Search Icon"
+        />
       </div>
       <div class="category-bar-text">
         <p>Category:</p>
       </div>
       <div class="category-bar-dropdown">
         <div class="dropdown-container">
-          <dropdown class="my-dropdown-toggle" :options="arrayOfCategories" :selected="category" :placeholder="'All'"
-            :closeOnOutsideClick="true" v-on:updateOption="filterUsingCategory">
+          <dropdown
+            class="my-dropdown-toggle"
+            :options="arrayOfCategories"
+            :selected="category"
+            :placeholder="'All'"
+            :closeOnOutsideClick="true"
+            v-on:updateOption="filterUsingCategory"
+          >
           </dropdown>
         </div>
       </div>
@@ -21,8 +36,14 @@
       </div>
       <div class="category-bar-dropdown">
         <div class="dropdown-container">
-          <dropdown class="my-dropdown-toggle" :options="arrayOfSorts" :selected="sort" :placeholder="'Most Recent'"
-            :closeOnOutsideClick="true" v-on:updateOption="filterUsingSort">
+          <dropdown
+            class="my-dropdown-toggle"
+            :options="arrayOfSorts"
+            :selected="sort"
+            :placeholder="'Most Recent'"
+            :closeOnOutsideClick="true"
+            v-on:updateOption="filterUsingSort"
+          >
           </dropdown>
         </div>
       </div>
@@ -32,15 +53,23 @@
 
     <!-- recipe card list -->
     <div class="recipe-list">
-      <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe"
-        @toggle="toggleRecipeDetails" />
+      <RecipeCard
+        v-for="recipe in filteredRecipes"
+        :key="recipe.recipe_id"
+        :recipe="recipe"
+        @toggle="toggleRecipeDetails"
+      />
     </div>
     <!--
     <RecipeDetailsWindow v-if="selectedRecipe" :selectedRecipe="selectedRecipe"
       :selectedIngredients="selectedIngredients" :closeModal="closeModal" />
 -->
     <CircleButton logo="src/assets/plus-icon.png" @click="toggleCreateRecipe" />
-    <CreateRecipe v-if="showCreateRecipe" @close="showCreateRecipe = false" />
+    <CreateRecipe
+      v-if="showCreateRecipe"
+      @close="showCreateRecipe = false"
+      @recipe-submitted="handleRecipeSubmitted"
+    />
   </div>
 </template>
 
@@ -54,6 +83,7 @@ import dropdown from "vue-dropdowns";
 import RecipeImage from "@/components/RecipeImage.vue";
 import CreateRecipe from "@/components/CreateRecipe.vue";
 import CircleButton from "@/components/CircleButton.vue";
+import router from "../router/index.js";
 
 export default {
   components: {
@@ -100,6 +130,7 @@ export default {
   },
   created() {
     this.fetchRecipes();
+    this.router = router;
   },
 
   methods: {
@@ -128,6 +159,10 @@ export default {
       this.selectedIngredients = [];
     },
 
+    handleRecipeSubmitted() {
+      this.$router.push("/community-page");
+    },
+
     filterByNameOrIngredients() {
       this.filteredRecipes = this.allCommunityRecipes.filter((recipe) => {
         const nameMatch = recipe.recipe_name
@@ -135,7 +170,9 @@ export default {
           .includes(this.searchQuery.toLowerCase());
         let ingredientsMatch = false;
         recipe.ingredients.forEach((ingredient) => {
-          if (ingredient.toLowerCase().includes(this.searchQuery.toLowerCase())) {
+          if (
+            ingredient.toLowerCase().includes(this.searchQuery.toLowerCase())
+          ) {
             ingredientsMatch = true;
           }
         });
@@ -153,7 +190,9 @@ export default {
         const recipesIDlist = docSnap.data().recipes;
         if (recipesIDlist.length != 0) {
           for (let x in recipesIDlist) {
-            const docSnap = await getDoc(doc(db, "all_recipes", recipesIDlist[x]));
+            const docSnap = await getDoc(
+              doc(db, "all_recipes", recipesIDlist[x])
+            );
             this.filteredRecipes.push(docSnap.data());
           }
         }
