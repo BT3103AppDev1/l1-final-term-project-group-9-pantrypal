@@ -256,7 +256,43 @@ export default {
     close() {
       this.$emit("close");
     },
+    validateForm() {
+      // if (
+      //   isNaN(this.recipeData.cook_time_hours) ||
+      //   isNaN(this.recipeData.cook_time_minutes)
+      // ) {
+      //   alert("Please enter valid cook time values.");
+      //   return false;
+      // }
+      // if (isNaN(this.recipeData.serving_size)) {
+      //   alert("Please enter valid serving size values.");
+      //   return false;
+      // }
+      if (
+        !this.recipeData.recipe_name ||
+        !this.recipeData.description ||
+        !this.recipeData.allergen_info ||
+        !this.recipeData.imageSrc ||
+        !this.recipeData.cook_time_hours ||
+        !this.recipeData.cook_time_minutes ||
+        !this.recipeData.category.length ||
+        !this.recipeData.serving_size ||
+        !this.recipeData.ingredients.length ||
+        !this.recipeData.directions.length
+      ) {
+        // at least one field is empty
+        alert(
+          "Please fill in all fields before submitting the recipe and ensure they are valid."
+        );
+        return false;
+      }
+      // form is valid
+      return true;
+    },
     submitRecipe() {
+      if (!this.validateForm()) {
+        return;
+      }
       const user = auth.currentUser;
       const userId = user ? user.uid : "";
 
@@ -274,11 +310,10 @@ export default {
         directions: this.recipeData.directions.map((d) => d.text),
         ingredients: this.recipeData.ingredients,
         like_count: 0,
-        recipe_id: "",
+        recipe_id: "", //dont know if this works
         recipe_img_url: this.recipeData.imageSrc,
         recipe_name: this.recipeData.recipe_name,
         serving_size: parseInt(this.recipeData.serving_size),
-        showDetails: true,
         user_id: userId,
       };
 
@@ -292,7 +327,8 @@ export default {
           updateDoc(docRef, { recipe_id: docRef.id })
             .then(() => {
               console.log("Document updated successfully.");
-              // Additional logic after successful submission...
+              this.$emit("close");
+              this.$router.push("/community-page");
             })
             .catch((error) => {
               console.error("Error updating document: ", error);
