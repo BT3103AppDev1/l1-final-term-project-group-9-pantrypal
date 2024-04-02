@@ -169,9 +169,7 @@
       </div>
       <div class="button-container">
         <button class="cancel-button" @click="close">Cancel</button>
-        <button class="save-recipe-button" @click="submitRecipe">
-          Save Recipe
-        </button>
+        <save-recipe-button @save-recipe="submitRecipe" />
       </div>
     </div>
   </div>
@@ -179,6 +177,7 @@
 
 <script>
 import Multiselect from "vue-multiselect";
+import SaveRecipeButton from "../components/SaveRecipeButton.vue";
 import {
   auth,
   app,
@@ -198,6 +197,7 @@ import {
 export default {
   components: {
     Multiselect,
+    SaveRecipeButton,
   },
   data() {
     return {
