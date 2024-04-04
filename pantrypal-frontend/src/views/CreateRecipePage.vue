@@ -1,6 +1,5 @@
-<!-- REDUDANT NO LONGER IN USE -->
-
 <template>
+  <TopBar :ifFeed="true" />
   <div class="create-recipe-modal">
     <div class="recipe-form">
       <div class="recipe-form-content">
@@ -49,14 +48,18 @@
 
             <label for="recipeDescription">Description:</label>
             <textarea
+              type="text"
               id="recipeDescription"
               v-model="recipeData.description"
+              class="input-text"
             ></textarea>
 
             <label for="allergenInfo">Allergen Information:</label>
             <textarea
+              type="text"
               id="allergenInfo"
               v-model="recipeData.allergen_info"
+              class="input-text"
             ></textarea>
 
             <!-- Added Cook Time, Category and Serving Size -->
@@ -69,6 +72,7 @@
                     id="cookTimeHours"
                     v-model="recipeData.cook_time_hours"
                     min="0"
+                    @keydown="onlyNumberInput($event, 'cook_time_hours')"
                   />
                   <span>hours</span>
                   <input
@@ -76,6 +80,7 @@
                     id="cookTimeMins"
                     v-model="recipeData.cook_time_minutes"
                     min="0"
+                    @keydown="onlyNumberInput($event, 'cook_time_minutes')"
                   />
                   <span>mins</span>
                 </div>
@@ -96,6 +101,7 @@
                   id="servingSize"
                   v-model="recipeData.serving_size"
                   min="0"
+                  @keydown="onlyNumberInput($event, 'serving_size')"
                 />
               </div>
             </div>
@@ -148,8 +154,10 @@
                   >
                   <div class="direction-input">
                     <textarea
+                      type="text"
                       :id="'direction' + direction.stepNumber"
                       v-model="direction.text"
+                      class="input-text"
                     ></textarea>
                     <button
                       class="remove-button"
@@ -179,6 +187,7 @@
 
 <script>
 import Multiselect from "vue-multiselect";
+import TopBar from "@/components/TopBar.vue";
 import SaveRecipeButton from "../components/SaveRecipeButton.vue";
 import {
   auth,
@@ -199,6 +208,7 @@ import {
 export default {
   components: {
     Multiselect,
+    TopBar,
     SaveRecipeButton,
   },
   data() {
@@ -255,8 +265,21 @@ export default {
         this.recipeData.directions[i].stepNumber--;
       }
     },
+    onlyNumberInput(event, field) {
+      const code = event.keyCode || event.which;
+      if (code > 31 && (code < 48 || code > 57) && code !== 46) {
+        // If the key pressed is not a number or a decimal point, prevent the keypress
+        event.preventDefault();
+      } else if (code === 46 && this.recipeData[field].includes(".")) {
+        // If the key pressed is a decimal point and the current value already includes a decimal point, prevent the keypress
+        event.preventDefault();
+      } else {
+        // If the key pressed is a number or a decimal point, update the value
+        this.recipeData[field] = event.target.value;
+      }
+    },
     close() {
-      this.$emit("close");
+      this.$router.push("/community-page");
     },
     validateForm() {
       // if (
@@ -275,7 +298,7 @@ export default {
         !this.recipeData.description ||
         !this.recipeData.allergen_info ||
         !this.recipeData.imageSrc ||
-        !this.recipeData.cook_time_hours ||
+        // !this.recipeData.cook_time_hours ||
         !this.recipeData.cook_time_minutes ||
         !this.recipeData.category.length ||
         !this.recipeData.serving_size ||
@@ -328,7 +351,6 @@ export default {
           updateDoc(docRef, { recipe_id: docRef.id })
             .then(() => {
               console.log("Document updated successfully.");
-              this.$emit("close");
               this.$router.push("/community-page");
             })
             .catch((error) => {
@@ -345,7 +367,7 @@ export default {
 
 <style scoped>
 .create-recipe-modal {
-  position: fixed;
+  position: absolute;
   top: 100px;
   left: 0;
   width: 100%;
@@ -553,6 +575,14 @@ select {
   background-color: #ececec;
   resize: vertical;
   padding: 8px;
+  font-size: 16px;
+  line-height: 1.2;
+}
+
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
 }
 
 .second1 {

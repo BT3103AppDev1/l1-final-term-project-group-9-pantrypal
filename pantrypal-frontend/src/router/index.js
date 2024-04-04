@@ -10,6 +10,7 @@ import CommunityPage from '@/views/CommunityPage.vue'
 import RecipeDetailsPage from '@/views/RecipeDetailsPage.vue'
 import NotFound from '@/views/NotFound.vue';
 import Profile from '@/views/Profile.vue';
+import CreateRecipePage from '@/views/CreateRecipePage.vue'
 
 
 
@@ -57,6 +58,12 @@ const routes = [
         path: '/profile',
         name: 'Profile',
         component: Profile,
+        meta: { requiresAuth: true}
+    },
+    {
+        path: '/create-recipe',
+        name: 'RecipeCreate',
+        component: CreateRecipePage,
         meta: { requiresAuth: true}
     },
    
