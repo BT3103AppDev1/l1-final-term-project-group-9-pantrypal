@@ -12,6 +12,7 @@
     "@fortawesome/fontawesome-free": "^6.5.1",
     "axios": "^1.6.8",
     "firebase": "^10.8.1",
+    "uuid": "^9.0.1",
     "vue": "^3.4.15",
     "vue-dropdowns": "^1.1.2",
     "vue-multiselect": "^3.0.0-alpha.2",

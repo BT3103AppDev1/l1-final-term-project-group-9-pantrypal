@@ -23,7 +23,7 @@
                         type="submit"
                         class="askButton"
                     >
-                        Ask
+                        <img src="../assets/send-icon.png" height="20px">
                     </button>
                 </form>
             </div>
@@ -50,6 +50,8 @@
           },
         },
         mounted() {
+            console.log(this.selectedRecipe);
+            console.log("mounted");
           const initialMessage = `Welcome to ChefBot! Let's get cooking with your selected recipe: ${this.selectedRecipe.recipe_name}. Do you have any questions?`;
 
           this.messages.push({
@@ -117,7 +119,6 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      font-family: 'Roboto', sans-serif;
     }
     
     h1 {
@@ -189,7 +190,7 @@
     }
     
     .userMessageContent {
-      background-color: #1877F2;
+      background-color: #9bb35f;
       color: white;
       border-top-right-radius: 0;
     }
@@ -231,10 +232,11 @@
       background-color: white;
       border-radius: 24px;
       margin-right: 8px;
+      font-family: 'DM Sans', sans-serif;
     }
     
     .askButton {
-      background-color: #1877F2;
+      background-color: #9bb35f;
       color: white;
       font-size: 16px;
       padding: 8px 16px;
@@ -246,7 +248,7 @@
     }
     
     .askButton:hover {
-      background-color: #145CB3;
+      background-color: #8da551;
     }
     
     @media (max-width: 480px) {
