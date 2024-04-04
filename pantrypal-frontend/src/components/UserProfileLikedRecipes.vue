@@ -31,8 +31,10 @@
         <!-- RecipeCards######### -->
 
         <!-- recipe card list -->
-        <div class="recipe-list">
-            <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe" />
+        <div class="recipe-container">
+            <div class="recipe-list">
+                <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe" />
+            </div>
         </div>
     </div>
 </template>
@@ -165,7 +167,9 @@ export default {
 
 <style scoped>
 .liked-recipes-page {
-    width: 100%;
+    width: 90%;
+    margin-left: 50px;
+    margin-right: 50px;
 
 }
 
@@ -250,9 +254,15 @@ export default {
     text-align: center;
 }
 
-.recipe-list {
-    margin: 1rem;
+.recipe-container {
     display: flex;
+    justify-content: center;
+
+}
+
+.recipe-list {
+    display: flex;
+    flex: 0.9;
     flex-wrap: wrap;
     align-self: flex-start;
     flex-direction: row;
