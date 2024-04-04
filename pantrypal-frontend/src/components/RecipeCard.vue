@@ -62,7 +62,7 @@ export default {
   },
   methods: {
     toggleRecipeDetails() {
-      this.$router.push({ name: "RecipeDetailsPage", params: { id: this.recipe.recipe_id }, props: { profile: "test" } });
+      this.$router.push({ name: "RecipeDetailsPage", params: { id: this.recipe.recipe_id } });
     },
   },
 };
