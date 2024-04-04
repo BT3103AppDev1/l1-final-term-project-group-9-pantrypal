@@ -9,7 +9,7 @@
           :dietaryRestrictions="dietaryRestrictions" :prev_recipe_name="prev_recipe_name" @recipeGenerated="recipeGenerated" @back="handleBack" />
         <div class="recipe-details-container" v-if="selected === 'save'">
           <RecipeDetails :selectedRecipe="recipe" :selectedIngredients="selectedIngredients" :likeExists="false"/>
-          <CircleButton logo="src/assets/chefbot-button.png" class="chefBotIcon" @click="toggleChefBot" />
+          <CircleButton logo="src/assets/chefbot-button.png" @click="toggleChefBot" />
           <ChefBot :key="componentKey" :selectedRecipe="recipe" v-show="showChefBot" @close="showChefBot = false" />
           <button @click="submitRecipe">SAVE</button>
           <button @click="regenerateRecipe" class="reloadButton">Regenerate</button>
@@ -28,7 +28,7 @@
     import GenerateLoading from "@/components/GenerateLoading.vue";
     import RecipeDetails from "@/components/RecipeDetails.vue";
     import { app, auth } from "@/firebase.js";
-    import { getFirestore, doc, setDoc } from "firebase/firestore";
+    import { getFirestore, doc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
     import {v4 as uuidv4} from 'uuid';
 
     const db = getFirestore(app);
@@ -123,6 +123,16 @@
                     this.recipe.recipe_id = recipe_id;
                     console.log(this.recipe);
                     const recipeRef = await setDoc(doc(db, "all_recipes", recipe_id), this.recipe);
+                    await updateDoc(doc(db, "users", this.recipe.user_id), {
+                        my_cookbook: arrayUnion(this.recipe.recipe_id),
+                    });
+                    
+                    console.log(this.categories);
+                    this.categories.forEach((cat) => 
+                        updateDoc(doc(db, "categories", cat), {
+                            recipes: arrayUnion(this.recipe.recipe_id),
+                        })
+                    );
                 } catch (error) {
                     console.error("Error adding document:", error);
                 }
@@ -144,10 +154,6 @@
 }
 
 .recipe-details-container {
-    padding: 2rem;
-}
-
-.recipe-details-container {
   position: relative;
   padding: 2rem;
   min-height:400px;
@@ -166,17 +172,9 @@
   bottom: 0px;
   right: 20px;
   z-index: 10;
-}
-
-.reloadButton {
-  font-size: 15px;
   color: white;
   text-align: center;
   line-height: 32px; 
-}
-
-.chefBotIcon {
-  z-index: 100;
 }
 
 </style>
