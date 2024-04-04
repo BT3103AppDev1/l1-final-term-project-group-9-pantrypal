@@ -25,9 +25,8 @@
                     <input
                         v-model="ingredients[index].name"
                         type="text"
-                        placeholder="e.g. Apple"
-                        :class="{'input-required': !ingredients[index].name.trim()}"
-                        required
+                        placeholder="e.g. Chicken"
+                        required    
                     />
                 </div>
                 <div>
@@ -35,8 +34,7 @@
                     <input
                         v-model="ingredients[index].quantity"
                         type="text"
-                        placeholder="e.g. 10g"
-                        :class="{'input-required': !ingredients[index].quantity.trim()}"
+                        placeholder="e.g. 100g"
                         required
                     />
                 </div>
@@ -57,14 +55,14 @@
         <button
         type="submit"
         class="generate-button"
-        @click="generateRecipe"
-        :disabled="!validateIngredients()">
+        @click="generateRecipe">
             Generate Recipe
         </button>
     </div>
 </template>
 <script>
 import Multiselect from 'vue-multiselect'
+import { fetchCategories } from '@/firebase.js';
 
 export default {
     components: {
@@ -73,7 +71,7 @@ export default {
     name: 'InputLeftover',
     data() {
         return {
-            options: ['Chinese', 'Western'],
+            options: [],
             value: null,
             dietaryRestrictions: '',
             ingredients: [
@@ -87,6 +85,9 @@ export default {
                 }
             ],
         };
+    },
+    async mounted() {
+        this.options = await fetchCategories();
     },
     methods: {
         addIngredient() {
@@ -104,11 +105,17 @@ export default {
         generateRecipe() {
             console.log('Generating recipe...');
             console.log(this.value);
-            this.$emit('generate-recipe', {
-                categories: this.value,
-                dietaryRestrictions: this.dietaryRestrictions,
-                ingredients: this.ingredients,
-            })
+
+            if (this.validateIngredients() === false) {
+                // Show alert if any ingredient fields are empty
+                alert('Please fill in all leftover names and quantities.');
+            } else {
+                this.$emit('generate-recipe', {
+                    categories: this.value,
+                    dietaryRestrictions: this.dietaryRestrictions,
+                    ingredients: this.ingredients,
+                })
+            }
         },
     },
 };

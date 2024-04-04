@@ -29,6 +29,7 @@ export default {
         right: 20px;
         background-color: #BD6B16;
         cursor: pointer;
+        z-index: 1000;
     }
 
     .logo {
