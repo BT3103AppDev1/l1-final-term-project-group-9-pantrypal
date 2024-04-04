@@ -47,13 +47,14 @@
     <!-- RecipeCards######### -->
 
     <!-- recipe card list -->
-    <div class="recipe-list">
-      <RecipeCard
-        v-for="recipe in filteredRecipes"
-        :key="recipe.recipe_id"
-        :recipe="recipe"
-        @toggle="toggleRecipeDetails"
-      />
+    <div class="recipe-container">
+      <div class="recipe-list">
+        <RecipeCard
+          v-for="recipe in filteredRecipes"
+          :key="recipe.recipe_id"
+          :recipe="recipe"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -124,7 +125,13 @@ export default {
     async fetchRecipes() {
       const userDocSnapshot = await getDoc(doc(db, "users", auth.currentUser.uid));
       const likedRecipes = userDocSnapshot.data().liked_recipes || [];
-      this.updateLikedRecipes(likedRecipes);
+      this.filteredRecipes = await Promise.all(
+        likedRecipes.map(async (recipeId) => {
+          const recipeDocSnapshot = await getDoc(doc(db, "all_recipes", recipeId));
+          return recipeDocSnapshot.data();
+        })
+      );
+      this.allLikedRecipes = this.filteredRecipes;
       this.sortByMostRecent();
       this.sortAllByMostRecent();
     },
@@ -305,6 +312,11 @@ export default {
 .dropdown-menu {
   width: 150px;
   text-align: center;
+}
+
+.recipe-container {
+  display: flex;
+  justify-content: center;
 }
 
 .recipe-list {

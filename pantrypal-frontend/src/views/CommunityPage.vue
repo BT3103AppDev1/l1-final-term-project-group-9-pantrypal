@@ -148,6 +148,9 @@ export default {
     },
     toggleCreateRecipe() {
       this.showCreateRecipe = !this.showCreateRecipe;
+      if (this.showCreateRecipe) {
+        this.router.push("/create-recipe");
+      }
     },
 
     toggleRecipeDetails(recipe) {
