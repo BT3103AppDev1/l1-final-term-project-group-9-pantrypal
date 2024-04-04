@@ -4,7 +4,9 @@
       <RecipeImage :path="recipe.recipe_img_url" :ifCard="true" />
     </div>
     <div class="recipe-details">
-      <h2>{{ recipe.recipe_name }}</h2>
+      <div class="recipe-name-container">
+        <text class="recipe-name">{{ recipe.recipe_name }}</text>
+      </div>
       <div class="info">
         <span
           v-for="(category, index) in recipe.categories"
@@ -13,12 +15,15 @@
           >{{ category }}</span
         >
       </div>
-      <div class="user-id">
-        <p>@{{ userName }}</p>
+      <div class="bottomRow">
+        <div class="user-id">
+          <p>@{{ userName }}</p>
+        </div>
+
+        <div class="like">
+          <LikeButton :recipe="recipe" />
+        </div>
       </div>
-    </div>
-    <div class="like">
-      <LikeButton :recipe="recipe" />
     </div>
   </div>
 </template>
@@ -66,11 +71,7 @@ export default {
   },
   methods: {
     toggleRecipeDetails() {
-      this.$router.push({
-        name: "RecipeDetailsPage",
-        params: { id: this.recipe.recipe_id },
-        props: { profile: "test" },
-      });
+      this.$router.push({ name: "RecipeDetailsPage", params: { id: this.recipe.recipe_id } });
     },
   },
 };
@@ -78,17 +79,15 @@ export default {
 
 <style scoped>
 .recipe-card {
-  width: 350px;
-  height: 300px;
+  width: 300px;
+  height: 350px;
   border: 1px solid #ccc;
-  border-radius: 8px;
-  overflow: hidden;
+  border-radius: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
-  line-height: 1;
   display: flex;
   flex-direction: column;
   margin: 20px;
+  overflow: hidden;
 }
 
 .recipe-card:hover {
@@ -98,7 +97,7 @@ export default {
 }
 
 .recipe-image {
-  flex: 1;
+  flex: 0.6;
   overflow: hidden;
 }
 
@@ -106,26 +105,38 @@ export default {
   width: 100%;
   height: 100%;
   object-fit: cover;
+
 }
 
 .recipe-details {
-  padding-left: 20px;
+  padding-left: 15px;
+  padding-right: 15px;
   background-color: #cbdf99;
-  flex: 0.5;
+  flex: 0.4;
+  display: flex;
+  flex-direction: column;
+
 }
 
-.recipe-details h2,
-.recipe-details .info,
-.recipe-details p {
-  margin-bottom: 5px;
+.recipe-name-container {
+  flex: 0.55;
+  font-size: 20px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
 }
+
 
 .info {
+  flex: 0.43;
   display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-self: flex-start;
 }
 
 .category-bubble {
-  display: inline-block;
+  height: 13px;
   background-color: #fffce2;
   color: #333;
   padding: 5px 10px;
@@ -134,18 +145,27 @@ export default {
   font-size: 0.75rem;
 }
 
+.bottomRow {
+  height: 30px;
+  display: flex;
+  flex-direction: row;
+  flex: 0.02;
+  align-items: center;
+
+}
+
 .user-id {
   font-style: italic;
   font-size: 0.75rem;
+  flex: 0.8
 }
 
 .like {
-  padding-bottom: 10px;
-  display: inline-flex;
   align-items: center;
   border: none;
   cursor: pointer;
   background-color: #cbdf99;
+  flex: 0.1
 }
 
 .like-button {

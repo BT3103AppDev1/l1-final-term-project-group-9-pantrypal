@@ -1,3 +1,5 @@
+<!-- REDUDANT NO LONGER IN USE -->
+
 <template>
   <div class="create-recipe-modal">
     <div class="recipe-form">
@@ -261,11 +263,10 @@ export default {
       ) {
         // at least one field is empty
         alert(
-          "Please fill in all fields before submitting the recipe and ensure they are valid."
+          "Please fill in all fields properly before submitting the recipe."
         );
         return false;
       }
-      // form is valid
       return true;
     },
     submitRecipe() {

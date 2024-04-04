@@ -1,14 +1,12 @@
 <template>
+
   <div class="like">
     <button class="like-button" @click.stop="toggleLikeRecipe">
-      <i
-        class="fa"
-        :class="['fa-thumbs-up', { liked: !recipeIsLiked }]"
-        aria-hidden="true"
-      ></i>
+      <i class="fa" :class="['fa-thumbs-up', { liked: !recipeIsLiked }]" aria-hidden="true"></i>
     </button>
     <span>{{ recipe.like_count }}</span>
   </div>
+
 </template>
 
 <script>
@@ -92,12 +90,13 @@ export default {
 <style scoped>
 .like {
   padding-left: 15px;
-  padding-bottom: 10px;
+
   display: inline-flex;
   align-items: center;
   border: none;
   cursor: pointer;
   background: none;
+
 }
 
 .like-button {

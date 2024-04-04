@@ -46,14 +46,12 @@
 
     <!-- RecipeCards######### -->
 
-    <!-- recipe card list -->
-    <div class="recipe-list">
-      <RecipeCard
-        v-for="recipe in filteredRecipes"
-        :key="recipe.recipe_id"
-        :recipe="recipe"
-        @toggle="toggleRecipeDetails"
-      />
+        <!-- recipe card list -->
+        <div class="recipe-container">
+            <div class="recipe-list">
+                <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe" />
+            </div>
+        </div>
     </div>
   </div>
 </template>
@@ -132,14 +130,20 @@ export default {
       this.showCreateRecipe = !this.showCreateRecipe;
     },
 
-    toggleRecipeDetails(recipe) {
-      recipe.showDetails = !recipe.showDetails;
-      this.selectedRecipe = recipe;
-    },
-    closeModal() {
-      this.selectedRecipe = null;
-      this.selectedIngredients = [];
-    },
+    methods: {
+        async fetchRecipes() {
+            const userDocSnapshot = await getDoc(doc(db, "users", auth.currentUser.uid));
+            const likedRecipes = userDocSnapshot.data().liked_recipes || [];
+            this.filteredRecipes = await Promise.all(
+                likedRecipes.map(async (recipeId) => {
+                    const recipeDocSnapshot = await getDoc(doc(db, "all_recipes", recipeId));
+                    return recipeDocSnapshot.data();
+                })
+            );
+            this.allLikedRecipes = this.filteredRecipes;
+            this.sortByMostRecent();
+            this.sortAllByMostRecent();
+        },
 
     filterByNameOrIngredients() {
       this.filteredRecipes = this.allLikedRecipes.filter((recipe) => {
@@ -223,7 +227,9 @@ export default {
 
 <style scoped>
 .liked-recipes-page {
-  width: 100%;
+    width: 90%;
+    margin-left: 50px;
+    margin-right: 50px;
 }
 
 .filterBar {
@@ -307,11 +313,17 @@ export default {
   text-align: center;
 }
 
+.recipe-container {
+    display: flex;
+    justify-content: center;
+
+}
+
 .recipe-list {
-  margin: 1rem;
-  display: flex;
-  flex-wrap: wrap;
-  align-self: flex-start;
-  flex-direction: row;
+    display: flex;
+    flex: 0.9;
+    flex-wrap: wrap;
+    align-self: flex-start;
+    flex-direction: row;
 }
 </style>
