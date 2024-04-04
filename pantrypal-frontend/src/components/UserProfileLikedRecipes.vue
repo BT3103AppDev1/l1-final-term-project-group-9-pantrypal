@@ -32,16 +32,8 @@
 
         <!-- recipe card list -->
         <div class="recipe-list">
-            <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe"
-                @toggle="toggleRecipeDetails" />
+            <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe" />
         </div>
-        <!-- change to Page
-    <RecipeDetailsWindow
-      v-if="selectedRecipe"
-      :selectedRecipe="selectedRecipe"
-      :selectedIngredients="selectedIngredients"
-      :closeModal="closeModal"
-    />-->
     </div>
 </template>
 
@@ -111,18 +103,6 @@ export default {
             this.allLikedRecipes = this.filteredRecipes;
             this.sortByMostRecent();
             this.sortAllByMostRecent();
-        },
-        toggleCreateRecipe() {
-            this.showCreateRecipe = !this.showCreateRecipe;
-        },
-
-        toggleRecipeDetails(recipe) {
-            recipe.showDetails = !recipe.showDetails;
-            this.selectedRecipe = recipe;
-        },
-        closeModal() {
-            this.selectedRecipe = null;
-            this.selectedIngredients = [];
         },
 
         filterByNameOrIngredients() {
