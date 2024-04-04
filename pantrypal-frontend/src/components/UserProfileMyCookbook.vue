@@ -1,5 +1,5 @@
 <template>
-    <div class="liked-recipes-page">
+    <div class="myCookbook-page">
         <div class="filterBar">
             <div class="search-bar">
                 <input type="text" class="search-input" placeholder="Search name or ingredients..."
@@ -31,8 +31,10 @@
         <!-- RecipeCards######### -->
 
         <!-- recipe card list -->
-        <div class="recipe-list">
-            <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe" />
+        <div class="recipe-container">
+            <div class="recipe-list">
+                <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe" />
+            </div>
         </div>
     </div>
 </template>
@@ -165,9 +167,10 @@ export default {
 </script>
 
 <style scoped>
-.liked-recipes-page {
-    width: 100%;
-
+.myCookbook-page {
+    width: 90%;
+    margin-left: 50px;
+    margin-right: 50px;
 }
 
 .filterBar {
@@ -251,8 +254,15 @@ export default {
     text-align: center;
 }
 
+.recipe-container {
+    display: flex;
+    justify-content: center;
+
+}
+
 .recipe-list {
     margin: 1rem;
+    flex: 0.9;
     display: flex;
     flex-wrap: wrap;
     align-self: flex-start;
