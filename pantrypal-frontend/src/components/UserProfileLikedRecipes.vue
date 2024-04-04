@@ -201,11 +201,19 @@ export default {
       likedRecipes.forEach(async (recipeId) => {
         const recipeDocSnapshot = await getDoc(doc(db, "all_recipes", recipeId));
         const recipeData = recipeDocSnapshot.data();
-        if (!this.allLikedRecipes.some(recipe => recipe.recipe_id === recipeData.recipe_id)) {
-            this.allLikedRecipes.push(recipeData);
+        if (
+          !this.allLikedRecipes.some(
+            (recipe) => recipe.recipe_id === recipeData.recipe_id
+          )
+        ) {
+          this.allLikedRecipes.push(recipeData);
         }
-        if (!this.filteredRecipes.some(recipe => recipe.recipe_id === recipeData.recipe_id)) {
-            this.filteredRecipes.push(recipeData);
+        if (
+          !this.filteredRecipes.some(
+            (recipe) => recipe.recipe_id === recipeData.recipe_id
+          )
+        ) {
+          this.filteredRecipes.push(recipeData);
         }
       });
     },
