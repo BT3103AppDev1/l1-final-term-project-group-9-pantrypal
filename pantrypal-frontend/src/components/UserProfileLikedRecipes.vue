@@ -31,17 +31,11 @@
         <!-- RecipeCards######### -->
 
         <!-- recipe card list -->
-        <div class="recipe-list">
-            <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe"
-                @toggle="toggleRecipeDetails" />
+        <div class="recipe-container">
+            <div class="recipe-list">
+                <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe" />
+            </div>
         </div>
-        <!-- change to Page
-    <RecipeDetailsWindow
-      v-if="selectedRecipe"
-      :selectedRecipe="selectedRecipe"
-      :selectedIngredients="selectedIngredients"
-      :closeModal="closeModal"
-    />-->
     </div>
 </template>
 
@@ -112,18 +106,6 @@ export default {
             this.sortByMostRecent();
             this.sortAllByMostRecent();
         },
-        toggleCreateRecipe() {
-            this.showCreateRecipe = !this.showCreateRecipe;
-        },
-
-        toggleRecipeDetails(recipe) {
-            recipe.showDetails = !recipe.showDetails;
-            this.selectedRecipe = recipe;
-        },
-        closeModal() {
-            this.selectedRecipe = null;
-            this.selectedIngredients = [];
-        },
 
         filterByNameOrIngredients() {
             this.filteredRecipes = this.allLikedRecipes.filter((recipe) => {
@@ -185,7 +167,9 @@ export default {
 
 <style scoped>
 .liked-recipes-page {
-    width: 100%;
+    width: 90%;
+    margin-left: 50px;
+    margin-right: 50px;
 
 }
 
@@ -270,9 +254,15 @@ export default {
     text-align: center;
 }
 
-.recipe-list {
-    margin: 1rem;
+.recipe-container {
     display: flex;
+    justify-content: center;
+
+}
+
+.recipe-list {
+    display: flex;
+    flex: 0.9;
     flex-wrap: wrap;
     align-self: flex-start;
     flex-direction: row;
