@@ -200,16 +200,26 @@ import {
 import { ref as storageRef } from "firebase/storage";
 import {
   getFirestore,
+  doc,
+  setDoc,
   addDoc,
   collection,
   updateDoc,
+  arrayUnion,
 } from "firebase/firestore";
+import { v4 as uuidv4 } from "uuid";
+import { useToast } from "vue-toastification";
+import "vue-toastification/dist/index.css";
 
 export default {
   components: {
     Multiselect,
     TopBar,
     SaveRecipeButton,
+  },
+  setup() {
+    const toast = useToast();
+    return { toast };
   },
   data() {
     return {
@@ -297,28 +307,57 @@ export default {
         !this.recipeData.recipe_name ||
         !this.recipeData.description ||
         !this.recipeData.allergen_info ||
-        !this.recipeData.imageSrc ||
-        // !this.recipeData.cook_time_hours ||
-        !this.recipeData.cook_time_minutes ||
+        // !this.recipeData.imageSrc ||
+        (!this.recipeData.cook_time_hours &&
+          !this.recipeData.cook_time_minutes) ||
         !this.recipeData.category.length ||
         !this.recipeData.serving_size ||
         !this.recipeData.ingredients.length ||
         !this.recipeData.directions.length
       ) {
         // at least one field is empty
-        alert(
-          "Please fill in all fields properly before submitting the recipe."
-        );
+        this.triggerToast();
+        // alert(
+        //   "Please fill in all fields properly before submitting the recipe."
+        // );
         return false;
       }
       return true;
     },
-    submitRecipe() {
+    triggerToast() {
+      this.toast.error(
+        "Please fill in all fields properly before submitting the recipe.",
+        {
+          position: "top-center",
+          hideProgressBar: true,
+        }
+      );
+    },
+    triggerToast2() {
+      this.toast.error("Recipe could not be saved.", {
+        position: "top-center",
+        hideProgressBar: true,
+      });
+    },
+    showToast() {
+      this.toast.success("Recipe was successfully created!", {
+        timeout: 2000,
+        position: "top-center",
+        hideProgressBar: true,
+      });
+    },
+    async submitRecipe() {
       if (!this.validateForm()) {
         return;
       }
       const user = auth.currentUser;
       const userId = user ? user.uid : "";
+      const recipe_id = uuidv4().toString();
+
+      if (!this.recipeData.imageSrc) {
+        this.recipeData.imageSrc =
+          "https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1";
+      }
 
       const recipe = {
         allergens: this.recipeData.allergen_info
@@ -334,7 +373,7 @@ export default {
         directions: this.recipeData.directions.map((d) => d.text),
         ingredients: this.recipeData.ingredients,
         like_count: 0,
-        recipe_id: "", //dont know if this works
+        recipe_id: recipe_id,
         recipe_img_url: this.recipeData.imageSrc,
         recipe_name: this.recipeData.recipe_name,
         serving_size: parseInt(this.recipeData.serving_size),
@@ -343,23 +382,46 @@ export default {
 
       const db = getFirestore(app);
       const colRef = collection(db, "all_recipes");
-      addDoc(colRef, recipe)
-        .then((docRef) => {
-          console.log("Document written with ID: ", docRef.id);
-
-          // Update the recipe document with the recipe_id
-          updateDoc(docRef, { recipe_id: docRef.id })
-            .then(() => {
-              console.log("Document updated successfully.");
-              this.$router.push("/community-page");
-            })
-            .catch((error) => {
-              console.error("Error updating document: ", error);
-            });
-        })
-        .catch((error) => {
-          console.error("Error adding document: ", error);
+      try {
+        const recipeRef = await setDoc(
+          doc(db, "all_recipes", recipe_id),
+          recipe
+        );
+        await updateDoc(doc(db, "users", recipe.user_id), {
+          my_cookbook: arrayUnion(recipe.recipe_id),
         });
+
+        console.log(this.categories);
+        this.recipeData.categories.forEach((cat) =>
+          updateDoc(doc(db, "categories", cat), {
+            recipes: arrayUnion(recipe.recipe_id),
+          })
+        );
+        console.log("Document updated successfully.");
+        this.$router.push("/community-page");
+        this.showToast();
+      } catch (error) {
+        console.error("Error adding document:", error);
+        this.triggerToast2();
+      }
+      //   addDoc(colRef, recipe)
+      //     .then((docRef) => {
+      //       console.log("Document written with ID: ", docRef.id);
+
+      //       // Update the recipe document with the recipe_id
+      //       updateDoc(docRef, { recipe_id: docRef.id })
+      //         .then(() => {
+      //           console.log("Document updated successfully.");
+      //           this.$router.push("/community-page");
+      //           this.showToast();
+      //         })
+      //         .catch((error) => {
+      //           console.error("Error updating document: ", error);
+      //         });
+      //     })
+      //     .catch((error) => {
+      //       console.error("Error adding document: ", error);
+      //     });
     },
   },
 };
@@ -377,7 +439,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow-y: auto;
+  overflow-y: visible;
 }
 
 .recipe-form {
@@ -387,11 +449,15 @@ export default {
   border-radius: 8px;
   width: 80%;
   height: 90%;
-  overflow-y: auto;
+  overflow-y: visible;
 }
 
 .recipe-form label {
   margin-bottom: 5px;
+}
+
+.recioe-form-content {
+  position: fixed;
 }
 
 .createRecipeRow {
