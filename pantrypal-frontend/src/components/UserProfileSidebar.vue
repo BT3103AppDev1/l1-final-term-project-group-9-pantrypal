@@ -8,7 +8,6 @@
           alt="profile pic"
           class="profile"
         />
-        <!-- <img :src="profilePicUrl || userData.profile_img_url || '../assets/profile.svg'" alt="profile pic" class="profile" /> -->
         <input type="file" @change="onFileSelected" hidden ref="fileInput" />
         <button @click="triggerFileInput">Change Picture</button>
       </div>

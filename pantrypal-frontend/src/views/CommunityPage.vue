@@ -9,11 +9,7 @@
           placeholder="Search name or ingredients..."
           v-model="searchQuery"
         />
-        <img
-          class="search-button"
-          src="../assets/search-icon.svg"
-          alt="Search Icon"
-        />
+        <img class="search-button" src="../assets/search-icon.svg" alt="Search Icon" />
       </div>
       <div class="category-bar-text">
         <p>Category:</p>
@@ -53,6 +49,9 @@
 
     <!-- recipe card list -->
     <div class="recipe-list">
+      <div v-if="filteredRecipes.length === 0">
+        <p>No results found</p>
+      </div>
       <RecipeCard
         v-for="recipe in filteredRecipes"
         :key="recipe.recipe_id"
@@ -173,9 +172,7 @@ export default {
           .includes(this.searchQuery.toLowerCase());
         let ingredientsMatch = false;
         recipe.ingredients.forEach((ingredient) => {
-          if (
-            ingredient.toLowerCase().includes(this.searchQuery.toLowerCase())
-          ) {
+          if (ingredient.toLowerCase().includes(this.searchQuery.toLowerCase())) {
             ingredientsMatch = true;
           }
         });
@@ -193,9 +190,7 @@ export default {
         const recipesIDlist = docSnap.data().recipes;
         if (recipesIDlist.length != 0) {
           for (let x in recipesIDlist) {
-            const docSnap = await getDoc(
-              doc(db, "all_recipes", recipesIDlist[x])
-            );
+            const docSnap = await getDoc(doc(db, "all_recipes", recipesIDlist[x]));
             this.filteredRecipes.push(docSnap.data());
           }
         }

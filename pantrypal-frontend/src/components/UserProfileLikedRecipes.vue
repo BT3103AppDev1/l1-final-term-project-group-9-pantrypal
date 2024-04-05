@@ -111,7 +111,6 @@ export default {
     this.fetchRecipes();
     this.sortAllByMostRecent();
 
-    // Set up real-time listener for liked recipes
     const userDocRef = doc(db, "users", auth.currentUser.uid);
     onSnapshot(userDocRef, (doc) => {
       if (doc.exists()) {
