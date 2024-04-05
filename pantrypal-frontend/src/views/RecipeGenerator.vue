@@ -133,12 +133,13 @@
                         my_cookbook: arrayUnion(this.recipe.recipe_id),
                     });
                     
-                    console.log(this.categories);
-                    this.categories.forEach((cat) => 
+                    if (this.categories) {
+                        this.categories.forEach((cat) => 
                         updateDoc(doc(db, "categories", cat), {
                             recipes: arrayUnion(this.recipe.recipe_id),
-                        })
-                    );
+                        }));
+                    }
+                    
                     this.disabled = true;
                     this.triggerToast();
                 } catch (error) {

@@ -2,11 +2,6 @@
     <div id="app">
       <div class="top-bar">
         <img src="../assets/logo.jpg" alt="PantryPal Logo" class="logo">
-        <transition name="fade">
-          <div v-if="showPopup" class="popup-notification">
-              You need to be logged in to access that page.
-          </div>
-        </transition>
         <div class="menu">
           <button class="btn-login" @click="goToLogin">Login</button>
           <button class="btn-signup" @click="goToSignUp">Sign Up</button>
@@ -27,27 +22,35 @@
   </template>
   
   <script>
+  import { useToast } from "vue-toastification";
+  import "vue-toastification/dist/index.css";
+
   export default {
     name: 'LandingPage',
-    data() {
-      return {
-        showPopup: false,
-      };
+    setup() {
+        const toast = useToast();
+        return { toast };
     },
     methods: {
         goToSignUp() {
-        this.$router.push('/signup');
+            this.$router.push('/signup');
         },
         goToLogin() {
-        this.$router.push('/login');
+            this.$router.push('/login');
         },
+        triggerToast() {
+            this.toast.error("You need to be logged in to access that page.", {
+                timeout: 2000,
+                position: 'top-center',
+                hideProgressBar: true,
+            });
+        }
     },
     created() {
       if (this.$route.query.redirected) {
-        this.showPopup = true;
-        setTimeout(() => this.showPopup = false, 4000);
+        this.triggerToast();
       }
-    }
+    },
 };
   </script>
   
