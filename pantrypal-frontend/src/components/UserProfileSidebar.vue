@@ -150,33 +150,17 @@ export default {
   height: fit-content;
 }
 
+.profile-pic {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .profile-pic img {
   width: 120px;
   height: 120px;
   border-radius: 60px;
   margin-bottom: 2rem;
-}
-
-.personal-details {
-  margin-bottom: 3rem;
-}
-
-.header {
-  cursor: pointer;
-  margin-bottom: 2rem;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-.header:hover {
-  background-color: #a7bf6a;
-  border-radius: 16px;
-  color: #3c1f11;
-}
-
-h3 {
-  color: white;
-  margin: 0 auto;
-  padding: 5px 0px;
 }
 
 .user-name {
@@ -187,10 +171,26 @@ h3 {
   color: white;
 }
 
+.personal-details {
+  margin-bottom: 3rem;
+}
+
+.header {
+  cursor: pointer;
+  padding: 8px 0px;
+  margin: 2rem 0px;
+  color: white;
+  /* transition: background-color 0.3s, color 0.3s; */
+}
+
+h3 {
+  color: white;
+  margin: 0 auto;
+}
+
 .selected {
   background-color: #a7bf6a;
   width: 100%;
-  padding: 5px 5px;
   border-radius: 16px;
   color: #3c1f11;
 }
