@@ -10,9 +10,11 @@
         <div class="recipe-details-container" v-if="selected === 'save'">
           <RecipeDetails :selectedRecipe="recipe" :selectedIngredients="selectedIngredients" :likeExists="false"/>
           <CircleButton logo="src/assets/chefbot-button.png" @click="toggleChefBot" />
-          <ChefBot :key="componentKey" :selectedRecipe="recipe" v-show="showChefBot" @close="showChefBot = false" />
-          <button @click="submitRecipe">SAVE</button>
-          <button @click="regenerateRecipe" class="reloadButton">Regenerate</button>
+          <ChefBot :key="componentKey" :selectedRecipe="recipe" v-show="showChefBot" @close="showChefBot = false" @togglePublishToCommunity="togglePublishToCommunity"/>
+            <div class="button-container">
+                <SaveRecipeButton @save-recipe="submitRecipe" :disabled="disabled"/>
+                <button @click="regenerateRecipe" class="reloadButton">Regenerate</button>
+            </div> 
         </div>
       </div>
     </div>
@@ -27,9 +29,11 @@
     import RecipeGeneratorSidebar from "@/components/RecipeGeneratorSidebar.vue";
     import GenerateLoading from "@/components/GenerateLoading.vue";
     import RecipeDetails from "@/components/RecipeDetails.vue";
+    import SaveRecipeButton from "@/components/SaveRecipeButton.vue";
     import { app, auth } from "@/firebase.js";
     import { getFirestore, doc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
     import {v4 as uuidv4} from 'uuid';
+    import { useToast } from "vue-toastification";
 
     const db = getFirestore(app);
 
@@ -43,6 +47,11 @@
             RecipeGeneratorSidebar,
             GenerateLoading,
             RecipeDetails,
+            SaveRecipeButton,
+        },
+        setup() {
+            const toast = useToast();
+            return { toast };
         },
         data() {
             return {
@@ -54,6 +63,7 @@
             recipe: {},
             selectedIngredients: [],
             prev_recipe_name: null,
+            disabled: false,
             };
         },
         methods: {
@@ -61,6 +71,7 @@
                 this.showChefBot = !this.showChefBot;
             },
             regenerateRecipe() {
+                this.disabled = false;
                 this.selected = 'generate';
             },
             handleBack() {
@@ -87,7 +98,7 @@
                     this.recipe.user_id = user_id;
                     this.recipe.created_date = new Date();
                     this.prev_recipe_name = this.recipe.recipe_name;
-
+                    this.recipe.community = false;
                     this.selectedIngredients = this.recipe.ingredients.map(() => false);
 
                     // Check each ingredient in the recipe if it's present in this.ingredients
@@ -112,16 +123,11 @@
             },
             async submitRecipe(){
                 const recipe_id = uuidv4().toString();
-                this.recipe.community = false;
                 this.recipe.like_count = 0;
                 this.recipe.recipe_id = recipe_id;
                 console.log(this.recipe);
 
                 try {
-                    this.recipe.community = false;
-                    this.recipe.like_count = 0;
-                    this.recipe.recipe_id = recipe_id;
-                    console.log(this.recipe);
                     const recipeRef = await setDoc(doc(db, "all_recipes", recipe_id), this.recipe);
                     await updateDoc(doc(db, "users", this.recipe.user_id), {
                         my_cookbook: arrayUnion(this.recipe.recipe_id),
@@ -133,9 +139,28 @@
                             recipes: arrayUnion(this.recipe.recipe_id),
                         })
                     );
+                    this.disabled = true;
+                    this.triggerToast();
                 } catch (error) {
                     console.error("Error adding document:", error);
                 }
+            },
+            triggerToast() {
+                this.toast.success("Recipe saved successfully!", {
+                    position: "top-center",
+                    timeout: 2000,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                });
+            },
+            togglePublishToCommunity(props) {
+                this.recipe.community = props;
             }
         },
     };
@@ -159,7 +184,7 @@
   min-height:400px;
 }
 
-.reloadButton {
+/* .reloadButton {
   background-color: #a7bf6a;
   border: none;
   text-decoration: none;
@@ -168,13 +193,35 @@
   border-radius: 10px;
   width: 90px;
   height: 32px;
-  position: absolute;
-  bottom: 0px;
-  right: 20px;
-  z-index: 10;
   color: white;
   text-align: center;
   line-height: 32px; 
+} */
+
+.reloadButton {
+  background-color: #3C1F11;
+  border: none;
+  color: #CBDF99;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 15px;
+  width: auto;
+  height: auto;
+  margin: 0 20px;
+  font-size: 14px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
+
+.reloadButton:hover {
+  background-color: #321b10;
+}
+
+.button-container {
+    display: flex;
+    justify-content: right;
+    margin-top: 20px;
+}
+
 
 </style>

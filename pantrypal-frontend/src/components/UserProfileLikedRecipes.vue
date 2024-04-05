@@ -159,45 +159,43 @@ export default {
         return nameMatch || ingredientsMatch;
       });
     },
+        async filterUsingCategory(payload) {
+            this.category = payload;
+            if (this.category.name == "All") {
+                this.filteredRecipes = this.allLikedRecipes;
+            } else {
+                this.filteredRecipes = [];
+                const docSnap = await getDoc(doc(db, "categories", payload.name));
+                const recipesIDlist = docSnap.data().recipes;
 
-    async filterUsingCategory(payload) {
-      this.category = payload;
-      if (this.category.name == "All") {
-        this.filteredRecipes = this.allLikedRecipes;
-      } else {
-        this.filteredRecipes = [];
-        const docSnap = await getDoc(doc(db, "categories", payload.id));
-        const recipesIDlist = docSnap.data().recipes;
-        if (recipesIDlist.length != 0) {
-          for (let x in recipesIDlist) {
-            const docSnap = await getDoc(doc(db, "all_recipes", recipesIDlist[x]));
-            this.filteredRecipes.push(docSnap.data());
-          }
-        }
-      }
-    },
-    filterUsingSort(payload) {
-      this.sort = payload;
-      if (payload.name == "Most Recent") {
-        this.sortByMostRecent();
-      } else {
-        this.sortByMostLiked();
-      }
-    },
-    sortAllByMostRecent() {
-      this.allLikedRecipes = this.allLikedRecipes.sort((a, b) => {
-        return b.created_date.toDate() - a.created_date.toDate();
-      });
-    },
-    sortByMostRecent() {
-      this.filteredRecipes = this.filteredRecipes.sort((a, b) => {
-        return b.created_date.toDate() - a.created_date.toDate();
-      });
-    },
-    sortByMostLiked() {
-      this.filteredRecipes = this.filteredRecipes.sort((a, b) => {
-        return b.like_count - a.like_count;
-      });
+                if (recipesIDlist.length != 0) {
+                    this.filteredRecipes = this.allLikedRecipes.filter(recipe => recipesIDlist.includes(recipe.recipe_id));
+                }
+            }
+        },
+        filterUsingSort(payload) {
+            this.sort = payload;
+            if (payload.name == "Most Recent") {
+                this.sortByMostRecent();
+            } else {
+                this.sortByMostLiked();
+            }
+        },
+        sortAllByMostRecent() {
+            this.allLikedRecipes = this.allLikedRecipes.sort((a, b) => {
+                return b.created_date.toDate() - a.created_date.toDate();
+            });
+        },
+        sortByMostRecent() {
+            this.filteredRecipes = this.filteredRecipes.sort((a, b) => {
+                return b.created_date.toDate() - a.created_date.toDate();
+            });
+        },
+        sortByMostLiked() {
+            this.filteredRecipes = this.filteredRecipes.sort((a, b) => {
+                return b.like_count - a.like_count;
+            });
+        },
     },
     updateLikedRecipes(likedRecipes) {
       this.filteredRecipes = [];
@@ -228,8 +226,6 @@ export default {
 <style scoped>
 .liked-recipes-page {
     width: 90%;
-    margin-left: 50px;
-    margin-right: 50px;
 }
 
 .filterBar {
@@ -316,7 +312,6 @@ export default {
 .recipe-container {
     display: flex;
     justify-content: center;
-
 }
 
 .recipe-list {

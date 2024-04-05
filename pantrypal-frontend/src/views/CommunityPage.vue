@@ -3,31 +3,16 @@
     <TopBar :ifFeed="true" />
     <div class="filterBar">
       <div class="search-bar">
-        <input
-          type="text"
-          class="search-input"
-          placeholder="Search name or ingredients..."
-          v-model="searchQuery"
-        />
-        <img
-          class="search-button"
-          src="../assets/search-icon.svg"
-          alt="Search Icon"
-        />
+        <input type="text" class="search-input" placeholder="Search name or ingredients..." v-model="searchQuery" />
+        <img class="search-button" src="../assets/search-icon.svg" alt="Search Icon" />
       </div>
       <div class="category-bar-text">
         <p>Category:</p>
       </div>
       <div class="category-bar-dropdown">
         <div class="dropdown-container">
-          <dropdown
-            class="my-dropdown-toggle"
-            :options="arrayOfCategories"
-            :selected="category"
-            :placeholder="'All'"
-            :closeOnOutsideClick="true"
-            v-on:updateOption="filterUsingCategory"
-          >
+          <dropdown class="my-dropdown-toggle" :options="arrayOfCategories" :selected="category" :placeholder="'All'"
+            :closeOnOutsideClick="true" v-on:updateOption="filterUsingCategory">
           </dropdown>
         </div>
       </div>
@@ -36,14 +21,8 @@
       </div>
       <div class="category-bar-dropdown">
         <div class="dropdown-container">
-          <dropdown
-            class="my-dropdown-toggle"
-            :options="arrayOfSorts"
-            :selected="sort"
-            :placeholder="'Most Recent'"
-            :closeOnOutsideClick="true"
-            v-on:updateOption="filterUsingSort"
-          >
+          <dropdown class="my-dropdown-toggle" :options="arrayOfSorts" :selected="sort" :placeholder="'Most Recent'"
+            :closeOnOutsideClick="true" v-on:updateOption="filterUsingSort">
           </dropdown>
         </div>
       </div>
@@ -53,23 +32,21 @@
 
     <!-- recipe card list -->
     <div class="recipe-list">
-      <RecipeCard
-        v-for="recipe in filteredRecipes"
-        :key="recipe.recipe_id"
-        :recipe="recipe"
-        @toggle="toggleRecipeDetails"
-      />
+      <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe"
+        @toggle="toggleRecipeDetails" />
     </div>
     <!--
     <RecipeDetailsWindow v-if="selectedRecipe" :selectedRecipe="selectedRecipe"
       :selectedIngredients="selectedIngredients" :closeModal="closeModal" />
 -->
     <CircleButton logo="src/assets/plus-icon.png" @click="toggleCreateRecipe" />
+    <!--
     <CreateRecipe
       v-if="showCreateRecipe"
       @close="showCreateRecipe = false"
       @recipe-submitted="handleRecipeSubmitted"
     />
+    -->
   </div>
 </template>
 
@@ -98,18 +75,18 @@ export default {
   data() {
     return {
       arrayOfCategories: [
-        { name: "All", id: "00" },
-        { name: "Asian", id: "01" },
-        { name: "Western", id: "02" },
-        { name: "Local Delights", id: "03" },
-        { name: "Healthy Choices", id: "04" },
-        { name: "Fast Food", id: "05" },
-        { name: "Desserts and Snacks", id: "06" },
-        { name: "Beverages", id: "07" },
-        { name: "Specialty", id: "08" },
-        { name: "Breakfast and Brunch", id: "09" },
-        { name: "Late-night Eats", id: "10" },
-        { name: "Others", id: "11" },
+        { name: "All" },
+        { name: "Asian" },
+        { name: "Western" },
+        { name: "Local Delights" },
+        { name: "Healthy Choices" },
+        { name: "Fast Food" },
+        { name: "Desserts and Snacks" },
+        { name: "Beverages" },
+        { name: "Specialty" },
+        { name: "Breakfast and Brunch" },
+        { name: "Late-night Eats" },
+        { name: "Others" },
       ],
       category: {},
       arrayOfSorts: [{ name: "Most Recent" }, { name: "Most Liked" }],
@@ -189,15 +166,10 @@ export default {
         this.filteredRecipes = this.allCommunityRecipes;
       } else {
         this.filteredRecipes = [];
-        const docSnap = await getDoc(doc(db, "categories", payload.id));
+        const docSnap = await getDoc(doc(db, "categories", payload.name));
         const recipesIDlist = docSnap.data().recipes;
         if (recipesIDlist.length != 0) {
-          for (let x in recipesIDlist) {
-            const docSnap = await getDoc(
-              doc(db, "all_recipes", recipesIDlist[x])
-            );
-            this.filteredRecipes.push(docSnap.data());
-          }
+          this.filteredRecipes = this.allCommunityRecipes.filter(recipe => recipesIDlist.includes(recipe.recipe_id));
         }
       }
     },
@@ -227,6 +199,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 .community-page {

@@ -63,12 +63,18 @@
 <script>
 import Multiselect from 'vue-multiselect'
 import { fetchCategories } from '@/firebase.js';
+import { useToast } from 'vue-toastification';
+import "vue-toastification/dist/index.css";
 
 export default {
     components: {
         Multiselect,
     },
     name: 'InputLeftover',
+    setup() {
+        const toast = useToast();
+        return { toast };
+    },
     data() {
         return {
             options: [],
@@ -108,7 +114,8 @@ export default {
 
             if (this.validateIngredients() === false) {
                 // Show alert if any ingredient fields are empty
-                alert('Please fill in all leftover names and quantities.');
+                // alert('Please fill in all leftover names and quantities.');
+                this.triggerToast();
             } else {
                 this.$emit('generate-recipe', {
                     categories: this.value,
@@ -117,6 +124,13 @@ export default {
                 })
             }
         },
+        triggerToast() {
+            this.toast.error("Please fill in all leftover names and quantities.", {
+                timeout: 2000,
+                position: 'top-center',
+                hideProgressBar: true,
+            });
+        }
     },
 };
 </script> 
