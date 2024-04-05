@@ -8,7 +8,12 @@
         <text class="recipe-name">{{ recipe.recipe_name }}</text>
       </div>
       <div class="info">
-        <span v-for="(category, index) in recipe.categories" :key="index" class="category-bubble">{{ category }}</span>
+        <span
+          v-for="(category, index) in recipe.categories"
+          :key="index"
+          class="category-bubble"
+          >{{ category }}</span
+        >
       </div>
       <div class="bottomRow">
         <div class="user-id">
@@ -30,7 +35,6 @@ import LikeButton from "./LikeButton.vue";
 import { db, auth } from "../firebase";
 import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-
 
 export default {
   components: {
@@ -89,6 +93,7 @@ export default {
 .recipe-card:hover {
   transform: scale(1.02);
   transition: transform 0.3s ease;
+  cursor: pointer;
 }
 
 .recipe-image {
