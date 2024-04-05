@@ -41,7 +41,6 @@
 
 <script>
 import RecipeCard from "../components/RecipeCard.vue";
-import RecipeDetailsWindow from "../components/RecipeDetailsWindow.vue";
 import { db, auth } from "../firebase.js";
 import { collection, getDocs, getDoc, doc } from "firebase/firestore";
 import dropdown from "vue-dropdowns";
@@ -50,7 +49,6 @@ import RecipeImage from "@/components/RecipeImage.vue";
 export default {
     components: {
         RecipeCard,
-        RecipeDetailsWindow,
         dropdown,
         RecipeImage,
     },

@@ -51,7 +51,6 @@
 
 <script>
 import RecipeCard from "../components/RecipeCard.vue";
-import RecipeDetailsWindow from "../components/RecipeDetailsWindow.vue";
 import { db } from "../firebase.js";
 import { collection, getDocs, getDoc, doc } from "firebase/firestore";
 import TopBar from "@/components/TopBar.vue";
@@ -64,7 +63,6 @@ import router from "../router/index.js";
 export default {
   components: {
     RecipeCard,
-    RecipeDetailsWindow,
     TopBar,
     dropdown,
     RecipeImage,
