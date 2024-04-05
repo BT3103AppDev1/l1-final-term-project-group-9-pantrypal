@@ -24,13 +24,8 @@
         <p class="logOutButton-text">Log out</p>
       </button>
       <button type="button" class="profileButton" @click="goToProfile()">
-        <ProfileImage
-          :path="userData.profile_img_url"
-          :ifCard="true"
-          alt="profile pic"
-          class="profile"
-          @click="goToProfile()"
-        />
+        <ProfileImage :path="userData.profile_img_url" :ifCard="true" alt="profile pic" class="profile"
+          @click="goToProfile()" />
       </button>
     </div>
   </div>
@@ -95,6 +90,7 @@ export default {
 </script>
 <style>
 .topBar {
+
   margin: 15px 0px;
   display: flex;
   flex-direction: row;

@@ -128,13 +128,11 @@ export default {
                 this.filteredRecipes = this.allLikedRecipes;
             } else {
                 this.filteredRecipes = [];
-                const docSnap = await getDoc(doc(db, "categories", payload.id));
+                const docSnap = await getDoc(doc(db, "categories", payload.name));
                 const recipesIDlist = docSnap.data().recipes;
+
                 if (recipesIDlist.length != 0) {
-                    for (let x in recipesIDlist) {
-                        const docSnap = await getDoc(doc(db, "all_recipes", recipesIDlist[x]));
-                        this.filteredRecipes.push(docSnap.data());
-                    }
+                    this.filteredRecipes = this.allLikedRecipes.filter(recipe => recipesIDlist.includes(recipe.recipe_id));
                 }
             }
         },
@@ -168,8 +166,7 @@ export default {
 <style scoped>
 .liked-recipes-page {
     width: 90%;
-    margin-left: 50px;
-    margin-right: 50px;
+
 
 }
 
@@ -257,7 +254,6 @@ export default {
 .recipe-container {
     display: flex;
     justify-content: center;
-
 }
 
 .recipe-list {
