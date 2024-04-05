@@ -256,7 +256,7 @@ export default {
         };
         reader.readAsDataURL(file); // Read the file
       } else {
-        alert("Please select a JPG or PNG image file.");
+        this.imageNotValid();
       }
     },
     addIngredient() {
@@ -316,7 +316,7 @@ export default {
         !this.recipeData.directions.length
       ) {
         // at least one field is empty
-        this.triggerToast();
+        this.fillAllFields();
         // alert(
         //   "Please fill in all fields properly before submitting the recipe."
         // );
@@ -324,7 +324,13 @@ export default {
       }
       return true;
     },
-    triggerToast() {
+    imageNotValid() {
+      this.toast.error("Please select a JPG or PNG image file.", {
+        position: "top-center",
+        hideProgressBar: true,
+      });
+    },
+    fillAllFields() {
       this.toast.error(
         "Please fill in all fields properly before submitting the recipe.",
         {
@@ -333,13 +339,13 @@ export default {
         }
       );
     },
-    triggerToast2() {
+    cannotSaveRecipe() {
       this.toast.error("Recipe could not be saved.", {
         position: "top-center",
         hideProgressBar: true,
       });
     },
-    showToast() {
+    recipeSavedSuccess() {
       this.toast.success("Recipe was successfully created!", {
         timeout: 2000,
         position: "top-center",
@@ -399,10 +405,10 @@ export default {
         );
         console.log("Document updated successfully.");
         this.$router.push("/community-page");
-        this.showToast();
+        this.recipeSavedSucces();
       } catch (error) {
         console.error("Error adding document:", error);
-        this.triggerToast2();
+        this.cannotSaveRecipe();
       }
       //   addDoc(colRef, recipe)
       //     .then((docRef) => {
