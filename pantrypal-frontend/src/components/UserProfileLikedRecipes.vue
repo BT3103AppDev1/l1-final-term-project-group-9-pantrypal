@@ -89,7 +89,7 @@ export default {
     },
     created() {
         this.fetchRecipes();
-        this.sortAllByMostRecent();
+
 
         // Set up real-time listener for liked recipes
         const userDocRef = doc(db, "users", auth.currentUser.uid);
@@ -99,15 +99,16 @@ export default {
                 this.updateLikedRecipes(likedRecipes);
             }
         });
+
     },
 
     methods: {
         async fetchRecipes() {
             const userDocSnapshot = await getDoc(doc(db, "users", auth.currentUser.uid));
             const likedRecipes = userDocSnapshot.data().liked_recipes || [];
-            this.updateLikedRecipes(likedRecipes);
-            this.sortByMostRecent();
-            this.sortAllByMostRecent();
+            this.updateLikedRecipes(likedRecipes)
+
+
         },
 
 
@@ -163,7 +164,7 @@ export default {
             });
         },
 
-        updateLikedRecipes(likedRecipes) {
+        async updateLikedRecipes(likedRecipes) {
             this.filteredRecipes = [];
             this.allLikedRecipes = [];
             likedRecipes.forEach(async (recipeId) => {
@@ -184,6 +185,7 @@ export default {
                     this.filteredRecipes.push(recipeData);
                 }
             });
+
         }
     }
 };

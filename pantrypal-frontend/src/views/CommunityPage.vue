@@ -90,6 +90,7 @@ export default {
       sort: {},
       allCommunityRecipes: [],
       filteredRecipes: [],
+      filteredRecipesByName: [],
       allRecipes: [],
       searchQuery: "",
       selectedRecipe: null,
@@ -101,7 +102,9 @@ export default {
   watch: {
     searchQuery(value) {
       this.filterByNameOrIngredients();
+      localStorage.setItem("searchQuery", value);
     },
+
   },
   created() {
     this.fetchRecipes();
@@ -112,6 +115,12 @@ export default {
     // Remove the scroll event listener when component is destroyed
     window.removeEventListener('scroll', this.handleScroll);
   },
+  mounted() {
+    const storedSearchQuery = localStorage.getItem("searchQuery");
+    if (storedSearchQuery) {
+      this.searchQuery = storedSearchQuery;
+    }
+  },
 
   methods: {
     async fetchRecipes() {
@@ -121,10 +130,13 @@ export default {
         if (doc.data().community && doc.data().community === true) {
           this.allCommunityRecipes.push(doc.data());
           this.filteredRecipes.push(doc.data());
+          this.filteredRecipesByName.push(doc.data());
         }
       });
-      this.sortByMostRecent();
-      this.sortAllByMostRecent();
+      this.filterByNameOrIngredients();
+      this.sortByMostRecent(this.allCommunityRecipes);
+      this.sortByMostRecent(this.filteredRecipes);
+      this.sortByMostRecent(this.filteredRecipesByName);
     },
     toggleCreateRecipe() {
       this.showCreateRecipe = !this.showCreateRecipe;
@@ -136,14 +148,6 @@ export default {
     toggleRecipeDetails(recipe) {
       recipe.showDetails = !recipe.showDetails;
       this.selectedRecipe = recipe;
-    },
-    closeModal() {
-      this.selectedRecipe = null;
-      this.selectedIngredients = [];
-    },
-
-    handleRecipeSubmitted() {
-      this.$router.push("/community-page");
     },
 
     filterByNameOrIngredients() {
@@ -161,39 +165,36 @@ export default {
         });
         return nameMatch || ingredientsMatch;
       });
+      this.filteredRecipesByName = this.filteredRecipes
     },
 
     async filterUsingCategory(payload) {
       this.category = payload;
       if (this.category.name == "All") {
-        this.filteredRecipes = this.allCommunityRecipes;
+        this.filteredRecipes = this.filteredRecipesByName;
       } else {
-        this.filteredRecipes = [];
         const docSnap = await getDoc(doc(db, "categories", payload.name));
         const recipesIDlist = docSnap.data().recipes;
         if (recipesIDlist.length != 0) {
-          this.filteredRecipes = this.allCommunityRecipes.filter(recipe => recipesIDlist.includes(recipe.recipe_id));
+          this.filteredRecipes = this.filteredRecipesByName;
+          this.filteredRecipes = this.filteredRecipes.filter(recipe => recipesIDlist.includes(recipe.recipe_id));
         }
       }
     },
     filterUsingSort(payload) {
       this.sort = payload;
       if (payload.name == "Most Recent") {
-        this.sortByMostRecent();
+        this.sortByMostRecent(this.filteredRecipes);
       } else {
         this.sortByMostLiked();
       }
     },
-    sortAllByMostRecent() {
-      this.allCommunityRecipes = this.allCommunityRecipes.sort((a, b) => {
+    sortByMostRecent(recipes) {
+      recipes = recipes.sort((a, b) => {
         return b.created_date.toDate() - a.created_date.toDate();
       });
     },
-    sortByMostRecent() {
-      this.filteredRecipes = this.filteredRecipes.sort((a, b) => {
-        return b.created_date.toDate() - a.created_date.toDate();
-      });
-    },
+
     sortByMostLiked() {
       this.filteredRecipes = this.filteredRecipes.sort((a, b) => {
         return b.like_count - a.like_count;
