@@ -90,7 +90,6 @@ export default {
 </script>
 <style>
 .topBar {
-
   margin: 15px 0px;
   display: flex;
   flex-direction: row;

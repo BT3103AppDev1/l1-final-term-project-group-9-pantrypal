@@ -35,18 +35,17 @@
       <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe"
         @toggle="toggleRecipeDetails" />
     </div>
-    <!--
-    <RecipeDetailsWindow v-if="selectedRecipe" :selectedRecipe="selectedRecipe"
-      :selectedIngredients="selectedIngredients" :closeModal="closeModal" />
--->
-    <CircleButton logo="src/assets/plus-icon.png" @click="toggleCreateRecipe" />
-    <!--
-    <CreateRecipe
-      v-if="showCreateRecipe"
-      @close="showCreateRecipe = false"
-      @recipe-submitted="handleRecipeSubmitted"
-    />
+
+    <!-- Back to Top button 
+    <button class="back-to-top" @click="scrollToTop" v-show="showBackToTop">
+      <img src="../assets/BackToTop.svg" alt="Back To Top" />
+      <text>Back To Top</text>
+    </button>
     -->
+
+    <CircleButton logo="src/assets/plus-icon.png" @click="toggleCreateRecipe" />
+
+
   </div>
 </template>
 
@@ -98,6 +97,7 @@ export default {
       selectedRecipe: null,
       selectedIngredients: [],
       showCreateRecipe: false,
+      showBackToTop: false
     };
   },
   watch: {
@@ -108,6 +108,11 @@ export default {
   created() {
     this.fetchRecipes();
     this.router = router;
+    window.addEventListener('scroll', this.handleScroll);
+  },
+  destroyed() {
+    // Remove the scroll event listener when component is destroyed
+    window.removeEventListener('scroll', this.handleScroll);
   },
 
   methods: {
@@ -196,7 +201,20 @@ export default {
         return b.like_count - a.like_count;
       });
     },
-  },
+    handleScroll() {
+      // Show the button when user scrolls down beyond 300px
+      this.showBackToTop = window.scrollY > 250;
+
+    },
+    // Method to scroll to the top of the page
+    scrollToTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth' // Smooth scrolling
+      });
+
+    }
+  }
 };
 </script>
 
@@ -305,5 +323,27 @@ export default {
 .plus-icon-container img {
   width: 30px;
   height: 30px;
+}
+
+.back-to-top {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  padding: 10px 20px;
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column
+}
+
+/* Show the button when scrolling down */
+.back-to-top.show {
+  display: block;
+}
+
+.back-to-top img {
+  width: 60px;
+  height: 60px;
 }
 </style>
