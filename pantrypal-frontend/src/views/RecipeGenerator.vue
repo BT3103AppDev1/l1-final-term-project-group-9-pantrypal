@@ -10,7 +10,7 @@
         <div class="recipe-details-container" v-if="selected === 'save'">
           <RecipeDetails :selectedRecipe="recipe" :selectedIngredients="selectedIngredients" :likeExists="false"/>
           <CircleButton logo="src/assets/chefbot-button.png" @click="toggleChefBot" />
-          <ChefBot :key="componentKey" :selectedRecipe="recipe" v-show="showChefBot" @close="showChefBot = false" />
+          <ChefBot :key="componentKey" :selectedRecipe="recipe" v-show="showChefBot" @close="showChefBot = false" @togglePublishToCommunity="togglePublishToCommunity"/>
             <div class="button-container">
                 <SaveRecipeButton @save-recipe="submitRecipe" :disabled="disabled"/>
                 <button @click="regenerateRecipe" class="reloadButton">Regenerate</button>
@@ -98,7 +98,7 @@
                     this.recipe.user_id = user_id;
                     this.recipe.created_date = new Date();
                     this.prev_recipe_name = this.recipe.recipe_name;
-
+                    this.recipe.community = false;
                     this.selectedIngredients = this.recipe.ingredients.map(() => false);
 
                     // Check each ingredient in the recipe if it's present in this.ingredients
@@ -123,16 +123,11 @@
             },
             async submitRecipe(){
                 const recipe_id = uuidv4().toString();
-                this.recipe.community = false;
                 this.recipe.like_count = 0;
                 this.recipe.recipe_id = recipe_id;
                 console.log(this.recipe);
 
                 try {
-                    this.recipe.community = false;
-                    this.recipe.like_count = 0;
-                    this.recipe.recipe_id = recipe_id;
-                    console.log(this.recipe);
                     const recipeRef = await setDoc(doc(db, "all_recipes", recipe_id), this.recipe);
                     await updateDoc(doc(db, "users", this.recipe.user_id), {
                         my_cookbook: arrayUnion(this.recipe.recipe_id),
@@ -163,6 +158,9 @@
                     closeButton: "button",
                     icon: true,
                 });
+            },
+            togglePublishToCommunity(props) {
+                this.recipe.community = props;
             }
         },
     };
