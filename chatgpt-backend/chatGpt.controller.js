@@ -148,15 +148,15 @@ const generateInitialRecipe = async (req, res) => {
         throw new Error("Recipe description is missing");
     }
 
-    const imageResponse = await openai.images.generate({
-        model: "dall-e-3",
-        prompt: recipeObject.description, 
-        n: 1,
-        size: "1024x1024",
-    });
+    // const imageResponse = await openai.images.generate({
+    //     model: "dall-e-3",
+    //     prompt: recipeObject.description, 
+    //     n: 1,
+    //     size: "1024x1024",
+    // });
 
-    const imageUrl = imageResponse.data[0].url;
-     // const imageUrl = "https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1";
+    // const imageUrl = imageResponse.data[0].url;
+    const imageUrl = "https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1";
 
     const recipeWithImage = {
         ...recipeObject, 

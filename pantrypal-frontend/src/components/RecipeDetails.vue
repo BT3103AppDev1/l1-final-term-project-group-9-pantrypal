@@ -1,6 +1,7 @@
 <template>
   <div class="horizontalRow">
     <div class="first">
+        <RecipeImage :path="selectedRecipe.recipe_img_url" :ifCard="false" />
         <div v-if="!likeExists" class="switch-container">
               <label class="switch">
                 <input
@@ -13,13 +14,16 @@
               </label>
               <label for="publishToCommunity">Publish to Community</label>
         </div>
-        <RecipeImage :path="selectedRecipe.recipe_img_url" :ifCard="false" />
     </div>
     <div class="second">
-      <div class="title-row">
-        <h1>{{ selectedRecipe.recipe_name }}</h1>
-        <LikeButton v-if="likeExists" :recipe="selectedRecipe" />
-      </div>
+        <div class="title-row">
+            <h1>{{ selectedRecipe.recipe_name }}</h1>
+            <LikeButton v-if="likeExists" :recipe="selectedRecipe" />
+        </div>
+        <div class="warning" v-if="selectedRecipe.AIgenerated">
+            <img clas="warning-logo" src="../assets/warning-icon.png" height="16px">
+            <span>This recipe is AI-generated and PantryPal has not verified it for accuracy and safety.</span>
+        </div>
       <p>
         <i v-if="likeExists">
           By @{{ username }},
@@ -317,5 +321,25 @@ export default {
 
 .switch-container input:checked + .slider:before {
   transform: translateX(20px);
+}
+
+.warning {
+    background-color: #FFF7D7;
+    padding: 10px 10px;
+    border-radius: 8px;
+    margin: 5px 10px 5px 0px;
+    font-size: 12px;
+    vertical-align: middle;
+    align-items: center; 
+    display: flex;
+    width: fit-content
+}
+
+img {
+    margin-right: 8px;
+}
+
+h1 {
+    margin: 0px 0px;
 }
 </style>

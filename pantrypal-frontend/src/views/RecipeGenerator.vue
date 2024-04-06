@@ -100,21 +100,29 @@
                     this.recipe.created_date = new Date();
                     this.prev_recipe_name = this.recipe.recipe_name;
                     this.recipe.community = false;
+                    this.recipe.AIgenerated = true;
                     this.selectedIngredients = this.recipe.ingredients.map(() => false);
+
+
+                    let temporaryLeftovers = [];
 
                     // Check each ingredient in the recipe if it's present in this.ingredients
                     this.recipe.ingredients.forEach((recipeIngredient, recipeIndex) => {
                     // Iterate over this.ingredients to find a match
-                    for (let i = 0; i < this.ingredients.length; i++) {
-                        const ingredient = this.ingredients[i].name;
-                        // Check if the recipeIngredient contains ingredient
-                        if (recipeIngredient.toLowerCase().includes(ingredient.toLowerCase())) {
-                            this.selectedIngredients[recipeIndex] = true; // Mark checkbox as checked if ingredient is in this.ingredients
-                            break; // Exit the loop once a match is found
+                        for (let i = 0; i < this.ingredients.length; i++) {
+                            const ingredient = this.ingredients[i].name;
+                            // Check if the recipeIngredient contains ingredient
+                            if (recipeIngredient.toLowerCase().includes(ingredient.toLowerCase())) {
+                                this.selectedIngredients[recipeIndex] = true; // Mark checkbox as checked if ingredient is in this.ingredients
+                                temporaryLeftovers.push(ingredient.toLowerCase());
+                                break; // Exit the loop once a match is found
+                            }
                         }
-                    }
                     });
-                    
+
+                    this.recipe.leftovers = temporaryLeftovers;
+
+                    console.log(this.recipe.leftovers);
                     this.selected = "save";
                     console.log(this.recipe);
                     console.log(typeof this.recipe);
@@ -123,6 +131,7 @@
                 }
             },
             async submitRecipe(){
+                this.disabled = true;
                 const recipe_id = uuidv4().toString();
                 this.recipe.like_count = 0;
                 this.recipe.recipe_id = recipe_id;
@@ -141,14 +150,13 @@
                         my_cookbook: arrayUnion(this.recipe.recipe_id),
                     });
                     
-                    if (this.categories) {
-                        this.categories.forEach((cat) => 
+                    if (this.recipe.categories) {
+                        this.recipe.categories.forEach((cat) => 
                         updateDoc(doc(db, "categories", cat), {
                             recipes: arrayUnion(this.recipe.recipe_id),
                         }));
                     }
                     
-                    this.disabled = true;
                     this.triggerToast();
                 } catch (error) {
                     console.error("Error adding document:", error);
