@@ -60,12 +60,16 @@ const generateInitialRecipe = async (req, res) => {
             dietary restrictions specified. If no specific cuisine or dietary restrictions are mentioned, those parameters should be 
             considered as open. The recipe given just has to meet at least one of the categories and at least one of the ingredients.
 
+            Note that "cook_time" is to be returned as an integer only, representing the number of minutes. The "categories" can only be from 
+            this pre-defined list: ["Asian", "Beverages", "Breakfast and Brunch", "Desserts and Snacks", "Fast Food", "Healthy Choices", "Late-night Eats", 
+            "Local Delights", "Others", "Specialty", "Western"].
+
             The recipe should be formatted as shown below, with all elements filled according to the input details. The example provided 
             is for illustrative purposes only and should not influence the generated recipe beyond the structure:
             {
                 "allergens": ["Diary", "Nuts"], 
-                "categories": ["Italian", "Pasta"],
-                "cook_time": "30 minutes", 
+                "categories": ["Western"],
+                "cook_time": 30, 
                 "description": "Indulge in a delightful culinary creation with our Chicken Breast Pesto Pasta,\n 
                     crafted from simple yet flavorful ingredients. Tender slices of seasoned chicken breast mingle with al dente pasta,\n 
                     generously coated in a luscious pesto sauce. Quick to prepare yet satisfying to savor,\n 
@@ -89,13 +93,17 @@ const generateInitialRecipe = async (req, res) => {
             dietary restrictions specified. If no specific cuisine or dietary restrictions are mentioned, those parameters should be 
             considered as open. The recipe given just has to meet at least one of the categories and at least one of the ingredients.
 
+            Note that "cook_time" is to be returned as an integer only, representing the number of minutes. The "categories" can only be from 
+            this pre-defined list: ["Asian", "Beverages", "Breakfast and Brunch", "Desserts and Snacks", "Fast Food", "Healthy Choices", "Late-night Eats", 
+            "Local Delights", "Others", "Specialty", "Western"].
+
             Do not generate the same recipe as this: ${req.body.prev_recipe_name}.
 
             The recipe should be formatted as shown below, with all elements filled according to the input details. The example provided 
             is for illustrative purposes only and should not influence the generated recipe beyond the structure:
             {
                 "allergens": ["Diary", "Nuts"], 
-                "categories": ["Italian", "Pasta"],
+                "categories": ["Western"],
                 "cook_time": "30 minutes", 
                 "description": "Indulge in a delightful culinary creation with our Chicken Breast Pesto Pasta,\n 
                     crafted from simple yet flavorful ingredients. Tender slices of seasoned chicken breast mingle with al dente pasta,\n 
@@ -140,15 +148,15 @@ const generateInitialRecipe = async (req, res) => {
         throw new Error("Recipe description is missing");
     }
 
-    // const imageResponse = await openai.images.generate({
-    //     model: "dall-e-3",
-    //     prompt: recipeObject.description, 
-    //     n: 1,
-    //     size: "1024x1024",
-    // });
+    const imageResponse = await openai.images.generate({
+        model: "dall-e-3",
+        prompt: recipeObject.description, 
+        n: 1,
+        size: "1024x1024",
+    });
 
-    // const imageUrl = imageResponse.data[0].url;
-    const imageUrl = "https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1";
+    const imageUrl = imageResponse.data[0].url;
+     // const imageUrl = "https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1";
 
     const recipeWithImage = {
         ...recipeObject, 
