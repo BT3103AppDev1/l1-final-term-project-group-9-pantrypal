@@ -1,15 +1,14 @@
 <template>
   <div class="settings">
-    <TopBar :key="refreshKey"/>
+    <TopBar whichPage="none" :key="refreshKey" />
     <div class="content-container">
-      <UserProfileSidebar :selected="selected" @selected="changeSelected($event)" :userData="userData" @refreshProfilePic="refreshProfilePic"/>
+      <UserProfileSidebar :selected="selected" @selected="changeSelected($event)" :userData="userData"
+        @refreshProfilePic="refreshProfilePic" />
       <UserProfileEdit v-if="selected === 'settings' && Object.keys(userData).length !== 0" :userData="userData"
         @userData="handleUserDataUpdate" />
       <UserProfileLikedRecipes v-if="selected === 'likedRecipes'" :userData="userData" />
       <UserProfileMyCookbook v-if="selected === 'myCookbook'" :userData="userData" />
     </div>
-
-
   </div>
 </template>
 
@@ -54,8 +53,8 @@ export default {
       this.userData = { ...this.userData, username: updatedUserData.username };
     },
     refreshProfilePic(props) {
-        this.userData = { ...this.userData, profile_img_url : props};
-        this.refreshKey++;
+      this.userData = { ...this.userData, profile_img_url: props };
+      this.refreshKey++;
     }
   }
 }

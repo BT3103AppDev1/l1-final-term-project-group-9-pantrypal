@@ -1,38 +1,19 @@
 <template>
-  <TopBar :ifFeed="true" />
+  <TopBar whichPage="feed" />
   <div class="create-recipe-modal">
     <div class="recipe-form">
       <div class="recipe-form-content">
         <div class="createRecipeRow">
           <div class="first1">
-            <input
-              type="file"
-              id="recipeImage"
-              ref="fileInput"
-              style="display: none"
-              @change="handleImageUpload"
-            />
+            <input type="file" id="recipeImage" ref="fileInput" style="display: none" @change="handleImageUpload" />
             <div class="plus-icon-container" @click="chooseFile">
-              <img
-                v-if="recipeData.imageSrc"
-                :src="recipeData.imageSrc"
-                class="uploaded-image"
-                alt="Uploaded Image"
-              />
-              <img
-                :class="{ hidden: recipeData.imageSrc }"
-                class="upload-image"
-                src="../assets/image-upload.png"
-                alt="Upload Image"
-              />
+              <img v-if="recipeData.imageSrc" :src="recipeData.imageSrc" class="uploaded-image" alt="Uploaded Image" />
+              <img :class="{ hidden: recipeData.imageSrc }" class="upload-image" src="../assets/image-upload.png"
+                alt="Upload Image" />
             </div>
             <div class="switch-container">
               <label class="switch">
-                <input
-                  type="checkbox"
-                  id="publishToCommunity"
-                  v-model="recipeData.publish_to_community"
-                />
+                <input type="checkbox" id="publishToCommunity" v-model="recipeData.publish_to_community" />
                 <span class="slider"></span>
               </label>
               <label for="publishToCommunity">Publish to Community</label>
@@ -40,69 +21,36 @@
           </div>
           <div class="first2">
             <label for="recipeName">Title:</label>
-            <input
-              type="text"
-              id="recipeName"
-              v-model="recipeData.recipe_name"
-            />
+            <input type="text" id="recipeName" v-model="recipeData.recipe_name" />
 
             <label for="recipeDescription">Description:</label>
-            <textarea
-              type="text"
-              id="recipeDescription"
-              v-model="recipeData.description"
-              class="input-text"
-            ></textarea>
+            <textarea type="text" id="recipeDescription" v-model="recipeData.description" class="input-text"></textarea>
 
             <label for="allergenInfo">Allergen Information:</label>
-            <textarea
-              type="text"
-              id="allergenInfo"
-              v-model="recipeData.allergen_info"
-              class="input-text"
-            ></textarea>
+            <textarea type="text" id="allergenInfo" v-model="recipeData.allergen_info" class="input-text"></textarea>
 
             <!-- Added Cook Time, Category and Serving Size -->
             <div class="additional-info">
               <div class="input-group">
                 <label for="cookTime">Cook Time:</label>
                 <div class="time-input-group">
-                  <input
-                    type="number"
-                    id="cookTimeHours"
-                    v-model="recipeData.cook_time_hours"
-                    min="0"
-                    @keydown="onlyNumberInput($event, 'cook_time_hours')"
-                  />
+                  <input type="number" id="cookTimeHours" v-model="recipeData.cook_time_hours" min="0"
+                    @keydown="onlyNumberInput($event, 'cook_time_hours')" />
                   <span>hours</span>
-                  <input
-                    type="number"
-                    id="cookTimeMins"
-                    v-model="recipeData.cook_time_minutes"
-                    min="0"
-                    @keydown="onlyNumberInput($event, 'cook_time_minutes')"
-                  />
+                  <input type="number" id="cookTimeMins" v-model="recipeData.cook_time_minutes" min="0"
+                    @keydown="onlyNumberInput($event, 'cook_time_minutes')" />
                   <span>mins</span>
                 </div>
               </div>
               <div class="input-group">
                 <label for="category">Category:</label>
-                <multiselect
-                  v-model="recipeData.category"
-                  :options="recipeData.categories"
-                  :multiple="true"
-                  :close-on-select="false"
-                ></multiselect>
+                <multiselect v-model="recipeData.category" :options="recipeData.categories" :multiple="true"
+                  :close-on-select="false"></multiselect>
               </div>
               <div class="input-group">
                 <label for="servingSize">Serving Size:</label>
-                <input
-                  type="number"
-                  id="servingSize"
-                  v-model="recipeData.serving_size"
-                  min="0"
-                  @keydown="onlyNumberInput($event, 'serving_size')"
-                />
+                <input type="number" id="servingSize" v-model="recipeData.serving_size" min="0"
+                  @keydown="onlyNumberInput($event, 'serving_size')" />
               </div>
             </div>
           </div>
@@ -113,20 +61,9 @@
             <div class="recipe-section">
               <label for="ingredients">Ingredients:</label>
               <div class="ingredients-container">
-                <div
-                  v-for="(ingredient, index) in recipeData.ingredients"
-                  :key="index"
-                  class="ingredient-input"
-                >
-                  <input
-                    type="text"
-                    v-model="recipeData.ingredients[index]"
-                    placeholder="e.g. 10g Apple"
-                  />
-                  <button
-                    class="remove-button"
-                    @click="removeIngredient(index)"
-                  >
+                <div v-for="(ingredient, index) in recipeData.ingredients" :key="index" class="ingredient-input">
+                  <input type="text" v-model="recipeData.ingredients[index]" placeholder="e.g. 10g Apple" />
+                  <button class="remove-button" @click="removeIngredient(index)">
                     x
                   </button>
                 </div>
@@ -144,25 +81,12 @@
             <div class="recipe-section">
               <label for="directions">Directions:</label>
               <div class="directions-container">
-                <div
-                  v-for="(direction, index) in recipeData.directions"
-                  :key="index"
-                  class="direction-step"
-                >
-                  <label :for="'direction' + direction.stepNumber"
-                    >Step {{ direction.stepNumber }}</label
-                  >
+                <div v-for="(direction, index) in recipeData.directions" :key="index" class="direction-step">
+                  <label :for="'direction' + direction.stepNumber">Step {{ direction.stepNumber }}</label>
                   <div class="direction-input">
-                    <textarea
-                      type="text"
-                      :id="'direction' + direction.stepNumber"
-                      v-model="direction.text"
-                      class="input-text"
-                    ></textarea>
-                    <button
-                      class="remove-button"
-                      @click="removeDirection(index)"
-                    >
+                    <textarea type="text" :id="'direction' + direction.stepNumber" v-model="direction.text"
+                      class="input-text"></textarea>
+                    <button class="remove-button" @click="removeDirection(index)">
                       x
                     </button>
                   </div>
@@ -542,11 +466,11 @@ export default {
   border-radius: 50%;
 }
 
-.switch-container input:checked + .slider {
+.switch-container input:checked+.slider {
   background-color: black;
 }
 
-.switch-container input:checked + .slider:before {
+.switch-container input:checked+.slider:before {
   transform: translateX(20px);
 }
 

@@ -1,6 +1,6 @@
 <template>
   <div class="community-page">
-    <TopBar :ifFeed="true" />
+    <TopBar whichPage="feed" />
     <div class="filterBar">
       <div class="search-bar">
         <input type="text" class="search-input" placeholder="Search name or ingredients..." v-model="searchQuery" />
@@ -29,7 +29,11 @@
     </div>
 
     <!-- RecipeCards######### -->
-
+    <div v-if="!isDataLoaded" class="recipe-list">
+      <div v-for="i in 15" :key="i" class="placeholder-card">
+        <RecipeCardPlaceholder />
+      </div>
+    </div>
     <!-- recipe card list -->
     <div class="recipe-list">
       <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe"
@@ -59,6 +63,7 @@ import RecipeImage from "@/components/RecipeImage.vue";
 import CreateRecipe from "@/components/CreateRecipe.vue";
 import CircleButton from "@/components/CircleButton.vue";
 import router from "../router/index.js";
+import RecipeCardPlaceholder from "../components/RecipeCardPlaceholder.vue";
 
 export default {
   components: {
@@ -68,6 +73,7 @@ export default {
     RecipeImage,
     CreateRecipe,
     CircleButton,
+    RecipeCardPlaceholder
   },
   data() {
     return {
@@ -96,7 +102,8 @@ export default {
       selectedRecipe: null,
       selectedIngredients: [],
       showCreateRecipe: false,
-      showBackToTop: false
+      showBackToTop: false,
+      isDataLoaded: false,
     };
   },
   watch: {
@@ -110,6 +117,7 @@ export default {
     this.fetchRecipes();
     this.router = router;
     window.addEventListener('scroll', this.handleScroll);
+
   },
   destroyed() {
     // Remove the scroll event listener when component is destroyed
@@ -137,6 +145,7 @@ export default {
       this.sortByMostRecent(this.allCommunityRecipes);
       this.sortByMostRecent(this.filteredRecipes);
       this.sortByMostRecent(this.filteredRecipesByName);
+      this.isDataLoaded = true;
     },
     toggleCreateRecipe() {
       this.showCreateRecipe = !this.showCreateRecipe;
