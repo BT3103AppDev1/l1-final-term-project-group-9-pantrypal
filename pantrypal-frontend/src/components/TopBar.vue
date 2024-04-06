@@ -52,7 +52,8 @@ export default {
   },
   mounted() {
     let localUserData = localStorage.getItem("userData");
-    if (localUserData) {
+    console.log(localUserData)
+    if (localUserData && localUserData !== "" && localUserData !== "undefined") {
       this.userData = JSON.parse(localUserData);
     } else {
       this.fetchUserData();
@@ -72,6 +73,7 @@ export default {
     logout() {
       signOut(auth)
         .then(() => {
+          localStorage.clear();
           this.$router.push("/");
         })
         .catch((error) => {

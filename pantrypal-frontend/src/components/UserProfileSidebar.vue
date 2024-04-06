@@ -3,7 +3,7 @@
     <div class="profile-container">
       <div class="profile-pic">
         <ProfileImage
-          :path="userData.profile_img_url"
+          :path="profilePicUrl || userData.profile_img_url"
           :ifCard="true"
           alt="profile pic"
           class="profile"
@@ -68,6 +68,11 @@ export default {
     ProfileImage,
   },
   emits: ["selected"],
+  watch: {
+    profilePicUrl(newVal) {
+      localStorage.setItem("userData", JSON.stringify({ ...this.userData, profile_img_url: newVal }));
+    }
+  },
   methods: {
     selectedSettings() {
       this.$emit("selected", "settings");
