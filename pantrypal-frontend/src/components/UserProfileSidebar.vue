@@ -10,7 +10,11 @@
         />
         <!-- <img :src="profilePicUrl || userData.profile_img_url || '../assets/profile.svg'" alt="profile pic" class="profile" /> -->
         <input type="file" @change="onFileSelected" hidden ref="fileInput" />
-        <button @click="triggerFileInput">Change Picture</button>
+        <div v-if="selected === 'settings'">
+            <button @click="triggerFileInput">
+                <img class="plus-icon" src="../assets/profile-plus-icon.png" height="10px"/>
+            </button>
+        </div>
       </div>
       <div class="personal-details">
         <h4 class="user-name">@{{ userData.username }}</h4>
@@ -115,6 +119,7 @@ export default {
             .then((downloadURL) => {
               console.log("File available at", downloadURL);
               this.profilePicUrl = downloadURL;
+              this.$emit("refreshProfilePic", downloadURL);
               this.updateUserProfilePic(downloadURL);
             })
             .catch((error) => {
@@ -159,13 +164,12 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
+    height: 150px;
 }
 
 .profile-pic img {
   width: 120px;
   height: 120px;
-  border-radius: 60px;
-  margin-bottom: 2rem;
 }
 
 .user-name {
@@ -198,5 +202,23 @@ h3 {
   width: 100%;
   border-radius: 16px;
   color: #3c1f11;
+}
+ 
+button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    height: 30px;
+    padding: 0;
+    position: relative;
+    top: -40px;
+    left: 40px;
+    
+}
+
+.profile-pic button .plus-icon {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
 }
 </style>
