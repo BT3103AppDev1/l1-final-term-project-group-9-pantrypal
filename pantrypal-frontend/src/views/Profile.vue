@@ -1,6 +1,6 @@
 <template>
   <div class="settings">
-    <TopBar />
+    <TopBar whichPage="none" />
     <div class="content-container">
       <UserProfileSidebar :selected="selected" @selected="changeSelected($event)" :userData="userData" />
       <UserProfileEdit v-if="selected === 'settings' && Object.keys(userData).length !== 0" :userData="userData"

@@ -3,7 +3,7 @@
     <button class="firstContainer" @click="goToCommunityPage()">
       <img src="../assets/logo.jpg" alt="PantryPal Logo" class="logo" />
     </button>
-    <div v-if="ifFeed" class="secondContainer">
+    <div v-if="whichPage === 'feed'" class="secondContainer">
       <button class="custom-button" @click="goToCommunityPage()">
         <p class="button-text-selected">My Feed</p>
       </button>
@@ -11,12 +11,20 @@
         <p class="button-text">Smart Leftovers</p>
       </button>
     </div>
-    <div v-else class="secondContainer">
+    <div v-else-if="whichPage === 'generator'" class="secondContainer">
       <button class="custom-button" @click="goToCommunityPage()">
         <p class="button-text">My Feed</p>
       </button>
       <button class="custom-button" @click="goToRecipeGenerator()">
         <p class="button-text-selected">Smart Leftovers</p>
+      </button>
+    </div>
+    <div v-else class="secondContainer">
+      <button class="custom-button" @click="goToCommunityPage()">
+        <p class="button-text">My Feed</p>
+      </button>
+      <button class="custom-button" @click="goToRecipeGenerator()">
+        <p class="button-text">Smart Leftovers</p>
       </button>
     </div>
     <div class="thirdContainer">
@@ -40,7 +48,10 @@ import ProfileImage from "./ProfileImage.vue";
 
 export default {
   props: {
-    ifFeed: Boolean,
+    whichPage: {
+      type: String,
+      required: true
+    }
   },
   components: {
     ProfileImage,
