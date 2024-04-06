@@ -30,10 +30,11 @@
     import GenerateLoading from "@/components/GenerateLoading.vue";
     import RecipeDetails from "@/components/RecipeDetails.vue";
     import SaveRecipeButton from "@/components/SaveRecipeButton.vue";
-    import { app, auth } from "@/firebase.js";
+    import { app, auth, storage } from "@/firebase.js";
     import { getFirestore, doc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
     import {v4 as uuidv4} from 'uuid';
     import { useToast } from "vue-toastification";
+    import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 
     const db = getFirestore(app);
 
@@ -128,6 +129,13 @@
                 console.log(this.recipe);
 
                 try {
+                    const new_recipe_url = await this.saveDalleImageToFirebase(this.recipe.recipe_img_url, this.recipe.recipe_id);
+                    this.recipe.recipe_img_url = new_recipe_url;
+                } catch(error) {
+                    console.error("Error converting Dall-e");
+                }
+
+                try {
                     const recipeRef = await setDoc(doc(db, "all_recipes", recipe_id), this.recipe);
                     await updateDoc(doc(db, "users", this.recipe.user_id), {
                         my_cookbook: arrayUnion(this.recipe.recipe_id),
@@ -146,6 +154,60 @@
                     console.error("Error adding document:", error);
                 }
             },
+            async saveDalleImageToFirebase(imageUrl, firebasePath) {
+                try {
+                    const imageBlob = await this.fetchImageAsBlob(imageUrl);
+                    const downloadUrl = await this.uploadImageToFirebase(imageBlob, firebasePath);
+                    console.log('Image uploaded to Firebase:', downloadUrl);
+                    return downloadUrl; 
+                } catch (error) {
+                    console.error('Error saving Dalle image to Firebase:', error);
+                    throw error; 
+                }
+            },
+
+            async fetchImageAsBlob(imageUrl) {
+                const response = await fetch(`http://localhost:3000/fetch-image?url=${encodeURIComponent(imageUrl)}`);
+                if (!response.ok) {
+                    throw new Error(`Network response was not ok for URL: ${imageUrl}`);
+                }
+                return await response.blob();
+            },
+
+            async uploadImageToFirebase(blob, path) {
+                return new Promise((resolve, reject) => {
+                    const storageRef = ref(storage, `recipeImg/${path}`);
+                    const uploadTask = uploadBytesResumable(storageRef, blob);
+
+                    uploadTask.on(
+                        "state_changed",
+                        (snapshot) => {
+                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                            console.log('Upload is ' + progress + '% done');
+                        },
+                        (error) => {
+                            // Handle unsuccessful uploads
+                            console.error("Upload failed", error);
+                            reject(error); // Reject the promise on error
+                        },
+                        () => {
+                            // Handle successful uploads on complete
+                            getDownloadURL(uploadTask.snapshot.ref)
+                                .then((downloadURL) => {
+                                    console.log("File available at", downloadURL);
+                                    resolve(downloadURL); // Resolve the promise with the download URL
+                                })
+                                .catch((error) => {
+                                    console.error("Failed to get download URL", error);
+                                    reject(error); // Reject the promise if getting the download URL fails
+                                });
+                        }
+                    );
+                });
+            },
+
+
+
             triggerToast() {
                 this.toast.success("Recipe saved successfully!", {
                     position: "top-center",

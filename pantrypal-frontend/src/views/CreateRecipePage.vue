@@ -405,7 +405,7 @@ export default {
         );
         console.log("Document updated successfully.");
         this.$router.push("/community-page");
-        this.recipeSavedSucces();
+        this.recipeSavedSuccess();
       } catch (error) {
         console.error("Error adding document:", error);
         this.cannotSaveRecipe();
