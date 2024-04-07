@@ -33,7 +33,7 @@
         <!-- recipe card list -->
         <div class="recipe-container">
             <div class="recipe-list">
-                <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe" />
+                <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe" @updateLiked="updateLiked" />
             </div>
         </div>
     </div>
@@ -93,6 +93,9 @@ export default {
     },
 
     methods: {
+        updateLiked() {
+            this.$emit('updateLiked');
+        },
         async fetchRecipes() {
             const userDocSnapshot = await getDoc(doc(db, "users", auth.currentUser.uid));
             const myRecipes = userDocSnapshot.data().my_cookbook || [];

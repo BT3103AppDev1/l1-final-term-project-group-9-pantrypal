@@ -1,13 +1,9 @@
 <template>
   <div>
-    <TopBar :ifFeed="true" />
+    <TopBar whichPage="feed" />
     <div class="recipe-content">
-      <RecipeDetails
-        v-if="selectedRecipe"
-        :selectedRecipe="selectedRecipe"
-        :selectedIngredients="selectedIngredients"
-        :likeExists="true"
-      />
+      <RecipeDetails v-if="selectedRecipe" :selectedRecipe="selectedRecipe" :selectedIngredients="selectedIngredients"
+        :likeExists="true" />
     </div>
   </div>
 </template>
