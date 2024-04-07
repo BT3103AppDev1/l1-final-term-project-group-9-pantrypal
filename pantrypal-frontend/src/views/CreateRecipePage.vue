@@ -1,38 +1,19 @@
 <template>
-  <TopBar :ifFeed="true" />
+  <TopBar whichPage="feed" />
   <div class="create-recipe-modal">
     <div class="recipe-form">
       <div class="recipe-form-content">
         <div class="createRecipeRow">
           <div class="first1">
-            <input
-              type="file"
-              id="recipeImage"
-              ref="fileInput"
-              style="display: none"
-              @change="handleImageUpload"
-            />
+            <input type="file" id="recipeImage" ref="fileInput" style="display: none" @change="handleImageUpload" />
             <div class="plus-icon-container" @click="chooseFile">
-              <img
-                v-if="recipeData.imageSrc"
-                :src="recipeData.imageSrc"
-                class="uploaded-image"
-                alt="Uploaded Image"
-              />
-              <img
-                :class="{ hidden: recipeData.imageSrc }"
-                class="upload-image"
-                src="../assets/image-upload.png"
-                alt="Upload Image"
-              />
+              <img v-if="recipeData.imageSrc" :src="recipeData.imageSrc" class="uploaded-image" alt="Uploaded Image" />
+              <img :class="{ hidden: recipeData.imageSrc }" class="upload-image" src="../assets/image-upload.png"
+                alt="Upload Image" />
             </div>
             <div class="switch-container">
               <label class="switch">
-                <input
-                  type="checkbox"
-                  id="publishToCommunity"
-                  v-model="recipeData.publish_to_community"
-                />
+                <input type="checkbox" id="publishToCommunity" v-model="recipeData.publish_to_community" />
                 <span class="slider"></span>
               </label>
               <label for="publishToCommunity">Publish to Community</label>
@@ -40,69 +21,36 @@
           </div>
           <div class="first2">
             <label for="recipeName">Title:</label>
-            <input
-              type="text"
-              id="recipeName"
-              v-model="recipeData.recipe_name"
-            />
+            <input type="text" id="recipeName" v-model="recipeData.recipe_name" />
 
             <label for="recipeDescription">Description:</label>
-            <textarea
-              type="text"
-              id="recipeDescription"
-              v-model="recipeData.description"
-              class="input-text"
-            ></textarea>
+            <textarea type="text" id="recipeDescription" v-model="recipeData.description" class="input-text"></textarea>
 
             <label for="allergenInfo">Allergen Information:</label>
-            <textarea
-              type="text"
-              id="allergenInfo"
-              v-model="recipeData.allergen_info"
-              class="input-text"
-            ></textarea>
+            <textarea type="text" id="allergenInfo" v-model="recipeData.allergen_info" class="input-text"></textarea>
 
             <!-- Added Cook Time, Category and Serving Size -->
             <div class="additional-info">
               <div class="input-group">
                 <label for="cookTime">Cook Time:</label>
                 <div class="time-input-group">
-                  <input
-                    type="number"
-                    id="cookTimeHours"
-                    v-model="recipeData.cook_time_hours"
-                    min="0"
-                    @keydown="onlyNumberInput($event, 'cook_time_hours')"
-                  />
+                  <input type="number" id="cookTimeHours" v-model="recipeData.cook_time_hours" min="0"
+                    @keydown="onlyNumberInput($event, 'cook_time_hours')" />
                   <span>hours</span>
-                  <input
-                    type="number"
-                    id="cookTimeMins"
-                    v-model="recipeData.cook_time_minutes"
-                    min="0"
-                    @keydown="onlyNumberInput($event, 'cook_time_minutes')"
-                  />
+                  <input type="number" id="cookTimeMins" v-model="recipeData.cook_time_minutes" min="0"
+                    @keydown="onlyNumberInput($event, 'cook_time_minutes')" />
                   <span>mins</span>
                 </div>
               </div>
               <div class="input-group">
                 <label for="category">Category:</label>
-                <multiselect
-                  v-model="recipeData.category"
-                  :options="recipeData.categories"
-                  :multiple="true"
-                  :close-on-select="false"
-                ></multiselect>
+                <multiselect v-model="recipeData.category" :options="recipeData.categories" :multiple="true"
+                  :close-on-select="false"></multiselect>
               </div>
               <div class="input-group">
                 <label for="servingSize">Serving Size:</label>
-                <input
-                  type="number"
-                  id="servingSize"
-                  v-model="recipeData.serving_size"
-                  min="0"
-                  @keydown="onlyNumberInput($event, 'serving_size')"
-                />
+                <input type="number" id="servingSize" v-model="recipeData.serving_size" min="0"
+                  @keydown="onlyNumberInput($event, 'serving_size')" />
               </div>
             </div>
           </div>
@@ -113,20 +61,9 @@
             <div class="recipe-section">
               <label for="ingredients">Ingredients:</label>
               <div class="ingredients-container">
-                <div
-                  v-for="(ingredient, index) in recipeData.ingredients"
-                  :key="index"
-                  class="ingredient-input"
-                >
-                  <input
-                    type="text"
-                    v-model="recipeData.ingredients[index]"
-                    placeholder="e.g. 10g Apple"
-                  />
-                  <button
-                    class="remove-button"
-                    @click="removeIngredient(index)"
-                  >
+                <div v-for="(ingredient, index) in recipeData.ingredients" :key="index" class="ingredient-input">
+                  <input type="text" v-model="recipeData.ingredients[index]" placeholder="e.g. 10g Apple" />
+                  <button class="remove-button" @click="removeIngredient(index)">
                     x
                   </button>
                 </div>
@@ -144,25 +81,12 @@
             <div class="recipe-section">
               <label for="directions">Directions:</label>
               <div class="directions-container">
-                <div
-                  v-for="(direction, index) in recipeData.directions"
-                  :key="index"
-                  class="direction-step"
-                >
-                  <label :for="'direction' + direction.stepNumber"
-                    >Step {{ direction.stepNumber }}</label
-                  >
+                <div v-for="(direction, index) in recipeData.directions" :key="index" class="direction-step">
+                  <label :for="'direction' + direction.stepNumber">Step {{ direction.stepNumber }}</label>
                   <div class="direction-input">
-                    <textarea
-                      type="text"
-                      :id="'direction' + direction.stepNumber"
-                      v-model="direction.text"
-                      class="input-text"
-                    ></textarea>
-                    <button
-                      class="remove-button"
-                      @click="removeDirection(index)"
-                    >
+                    <textarea type="text" :id="'direction' + direction.stepNumber" v-model="direction.text"
+                      class="input-text"></textarea>
+                    <button class="remove-button" @click="removeDirection(index)">
                       x
                     </button>
                   </div>
@@ -200,16 +124,26 @@ import {
 import { ref as storageRef } from "firebase/storage";
 import {
   getFirestore,
+  doc,
+  setDoc,
   addDoc,
   collection,
   updateDoc,
+  arrayUnion,
 } from "firebase/firestore";
+import { v4 as uuidv4 } from "uuid";
+import { useToast } from "vue-toastification";
+import "vue-toastification/dist/index.css";
 
 export default {
   components: {
     Multiselect,
     TopBar,
     SaveRecipeButton,
+  },
+  setup() {
+    const toast = useToast();
+    return { toast };
   },
   data() {
     return {
@@ -246,7 +180,7 @@ export default {
         };
         reader.readAsDataURL(file); // Read the file
       } else {
-        alert("Please select a JPG or PNG image file.");
+        this.imageNotValid();
       }
     },
     addIngredient() {
@@ -297,28 +231,63 @@ export default {
         !this.recipeData.recipe_name ||
         !this.recipeData.description ||
         !this.recipeData.allergen_info ||
-        !this.recipeData.imageSrc ||
-        // !this.recipeData.cook_time_hours ||
-        !this.recipeData.cook_time_minutes ||
+        // !this.recipeData.imageSrc ||
+        (!this.recipeData.cook_time_hours &&
+          !this.recipeData.cook_time_minutes) ||
         !this.recipeData.category.length ||
         !this.recipeData.serving_size ||
         !this.recipeData.ingredients.length ||
         !this.recipeData.directions.length
       ) {
         // at least one field is empty
-        alert(
-          "Please fill in all fields properly before submitting the recipe."
-        );
+        this.fillAllFields();
+        // alert(
+        //   "Please fill in all fields properly before submitting the recipe."
+        // );
         return false;
       }
       return true;
     },
-    submitRecipe() {
+    imageNotValid() {
+      this.toast.error("Please select a JPG or PNG image file.", {
+        position: "top-center",
+        hideProgressBar: true,
+      });
+    },
+    fillAllFields() {
+      this.toast.error(
+        "Please fill in all fields properly before submitting the recipe.",
+        {
+          position: "top-center",
+          hideProgressBar: true,
+        }
+      );
+    },
+    cannotSaveRecipe() {
+      this.toast.error("Recipe could not be saved.", {
+        position: "top-center",
+        hideProgressBar: true,
+      });
+    },
+    recipeSavedSuccess() {
+      this.toast.success("Recipe was successfully created!", {
+        timeout: 2000,
+        position: "top-center",
+        hideProgressBar: true,
+      });
+    },
+    async submitRecipe() {
       if (!this.validateForm()) {
         return;
       }
       const user = auth.currentUser;
       const userId = user ? user.uid : "";
+      const recipe_id = uuidv4().toString();
+
+      if (!this.recipeData.imageSrc) {
+        this.recipeData.imageSrc =
+          "https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1";
+      }
 
       const recipe = {
         allergens: this.recipeData.allergen_info
@@ -334,7 +303,7 @@ export default {
         directions: this.recipeData.directions.map((d) => d.text),
         ingredients: this.recipeData.ingredients,
         like_count: 0,
-        recipe_id: "", //dont know if this works
+        recipe_id: recipe_id,
         recipe_img_url: this.recipeData.imageSrc,
         recipe_name: this.recipeData.recipe_name,
         serving_size: parseInt(this.recipeData.serving_size),
@@ -343,23 +312,46 @@ export default {
 
       const db = getFirestore(app);
       const colRef = collection(db, "all_recipes");
-      addDoc(colRef, recipe)
-        .then((docRef) => {
-          console.log("Document written with ID: ", docRef.id);
-
-          // Update the recipe document with the recipe_id
-          updateDoc(docRef, { recipe_id: docRef.id })
-            .then(() => {
-              console.log("Document updated successfully.");
-              this.$router.push("/community-page");
-            })
-            .catch((error) => {
-              console.error("Error updating document: ", error);
-            });
-        })
-        .catch((error) => {
-          console.error("Error adding document: ", error);
+      try {
+        const recipeRef = await setDoc(
+          doc(db, "all_recipes", recipe_id),
+          recipe
+        );
+        await updateDoc(doc(db, "users", recipe.user_id), {
+          my_cookbook: arrayUnion(recipe.recipe_id),
         });
+
+        console.log(this.categories);
+        this.recipeData.categories.forEach((cat) =>
+          updateDoc(doc(db, "categories", cat), {
+            recipes: arrayUnion(recipe.recipe_id),
+          })
+        );
+        console.log("Document updated successfully.");
+        this.$router.push("/community-page");
+        this.recipeSavedSuccess();
+      } catch (error) {
+        console.error("Error adding document:", error);
+        this.cannotSaveRecipe();
+      }
+      //   addDoc(colRef, recipe)
+      //     .then((docRef) => {
+      //       console.log("Document written with ID: ", docRef.id);
+
+      //       // Update the recipe document with the recipe_id
+      //       updateDoc(docRef, { recipe_id: docRef.id })
+      //         .then(() => {
+      //           console.log("Document updated successfully.");
+      //           this.$router.push("/community-page");
+      //           this.showToast();
+      //         })
+      //         .catch((error) => {
+      //           console.error("Error updating document: ", error);
+      //         });
+      //     })
+      //     .catch((error) => {
+      //       console.error("Error adding document: ", error);
+      //     });
     },
   },
 };
@@ -377,7 +369,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow-y: auto;
+  overflow-y: visible;
 }
 
 .recipe-form {
@@ -387,11 +379,15 @@ export default {
   border-radius: 8px;
   width: 80%;
   height: 90%;
-  overflow-y: auto;
+  overflow-y: visible;
 }
 
 .recipe-form label {
   margin-bottom: 5px;
+}
+
+.recioe-form-content {
+  position: fixed;
 }
 
 .createRecipeRow {
@@ -470,11 +466,11 @@ export default {
   border-radius: 50%;
 }
 
-.switch-container input:checked + .slider {
+.switch-container input:checked+.slider {
   background-color: black;
 }
 
-.switch-container input:checked + .slider:before {
+.switch-container input:checked+.slider:before {
   transform: translateX(20px);
 }
 

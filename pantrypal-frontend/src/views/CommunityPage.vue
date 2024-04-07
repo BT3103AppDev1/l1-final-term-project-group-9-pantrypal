@@ -1,6 +1,6 @@
 <template>
   <div class="community-page">
-    <TopBar :ifFeed="true" />
+    <TopBar whichPage="feed" />
     <div class="filterBar">
       <div class="search-bar">
         <input
@@ -46,12 +46,13 @@
     </div>
 
     <!-- RecipeCards######### -->
-
+    <div v-if="!isDataLoaded" class="recipe-list">
+      <div v-for="i in 15" :key="i" class="placeholder-card">
+        <RecipeCardPlaceholder />
+      </div>
+    </div>
     <!-- recipe card list -->
     <div class="recipe-list">
-      <div v-if="filteredRecipes.length === 0">
-        <p>No results found</p>
-      </div>
       <RecipeCard
         v-for="recipe in filteredRecipes"
         :key="recipe.recipe_id"
@@ -59,22 +60,20 @@
         @toggle="toggleRecipeDetails"
       />
     </div>
-    <!--
-    <RecipeDetailsWindow v-if="selectedRecipe" :selectedRecipe="selectedRecipe"
-      :selectedIngredients="selectedIngredients" :closeModal="closeModal" />
--->
+
+    <!-- Back to Top button 
+    <button class="back-to-top" @click="scrollToTop" v-show="showBackToTop">
+      <img src="../assets/BackToTop.svg" alt="Back To Top" />
+      <text>Back To Top</text>
+    </button>
+    -->
+
     <CircleButton logo="src/assets/plus-icon.png" @click="toggleCreateRecipe" />
-    <CreateRecipe
-      v-if="showCreateRecipe"
-      @close="showCreateRecipe = false"
-      @recipe-submitted="handleRecipeSubmitted"
-    />
   </div>
 </template>
 
 <script>
 import RecipeCard from "../components/RecipeCard.vue";
-import RecipeDetailsWindow from "../components/RecipeDetailsWindow.vue";
 import { db } from "../firebase.js";
 import { collection, getDocs, getDoc, doc } from "firebase/firestore";
 import TopBar from "@/components/TopBar.vue";
@@ -83,53 +82,69 @@ import RecipeImage from "@/components/RecipeImage.vue";
 import CreateRecipe from "@/components/CreateRecipe.vue";
 import CircleButton from "@/components/CircleButton.vue";
 import router from "../router/index.js";
+import RecipeCardPlaceholder from "../components/RecipeCardPlaceholder.vue";
 
 export default {
   components: {
     RecipeCard,
-    RecipeDetailsWindow,
     TopBar,
     dropdown,
     RecipeImage,
     CreateRecipe,
     CircleButton,
+    RecipeCardPlaceholder,
   },
   data() {
     return {
       arrayOfCategories: [
-        { name: "All", id: "00" },
-        { name: "Asian", id: "01" },
-        { name: "Western", id: "02" },
-        { name: "Local Delights", id: "03" },
-        { name: "Healthy Choices", id: "04" },
-        { name: "Fast Food", id: "05" },
-        { name: "Desserts and Snacks", id: "06" },
-        { name: "Beverages", id: "07" },
-        { name: "Specialty", id: "08" },
-        { name: "Breakfast and Brunch", id: "09" },
-        { name: "Late-night Eats", id: "10" },
-        { name: "Others", id: "11" },
+        { name: "All" },
+        { name: "Asian" },
+        { name: "Western" },
+        { name: "Local Delights" },
+        { name: "Healthy Choices" },
+        { name: "Fast Food" },
+        { name: "Desserts and Snacks" },
+        { name: "Beverages" },
+        { name: "Specialty" },
+        { name: "Breakfast and Brunch" },
+        { name: "Late-night Eats" },
+        { name: "Others" },
       ],
       category: {},
       arrayOfSorts: [{ name: "Most Recent" }, { name: "Most Liked" }],
       sort: {},
       allCommunityRecipes: [],
       filteredRecipes: [],
+      filteredRecipesByName: [],
       allRecipes: [],
       searchQuery: "",
       selectedRecipe: null,
       selectedIngredients: [],
       showCreateRecipe: false,
+      showBackToTop: false,
+      isDataLoaded: false,
     };
   },
   watch: {
     searchQuery(value) {
       this.filterByNameOrIngredients();
+      localStorage.setItem("searchQuery", value);
     },
   },
   created() {
     this.fetchRecipes();
     this.router = router;
+    window.addEventListener("scroll", this.handleScroll);
+  },
+  destroyed() {
+    // Remove the scroll event listener when component is destroyed
+    window.removeEventListener("scroll", this.handleScroll);
+  },
+  mounted() {
+    const storedSearchQuery = localStorage.getItem("searchQuery");
+    if (storedSearchQuery) {
+      this.searchQuery = storedSearchQuery;
+    }
   },
 
   methods: {
@@ -140,10 +155,14 @@ export default {
         if (doc.data().community && doc.data().community === true) {
           this.allCommunityRecipes.push(doc.data());
           this.filteredRecipes.push(doc.data());
+          this.filteredRecipesByName.push(doc.data());
         }
       });
-      this.sortByMostRecent();
-      this.sortAllByMostRecent();
+      this.filterByNameOrIngredients();
+      this.sortByMostRecent(this.allCommunityRecipes);
+      this.sortByMostRecent(this.filteredRecipes);
+      this.sortByMostRecent(this.filteredRecipesByName);
+      this.isDataLoaded = true;
     },
     toggleCreateRecipe() {
       this.showCreateRecipe = !this.showCreateRecipe;
@@ -155,14 +174,6 @@ export default {
     toggleRecipeDetails(recipe) {
       recipe.showDetails = !recipe.showDetails;
       this.selectedRecipe = recipe;
-    },
-    closeModal() {
-      this.selectedRecipe = null;
-      this.selectedIngredients = [];
-    },
-
-    handleRecipeSubmitted() {
-      this.$router.push("/community-page");
     },
 
     filterByNameOrIngredients() {
@@ -178,45 +189,52 @@ export default {
         });
         return nameMatch || ingredientsMatch;
       });
+      this.filteredRecipesByName = this.filteredRecipes;
     },
 
     async filterUsingCategory(payload) {
       this.category = payload;
       if (this.category.name == "All") {
-        this.filteredRecipes = this.allCommunityRecipes;
+        this.filteredRecipes = this.filteredRecipesByName;
       } else {
-        this.filteredRecipes = [];
-        const docSnap = await getDoc(doc(db, "categories", payload.id));
+        const docSnap = await getDoc(doc(db, "categories", payload.name));
         const recipesIDlist = docSnap.data().recipes;
         if (recipesIDlist.length != 0) {
-          for (let x in recipesIDlist) {
-            const docSnap = await getDoc(doc(db, "all_recipes", recipesIDlist[x]));
-            this.filteredRecipes.push(docSnap.data());
-          }
+          this.filteredRecipes = this.filteredRecipesByName;
+          this.filteredRecipes = this.filteredRecipes.filter((recipe) =>
+            recipesIDlist.includes(recipe.recipe_id)
+          );
         }
       }
     },
     filterUsingSort(payload) {
       this.sort = payload;
       if (payload.name == "Most Recent") {
-        this.sortByMostRecent();
+        this.sortByMostRecent(this.filteredRecipes);
       } else {
         this.sortByMostLiked();
       }
     },
-    sortAllByMostRecent() {
-      this.allCommunityRecipes = this.allCommunityRecipes.sort((a, b) => {
+    sortByMostRecent(recipes) {
+      recipes = recipes.sort((a, b) => {
         return b.created_date.toDate() - a.created_date.toDate();
       });
     },
-    sortByMostRecent() {
-      this.filteredRecipes = this.filteredRecipes.sort((a, b) => {
-        return b.created_date.toDate() - a.created_date.toDate();
-      });
-    },
+
     sortByMostLiked() {
       this.filteredRecipes = this.filteredRecipes.sort((a, b) => {
         return b.like_count - a.like_count;
+      });
+    },
+    handleScroll() {
+      // Show the button when user scrolls down beyond 300px
+      this.showBackToTop = window.scrollY > 250;
+    },
+    // Method to scroll to the top of the page
+    scrollToTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth", // Smooth scrolling
       });
     },
   },
@@ -327,5 +345,27 @@ export default {
 .plus-icon-container img {
   width: 30px;
   height: 30px;
+}
+
+.back-to-top {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  padding: 10px 20px;
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Show the button when scrolling down */
+.back-to-top.show {
+  display: block;
+}
+
+.back-to-top img {
+  width: 60px;
+  height: 60px;
 }
 </style>

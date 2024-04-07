@@ -41,7 +41,6 @@
 
 <script>
 import RecipeCard from "../components/RecipeCard.vue";
-import RecipeDetailsWindow from "../components/RecipeDetailsWindow.vue";
 import { db, auth } from "../firebase.js";
 import { collection, getDocs, getDoc, doc } from "firebase/firestore";
 import dropdown from "vue-dropdowns";
@@ -50,7 +49,6 @@ import RecipeImage from "@/components/RecipeImage.vue";
 export default {
     components: {
         RecipeCard,
-        RecipeDetailsWindow,
         dropdown,
         RecipeImage,
     },
@@ -129,13 +127,10 @@ export default {
                 this.filteredRecipes = this.myRecipes;
             } else {
                 this.filteredRecipes = [];
-                const docSnap = await getDoc(doc(db, "categories", payload.id));
+                const docSnap = await getDoc(doc(db, "categories", payload.name));
                 const recipesIDlist = docSnap.data().recipes;
                 if (recipesIDlist.length != 0) {
-                    for (let x in recipesIDlist) {
-                        const docSnap = await getDoc(doc(db, "all_recipes", recipesIDlist[x]));
-                        this.filteredRecipes.push(docSnap.data());
-                    }
+                    this.filteredRecipes = this.myRecipes.filter(recipe => recipesIDlist.includes(recipe.recipe_id));
                 }
             }
         },
@@ -169,8 +164,8 @@ export default {
 <style scoped>
 .myCookbook-page {
     width: 90%;
-    margin-left: 50px;
-    margin-right: 50px;
+    margin: auto;
+    margin-top: 0;
 }
 
 .filterBar {

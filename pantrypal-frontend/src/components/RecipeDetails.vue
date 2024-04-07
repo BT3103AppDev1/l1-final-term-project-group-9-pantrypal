@@ -1,13 +1,29 @@
 <template>
   <div class="horizontalRow">
     <div class="first">
-      <RecipeImage :path="selectedRecipe.recipe_img_url" :ifCard="false" />
+        <RecipeImage :path="selectedRecipe.recipe_img_url" :ifCard="false" />
+        <div v-if="!likeExists" class="switch-container">
+              <label class="switch">
+                <input
+                  type="checkbox"
+                  id="publishToCommunity"
+                  v-model="selectedRecipe.community"
+                  @change="togglePublishToCommunity"
+                />
+                <span class="slider"></span>
+              </label>
+              <label for="publishToCommunity">Publish to Community</label>
+        </div>
     </div>
     <div class="second">
-      <div class="title-row">
-        <h1>{{ selectedRecipe.recipe_name }}</h1>
-        <LikeButton v-if="likeExists" :recipe="selectedRecipe" />
-      </div>
+        <div class="title-row">
+            <h1>{{ selectedRecipe.recipe_name }}</h1>
+            <LikeButton v-if="likeExists" :recipe="selectedRecipe" />
+        </div>
+        <div class="warning" v-if="selectedRecipe.AIgenerated">
+            <img clas="warning-logo" src="../assets/warning-icon.png" height="16px">
+            <span>This recipe is AI-generated and PantryPal has not verified it for accuracy and safety.</span>
+        </div>
       <p>
         <i v-if="likeExists">
           By @{{ username }},
@@ -155,6 +171,9 @@ export default {
       }
       this.cookingTimeInHrAndMin = result || "0mins";
     },
+    togglePublishToCommunity() {
+      this.$emit("togglePublishToCommunity", this.selectedRecipe.community);
+    },
   },
 };
 </script>
@@ -249,5 +268,78 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+
+.switch-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.switch-container .switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+  vertical-align: middle;
+}
+
+.switch-container .switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch-container .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 20px;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 34px;
+}
+
+.switch-container .slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+.switch-container input:checked + .slider {
+  background-color: black;
+}
+
+.switch-container input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+.warning {
+    background-color: #FFF7D7;
+    padding: 10px 10px;
+    border-radius: 8px;
+    margin: 5px 10px 5px 0px;
+    font-size: 12px;
+    vertical-align: middle;
+    align-items: center; 
+    display: flex;
+    width: fit-content
+}
+
+img {
+    margin-right: 8px;
+}
+
+h1 {
+    margin: 0px 0px;
 }
 </style>

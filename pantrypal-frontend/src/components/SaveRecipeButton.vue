@@ -1,14 +1,18 @@
 <template>
-  <button class="save-recipe-button" @click="submitRecipe">Save Recipe</button>
+  <button class="save-recipe-button" @click="submitRecipe" :disabled="disabled">Save Recipe</button>
 </template>
 
 <script>
 export default {
-  methods: {
-    submitRecipe() {
-      this.$emit("save-recipe");
+    name: "SaveRecipeButton",
+    props: {
+        disabled: Boolean,
     },
-  },
+    methods: {
+        submitRecipe() {
+        this.$emit("save-recipe");
+        },
+    },
 };
 </script>
 
@@ -37,10 +41,17 @@ export default {
   height: auto;
   margin: 0 20px;
   font-size: 14px;
+  font-weight: bold;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.save-recipe-button:hover {
+.save-recipe-button:not([disabled]):hover {
   background-color: #596639;
+}
+
+.save-recipe-button[disabled] {
+  background-color: #cccccc; 
+  cursor: not-allowed; 
+  opacity: 0.6; 
 }
 </style>
