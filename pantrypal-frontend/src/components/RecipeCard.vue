@@ -21,7 +21,7 @@
         </div>
 
         <div class="like">
-          <LikeButton :recipe="recipe" />
+          <LikeButton :recipe="recipe" @updateLiked="updateLiked" />
         </div>
       </div>
     </div>
@@ -73,6 +73,9 @@ export default {
     toggleRecipeDetails() {
       this.$router.push({ name: "RecipeDetailsPage", params: { id: this.recipe.recipe_id } });
     },
+    updateLiked() {
+      this.$emit('updateLiked');
+    }
   },
 };
 </script>

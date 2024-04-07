@@ -6,8 +6,9 @@
         @refreshProfilePic="refreshProfilePic" />
       <UserProfileEdit v-if="selected === 'settings' && Object.keys(userData).length !== 0" :userData="userData"
         @userData="handleUserDataUpdate" />
-      <UserProfileLikedRecipes v-if="selected === 'likedRecipes'" :userData="userData" />
+      <UserProfileLikedRecipes v-if="selected === 'likedRecipes'" :userData="userData" @updateLiked="fetchUserStats" />
       <UserProfileMyCookbook v-if="selected === 'myCookbook'" :userData="userData" />
+      <UserProfileStats v-if="selected === 'stats'" :userData="userData" :lastStatsUpdate="lastStatsUpdate" :key="refreshKey"/>
     </div>
   </div>
 </template>
@@ -18,6 +19,7 @@ import TopBar from '../components/TopBar.vue'
 import UserProfileEdit from '../components/UserProfileEdit.vue'
 import UserProfileLikedRecipes from '../components/UserProfileLikedRecipes.vue'
 import UserProfileMyCookbook from '../components/UserProfileMyCookbook.vue';
+import UserProfileStats from '../components/UserProfileStats.vue'
 import { db, auth } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
 
@@ -28,18 +30,25 @@ export default {
     UserProfileSidebar,
     UserProfileEdit,
     UserProfileLikedRecipes,
-    UserProfileMyCookbook
+    UserProfileMyCookbook,
+    UserProfileStats
   },
   data() {
     return {
       selected: "settings",
-      userData: {}
+      userData: {},
+      lastStatsUpdate: Date.now(),
+      refreshKey:0
     };
   },
   mounted() {
     this.fetchUserData();
   },
   methods: {
+    fetchUserStats() {
+      this.lastStatsUpdate = Date.now();  
+      this.refreshKey++;
+    },
     changeSelected(x) {
       this.selected = x
     },
