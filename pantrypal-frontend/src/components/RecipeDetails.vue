@@ -1,19 +1,19 @@
 <template>
   <div class="horizontalRow">
     <div class="first">
-        <div v-if="!likeExists" class="switch-container">
-              <label class="switch">
-                <input
-                  type="checkbox"
-                  id="publishToCommunity"
-                  v-model="selectedRecipe.community"
-                  @change="togglePublishToCommunity"
-                />
-                <span class="slider"></span>
-              </label>
-              <label for="publishToCommunity">Publish to Community</label>
-        </div>
-        <RecipeImage :path="selectedRecipe.recipe_img_url" :ifCard="false" />
+      <div v-if="!likeExists" class="switch-container">
+        <label class="switch">
+          <input
+            type="checkbox"
+            id="publishToCommunity"
+            v-model="selectedRecipe.community"
+            @change="togglePublishToCommunity"
+          />
+          <span class="slider"></span>
+        </label>
+        <label for="publishToCommunity">Publish to Community</label>
+      </div>
+      <RecipeImage :path="selectedRecipe.recipe_img_url" :ifCard="false" />
     </div>
     <div class="second">
       <div class="title-row">
@@ -103,6 +103,13 @@
           </li>
         </ol>
       </div>
+      <div
+        class="button-container"
+        v-if="user && user.uid === selectedRecipe.user_id"
+      >
+        <button class="edit-recipe-button" @click="edit">Edit Recipe</button>
+        <button class="delete-recipe-button" @click="">Delete Recipe</button>
+      </div>
     </div>
   </div>
 </template>
@@ -111,7 +118,7 @@
 import RecipeImage from "./RecipeImage.vue";
 import LikeButton from "./LikeButton.vue";
 
-import { db } from "../firebase";
+import { db, auth } from "../firebase";
 import { collection, query, where, getDocs } from "firebase/firestore";
 export default {
   components: {
@@ -122,6 +129,7 @@ export default {
     return {
       username: "",
       cookingTimeInHrAndMin: "",
+      user: auth.currentUser,
     };
   },
   props: {
@@ -169,6 +177,12 @@ export default {
     },
     togglePublishToCommunity() {
       this.$emit("togglePublishToCommunity", this.selectedRecipe.community);
+    },
+    edit() {
+      this.$router.push({
+        name: "RecipeEdit",
+        params: { id: this.selectedRecipe.recipe_id },
+      });
     },
   },
 };
@@ -266,7 +280,6 @@ export default {
   align-items: center;
 }
 
-
 .switch-container {
   display: flex;
   align-items: center;
@@ -317,5 +330,48 @@ export default {
 
 .switch-container input:checked + .slider:before {
   transform: translateX(20px);
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  align-items: center;
+}
+
+.edit-recipe-button {
+  background-color: #a7bf6a;
+  border: none;
+  color: white;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 15px;
+  width: auto;
+  height: auto;
+  margin: 0 20px;
+  font-size: 14px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.edit-recipe-button:hover {
+  background-color: #596639;
+}
+
+.delete-recipe-button {
+  background-color: #ff4b4b;
+  border: none;
+  color: white;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 15px;
+  width: auto;
+  height: auto;
+  margin: 0 20px;
+  font-size: 14px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.delete-recipe-button:hover {
+  background-color: #cc3333;
 }
 </style>

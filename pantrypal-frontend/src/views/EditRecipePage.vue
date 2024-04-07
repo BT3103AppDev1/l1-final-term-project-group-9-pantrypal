@@ -179,8 +179,7 @@
         </div>
       </div>
       <div class="button-container">
-        <button class="cancel-button" @click="close">Cancel</button>
-        <SaveRecipeButton @save-recipe="submitRecipe" />
+        <save-recipe-button @save-recipe="submitRecipe" />
       </div>
     </div>
   </div>
@@ -204,6 +203,7 @@ import {
   doc,
   setDoc,
   addDoc,
+  getDoc,
   collection,
   updateDoc,
   arrayUnion,
@@ -218,20 +218,24 @@ export default {
     TopBar,
     SaveRecipeButton,
   },
+  props: {
+    id: String,
+  },
   setup() {
     const toast = useToast();
     return { toast };
   },
   data() {
     return {
+      selectedRecipe: null,
       recipeData: {
         imageSrc: null,
         publish_to_community: false,
         recipe_name: "",
         serving_size: "",
         description: "",
-        allergen_info: "",
-        allergens: [],
+        allergen_info: "", //input allergens
+        allergens: [], //storing allergens
         cook_time_hours: "",
         cook_time_minutes: "",
         categories: [], //loaded categories
@@ -243,8 +247,30 @@ export default {
   },
   async created() {
     this.recipeData.categories = await fetchCategories();
+    this.fetchRecipeDetails();
   },
   methods: {
+    async fetchRecipeDetails() {
+      const recipeDocSnapshot = await getDoc(doc(db, "all_recipes", this.id));
+      this.selectedRecipe = recipeDocSnapshot.data();
+      this.recipeData.imageSrc = this.selectedRecipe.recipe_img_url;
+      this.recipeData.publish_to_community = this.selectedRecipe.community;
+      this.recipeData.recipe_name = this.selectedRecipe.recipe_name;
+      this.recipeData.serving_size = this.selectedRecipe.serving_size;
+      this.recipeData.description = this.selectedRecipe.description;
+      this.recipeData.allergen_info = this.selectedRecipe.allergens.join(", "); //input allergens
+      this.recipeData.cook_time_hours = Math.floor(
+        this.selectedRecipe.cook_time / 60
+      );
+      this.recipeData.cook_time_minutes = this.selectedRecipe.cook_time % 60;
+      this.recipeData.category = this.selectedRecipe.categories;
+      this.recipeData.ingredients = this.selectedRecipe.ingredients;
+      this.recipeData.directions = this.selectedRecipe.directions.map(
+        (direction, index) => {
+          return { stepNumber: index + 1, text: direction };
+        }
+      );
+    },
     chooseFile() {
       this.$refs.fileInput.click();
     },
@@ -293,11 +319,21 @@ export default {
       this.$router.push("/community-page");
     },
     validateForm() {
+      // if (
+      //   isNaN(this.recipeData.cook_time_hours) ||
+      //   isNaN(this.recipeData.cook_time_minutes)
+      // ) {
+      //   alert("Please enter valid cook time values.");
+      //   return false;
+      // }
+      // if (isNaN(this.recipeData.serving_size)) {
+      //   alert("Please enter valid serving size values.");
+      //   return false;
+      // }
       if (
         !this.recipeData.recipe_name ||
         !this.recipeData.description ||
         !this.recipeData.allergen_info ||
-        // !this.recipeData.imageSrc ||
         (!this.recipeData.cook_time_hours &&
           !this.recipeData.cook_time_minutes) ||
         !this.recipeData.category.length ||
@@ -348,7 +384,7 @@ export default {
       }
       const user = auth.currentUser;
       const userId = user ? user.uid : "";
-      const recipe_id = uuidv4().toString();
+      const recipe_id = this.selectedRecipe.recipe_id;
 
       if (!this.recipeData.imageSrc) {
         this.recipeData.imageSrc =
@@ -368,7 +404,7 @@ export default {
         description: this.recipeData.description,
         directions: this.recipeData.directions.map((d) => d.text),
         ingredients: this.recipeData.ingredients,
-        like_count: 0,
+        like_count: this.selectedRecipe.like_count,
         recipe_id: recipe_id,
         recipe_img_url: this.recipeData.imageSrc,
         recipe_name: this.recipeData.recipe_name,
@@ -379,7 +415,7 @@ export default {
       const db = getFirestore(app);
       const colRef = collection(db, "all_recipes");
       try {
-        const recipeRef = await setDoc(
+        const recipeRef = await updateDoc(
           doc(db, "all_recipes", recipe_id),
           recipe
         );
@@ -394,8 +430,11 @@ export default {
           })
         );
         console.log("Document updated successfully.");
-        this.$router.push("/community-page");
-        this.recipeSavedSucces();
+        this.$router.push({
+          name: "RecipeDetailsPage",
+          params: { id: this.selectedRecipe.recipe_id },
+        });
+        this.recipeSavedSuccess();
       } catch (error) {
         console.error("Error adding document:", error);
         this.cannotSaveRecipe();
@@ -756,6 +795,19 @@ textarea {
 
 .cancel-button:hover {
   color: #6b6969;
+}
+
+.save-recipe-button {
+  background-color: #60ce64;
+  border: none;
+  text-decoration: none;
+  color: white;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 15px;
+  width: 90px;
+  height: 32px;
+  margin: 0 20px;
 }
 
 .save-recipe-button {
