@@ -1,9 +1,14 @@
 <template>
   <div class="community-page">
-    <TopBar :ifFeed="true" />
+    <TopBar whichPage="feed" />
     <div class="filterBar">
       <div class="search-bar">
-        <input type="text" class="search-input" placeholder="Search name or ingredients..." v-model="searchQuery" />
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Search name or ingredients..."
+          v-model="searchQuery"
+        />
         <img class="search-button" src="../assets/search-icon.svg" alt="Search Icon" />
       </div>
       <div class="category-bar-text">
@@ -11,8 +16,14 @@
       </div>
       <div class="category-bar-dropdown">
         <div class="dropdown-container">
-          <dropdown class="my-dropdown-toggle" :options="arrayOfCategories" :selected="category" :placeholder="'All'"
-            :closeOnOutsideClick="true" v-on:updateOption="filterUsingCategory">
+          <dropdown
+            class="my-dropdown-toggle"
+            :options="arrayOfCategories"
+            :selected="category"
+            :placeholder="'All'"
+            :closeOnOutsideClick="true"
+            v-on:updateOption="filterUsingCategory"
+          >
           </dropdown>
         </div>
       </div>
@@ -21,19 +32,33 @@
       </div>
       <div class="category-bar-dropdown">
         <div class="dropdown-container">
-          <dropdown class="my-dropdown-toggle" :options="arrayOfSorts" :selected="sort" :placeholder="'Most Recent'"
-            :closeOnOutsideClick="true" v-on:updateOption="filterUsingSort">
+          <dropdown
+            class="my-dropdown-toggle"
+            :options="arrayOfSorts"
+            :selected="sort"
+            :placeholder="'Most Recent'"
+            :closeOnOutsideClick="true"
+            v-on:updateOption="filterUsingSort"
+          >
           </dropdown>
         </div>
       </div>
     </div>
 
     <!-- RecipeCards######### -->
-
+    <div v-if="!isDataLoaded" class="recipe-list">
+      <div v-for="i in 15" :key="i" class="placeholder-card">
+        <RecipeCardPlaceholder />
+      </div>
+    </div>
     <!-- recipe card list -->
     <div class="recipe-list">
-      <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe"
-        @toggle="toggleRecipeDetails" />
+      <RecipeCard
+        v-for="recipe in filteredRecipes"
+        :key="recipe.recipe_id"
+        :recipe="recipe"
+        @toggle="toggleRecipeDetails"
+      />
     </div>
 
     <!-- Back to Top button 
@@ -44,8 +69,6 @@
     -->
 
     <CircleButton logo="src/assets/plus-icon.png" @click="toggleCreateRecipe" />
-
-
   </div>
 </template>
 
@@ -59,6 +82,7 @@ import RecipeImage from "@/components/RecipeImage.vue";
 import CreateRecipe from "@/components/CreateRecipe.vue";
 import CircleButton from "@/components/CircleButton.vue";
 import router from "../router/index.js";
+import RecipeCardPlaceholder from "../components/RecipeCardPlaceholder.vue";
 
 export default {
   components: {
@@ -68,6 +92,7 @@ export default {
     RecipeImage,
     CreateRecipe,
     CircleButton,
+    RecipeCardPlaceholder,
   },
   data() {
     return {
@@ -90,27 +115,36 @@ export default {
       sort: {},
       allCommunityRecipes: [],
       filteredRecipes: [],
+      filteredRecipesByName: [],
       allRecipes: [],
       searchQuery: "",
       selectedRecipe: null,
       selectedIngredients: [],
       showCreateRecipe: false,
-      showBackToTop: false
+      showBackToTop: false,
+      isDataLoaded: false,
     };
   },
   watch: {
     searchQuery(value) {
       this.filterByNameOrIngredients();
+      localStorage.setItem("searchQuery", value);
     },
   },
   created() {
     this.fetchRecipes();
     this.router = router;
-    window.addEventListener('scroll', this.handleScroll);
+    window.addEventListener("scroll", this.handleScroll);
   },
   destroyed() {
     // Remove the scroll event listener when component is destroyed
-    window.removeEventListener('scroll', this.handleScroll);
+    window.removeEventListener("scroll", this.handleScroll);
+  },
+  mounted() {
+    const storedSearchQuery = localStorage.getItem("searchQuery");
+    if (storedSearchQuery) {
+      this.searchQuery = storedSearchQuery;
+    }
   },
 
   methods: {
@@ -121,10 +155,14 @@ export default {
         if (doc.data().community && doc.data().community === true) {
           this.allCommunityRecipes.push(doc.data());
           this.filteredRecipes.push(doc.data());
+          this.filteredRecipesByName.push(doc.data());
         }
       });
-      this.sortByMostRecent();
-      this.sortAllByMostRecent();
+      this.filterByNameOrIngredients();
+      this.sortByMostRecent(this.allCommunityRecipes);
+      this.sortByMostRecent(this.filteredRecipes);
+      this.sortByMostRecent(this.filteredRecipesByName);
+      this.isDataLoaded = true;
     },
     toggleCreateRecipe() {
       this.showCreateRecipe = !this.showCreateRecipe;
@@ -137,14 +175,6 @@ export default {
       recipe.showDetails = !recipe.showDetails;
       this.selectedRecipe = recipe;
     },
-    closeModal() {
-      this.selectedRecipe = null;
-      this.selectedIngredients = [];
-    },
-
-    handleRecipeSubmitted() {
-      this.$router.push("/community-page");
-    },
 
     filterByNameOrIngredients() {
       this.filteredRecipes = this.allCommunityRecipes.filter((recipe) => {
@@ -153,47 +183,44 @@ export default {
           .includes(this.searchQuery.toLowerCase());
         let ingredientsMatch = false;
         recipe.ingredients.forEach((ingredient) => {
-          if (
-            ingredient.toLowerCase().includes(this.searchQuery.toLowerCase())
-          ) {
+          if (ingredient.toLowerCase().includes(this.searchQuery.toLowerCase())) {
             ingredientsMatch = true;
           }
         });
         return nameMatch || ingredientsMatch;
       });
+      this.filteredRecipesByName = this.filteredRecipes;
     },
 
     async filterUsingCategory(payload) {
       this.category = payload;
       if (this.category.name == "All") {
-        this.filteredRecipes = this.allCommunityRecipes;
+        this.filteredRecipes = this.filteredRecipesByName;
       } else {
-        this.filteredRecipes = [];
         const docSnap = await getDoc(doc(db, "categories", payload.name));
         const recipesIDlist = docSnap.data().recipes;
         if (recipesIDlist.length != 0) {
-          this.filteredRecipes = this.allCommunityRecipes.filter(recipe => recipesIDlist.includes(recipe.recipe_id));
+          this.filteredRecipes = this.filteredRecipesByName;
+          this.filteredRecipes = this.filteredRecipes.filter((recipe) =>
+            recipesIDlist.includes(recipe.recipe_id)
+          );
         }
       }
     },
     filterUsingSort(payload) {
       this.sort = payload;
       if (payload.name == "Most Recent") {
-        this.sortByMostRecent();
+        this.sortByMostRecent(this.filteredRecipes);
       } else {
         this.sortByMostLiked();
       }
     },
-    sortAllByMostRecent() {
-      this.allCommunityRecipes = this.allCommunityRecipes.sort((a, b) => {
+    sortByMostRecent(recipes) {
+      recipes = recipes.sort((a, b) => {
         return b.created_date.toDate() - a.created_date.toDate();
       });
     },
-    sortByMostRecent() {
-      this.filteredRecipes = this.filteredRecipes.sort((a, b) => {
-        return b.created_date.toDate() - a.created_date.toDate();
-      });
-    },
+
     sortByMostLiked() {
       this.filteredRecipes = this.filteredRecipes.sort((a, b) => {
         return b.like_count - a.like_count;
@@ -202,20 +229,17 @@ export default {
     handleScroll() {
       // Show the button when user scrolls down beyond 300px
       this.showBackToTop = window.scrollY > 250;
-
     },
     // Method to scroll to the top of the page
     scrollToTop() {
       window.scrollTo({
         top: 0,
-        behavior: 'smooth' // Smooth scrolling
+        behavior: "smooth", // Smooth scrolling
       });
-
-    }
-  }
+    },
+  },
 };
 </script>
-
 
 <style scoped>
 .community-page {
@@ -332,7 +356,7 @@ export default {
   border: none;
   background-color: transparent;
   display: flex;
-  flex-direction: column
+  flex-direction: column;
 }
 
 /* Show the button when scrolling down */

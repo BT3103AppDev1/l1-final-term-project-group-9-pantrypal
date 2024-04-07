@@ -7,7 +7,8 @@
                     v-model="value" 
                     :options="options"
                     :multiple="true"
-                    :close-on-select="false">
+                    :close-on-select="false"
+                    :max="3">
                 </multiselect>       
             </div>
             <label>Dietary Restrictions</label>

@@ -1,7 +1,8 @@
 <template>
   <div class="user-profile-edit">
     <PasswordConfirmationModal :isVisible="showPasswordModal" @update:isVisible="showPasswordModal = $event" @confirm="handlePasswordConfirm" />
-    <form @submit.prevent="saveChanges" class="user-form">
+    <h2>Edit User Details</h2>
+    <form @submit.prevent="saveChangesDetails" class="user-form">
       <div class="form-group">
         <label for="email">Email Address</label>
         <input type="email" id="email" v-model="email" disabled class="input-field non-editable" />
@@ -12,6 +13,12 @@
         <input type="text" id="username" v-model="username" class="input-field" />
       </div>
 
+      <div class="save-changes-btn-container">
+        <button type="submit" class="save-changes-btn">Save Changes</button>
+      </div>
+    </form>
+    <h2>Change Password</h2>
+    <form @submit.prevent="saveChangesPassword" class="user-form">
       <div class="form-group">
         <label for="newPassword">New Password</label>
         <input type="password" id="newPassword" v-model="newPassword" class="input-field" />
@@ -33,6 +40,8 @@ import { reauthenticateWithCredential, EmailAuthProvider, updatePassword } from 
 import { doc, updateDoc } from 'firebase/firestore';
 import { db, auth } from "../firebase";
 import PasswordConfirmationModal from './PasswordConfirmationModal.vue';
+import { useToast } from 'vue-toastification';
+import "vue-toastification/dist/index.css";
 
 export default {
   name: 'UserProfileEdit',
@@ -53,36 +62,25 @@ export default {
       passwordUpdateComplete: true,
     }
   },
-
-
-
+  setup() {
+        const toast = useToast();
+        return { toast };
+  },
   created() {
     this.email = this.userData.email;
     this.username = this.userData.username;
   },
   methods: {
-    async saveChanges() {
+    async saveChangesDetails() {
       try {
         const user = auth.currentUser;
-        if (this.newPassword) {
-          await this.changePassword(this.newPassword);
-        }
-
-        if (this.newPassword && !this.passwordUpdateComplete) {
-            alert("Please complete the password update process first.");
-            const userRef = doc(db, 'users', user.uid);
-            await updateDoc(userRef, {
-                username: this.username,
-            });
-            return;
-        }
 
         if (user) {
           const userRef = doc(db, 'users', user.uid);
           await updateDoc(userRef, {
             username: this.username,
           });
-          alert('Profile updated successfully.');
+          this.triggerToastUserComplete();
           this.$emit('userData', { ...this.userData, username: this.username })
 
         }
@@ -91,13 +89,33 @@ export default {
         alert(error.message);
       }
     },
-    async changePassword() {
-        if (this.newPassword !== this.confirmPassword) {
-            alert("Passwords do not match.");
+    async saveChangesPassword() {
+      try {
+        const user = auth.currentUser;
+        if (this.newPassword) {
+          await this.changePassword(this.newPassword);
+        }
+
+        if (this.newPassword && !this.passwordUpdateComplete) {
+            this.triggerToastPasswordComplete();
+            const userRef = doc(db, 'users', user.uid);
+            await updateDoc(userRef, {
+                username: this.username,
+            });
             return;
         }
-        if (!this.newPassword) {
-            alert("New password must not be empty.");
+      } catch (error) {
+        console.error("Error updating profile:", error);
+        alert(error.message);
+      }
+    },
+    async changePassword() {
+        if (this.newPassword !== this.confirmPassword) {
+            this.triggerToastPasswordNoMatch();
+            return;
+        }
+        if (!this.newPassword || !this.confirmPassword) {
+            this.triggerToastPasswordTooShort();
             return;
         }
         this.showPasswordModal = true;
@@ -110,14 +128,56 @@ export default {
             await reauthenticateWithCredential(user, credential);
             await updatePassword(user, this.newPassword);
             this.passwordUpdateComplete = true;
-            alert('Password updated successfully.');
+            this.triggerToastPasswordSuccess();
             this.newPassword = '';
             this.confirmPassword = '';
         } catch (error) {
             console.error("Error updating password:", error);
-            alert("Invalid Credentials");
+            this.triggerToastPasswordFailed()
             this.passwordUpdateComplete = true;
         }
+    },
+    triggerToastUserComplete() {
+        this.toast("Profile updated successfully.", {
+            timeout: 2000,
+            position: 'top-center',
+            hideProgressBar: true,
+        });
+    },
+    triggerToastPasswordNoMatch() {
+        this.toast.error("Passwords do not match.", {
+            timeout: 2000,
+            position: 'top-center',
+            hideProgressBar: true,
+        });
+    },
+    triggerToastPasswordTooShort() {
+        this.toast.error("Password fields cannot be empty", {
+            timeout: 2000,
+            position: 'top-center',
+            hideProgressBar: true,
+        });
+    },
+    triggerToastPasswordComplete() {
+        this.toast("Please complete the password update process first.", {
+            timeout: 2000,
+            position: 'top-center',
+            hideProgressBar: true,
+        });
+    },
+    triggerToastPasswordSuccess() {
+        this.toast("Password updated successfully.", {
+            timeout: 2000,
+            position: 'top-center',
+            hideProgressBar: true,
+        });
+    },
+    triggerToastPasswordFailed() {
+        this.toast.error("Invalid Credentials", {
+            timeout: 2000,
+            position: 'top-center',
+            hideProgressBar: true,
+        });
     },
   }
 }
@@ -126,22 +186,28 @@ export default {
 <style scoped>
 .user-profile-edit {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column; 
+  align-items: center; 
   width: 100%;
   margin-bottom: 90px;
+  padding-top: 110px;
 }
 
 .user-form {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-gap: 1rem;
+  display: flex; 
+  flex-wrap: wrap; 
+  justify-content: center; 
   max-width: 600px;
-  margin: auto;
+  margin: 10px auto;
+  padding-bottom: 30px;
 }
 
 .user-profile-edit .form-group {
   margin-bottom: 1rem;
+  flex: 0 0 48%; 
+  display: flex; 
+  flex-direction: column; 
+  margin-right: 10px;
 }
 
 .user-profile-edit .input-field {
@@ -150,7 +216,7 @@ export default {
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
-  margin-bottom: 10px;
+  margin-top: 0.5rem;
   font-size: 16px;
 }
 
@@ -182,7 +248,7 @@ export default {
 
 @media (max-width: 768px) {
   .user-profile-edit {
-    grid-template-columns: 1fr;
+    flex-direction: column;
   }
 }
 </style>

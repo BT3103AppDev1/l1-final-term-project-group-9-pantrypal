@@ -15,7 +15,7 @@
         <div class="register-link">
           New Here? <a href="/signup">Register</a>
         </div>
-        <button type="submit" class="btn-login">log in</button>
+        <button type="submit" class="btn-login">Log In</button>
       </form>
       <div class="error-message" v-if="error" style="color: red;">{{ error }}</div>
     </div>

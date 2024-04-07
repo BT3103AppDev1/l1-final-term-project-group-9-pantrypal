@@ -1,6 +1,10 @@
 <template>
   <div class="horizontalRow">
     <div class="first">
+      <button class="back-button" @click="goBack">
+        <i class="fas fa-arrow-left"></i> Back
+      </button>
+      <RecipeImage :path="selectedRecipe.recipe_img_url" :ifCard="false" />
       <div v-if="!likeExists" class="switch-container">
         <label class="switch">
           <input
@@ -20,17 +24,25 @@
         <h1>{{ selectedRecipe.recipe_name }}</h1>
         <LikeButton v-if="likeExists" :recipe="selectedRecipe" />
       </div>
+      <div class="warning" v-if="selectedRecipe.AIgenerated">
+        <img clas="warning-logo" src="../assets/warning-icon.png" height="16px" />
+        <span
+          >This recipe is AI-generated and PantryPal has not verified it for accuracy and
+          safety.</span
+        >
+      </div>
       <p>
         <i v-if="likeExists">
           By @{{ username }},
           {{
-            new Date(
-              selectedRecipe.created_date.seconds * 1000
-            ).toLocaleDateString("en-GB", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })
+            new Date(selectedRecipe.created_date.seconds * 1000).toLocaleDateString(
+              "en-GB",
+              {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              }
+            )
           }}
         </i>
         <i v-else>
@@ -53,10 +65,7 @@
       </p>
       <span class="allergens-container">
         <p><b>CONTAINS:</b></p>
-        <template
-          v-for="(allergen, index) in selectedRecipe.allergens"
-          :key="index"
-        >
+        <template v-for="(allergen, index) in selectedRecipe.allergens" :key="index">
           <span>{{ allergen }}</span>
           <p v-if="index < selectedRecipe.allergens.length - 1">,</p>
         </template>
@@ -76,10 +85,7 @@
       <div class="recipe-section">
         <h3>Ingredients:</h3>
         <ul class="checkbox-list">
-          <li
-            v-for="(ingredient, index) in selectedRecipe.ingredients"
-            :key="index"
-          >
+          <li v-for="(ingredient, index) in selectedRecipe.ingredients" :key="index">
             <!--using likeExists to remove checkbox-->
             <input
               v-if="!likeExists"
@@ -183,6 +189,10 @@ export default {
         name: "RecipeEdit",
         params: { id: this.selectedRecipe.recipe_id },
       });
+
+    goBack() {
+      window.history.length > 1 ? this.$router.go(-1) : this.$router.push("/");
+
     },
   },
 };
@@ -373,5 +383,44 @@ export default {
 
 .delete-recipe-button:hover {
   background-color: #cc3333;
+}
+
+.warning {
+  background-color: #fff7d7;
+  padding: 10px 10px;
+  border-radius: 8px;
+  margin: 5px 10px 5px 0px;
+  font-size: 12px;
+  vertical-align: middle;
+  align-items: center;
+  display: flex;
+  width: fit-content;
+}
+
+img {
+  margin-right: 8px;
+}
+
+h1 {
+  margin: 0px 0px;
+}
+
+.back-button {
+  margin-bottom: 10px;
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+  color: black;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.back-button:hover {
+  text-decoration: underline;
+}
+
+.back-button i {
+  margin-right: 5px;
 }
 </style>
