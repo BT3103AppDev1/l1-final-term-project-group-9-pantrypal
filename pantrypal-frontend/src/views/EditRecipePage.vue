@@ -179,6 +179,7 @@
         </div>
       </div>
       <div class="button-container">
+        <button class="cancel-button" @click="close">Cancel</button>
         <save-recipe-button @save-recipe="submitRecipe" />
       </div>
     </div>
@@ -204,9 +205,11 @@ import {
   setDoc,
   addDoc,
   getDoc,
+  getDocs,
   collection,
   updateDoc,
   arrayUnion,
+  arrayRemove,
 } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
 import { useToast } from "vue-toastification";
@@ -316,7 +319,10 @@ export default {
       }
     },
     close() {
-      this.$router.push("/community-page");
+      this.$router.push({
+        name: "RecipeDetailsPage",
+        params: { id: this.selectedRecipe.recipe_id },
+      });
     },
     validateForm() {
       // if (
@@ -378,6 +384,20 @@ export default {
         hideProgressBar: true,
       });
     },
+
+    async removeRecipeFromCategories() {
+      const db = getFirestore(app);
+      const categoryDocsSnapshot = await getDocs(collection(db, "categories"));
+      categoryDocsSnapshot.forEach((doc) => {
+        const category = doc.data();
+        if (!this.recipeData.category.includes(category.name)) {
+          updateDoc(doc.ref, {
+            recipes: arrayRemove(this.selectedRecipe.recipe_id),
+          });
+        }
+      });
+    },
+
     async submitRecipe() {
       if (!this.validateForm()) {
         return;
@@ -411,7 +431,6 @@ export default {
         serving_size: parseInt(this.recipeData.serving_size),
         user_id: userId,
       };
-
       const db = getFirestore(app);
       const colRef = collection(db, "all_recipes");
       try {
@@ -419,10 +438,7 @@ export default {
           doc(db, "all_recipes", recipe_id),
           recipe
         );
-        await updateDoc(doc(db, "users", recipe.user_id), {
-          my_cookbook: arrayUnion(recipe.recipe_id),
-        });
-
+        this.removeRecipeFromCategories();
         console.log(this.categories);
         this.recipeData.categories.forEach((cat) =>
           updateDoc(doc(db, "categories", cat), {
@@ -439,24 +455,6 @@ export default {
         console.error("Error adding document:", error);
         this.cannotSaveRecipe();
       }
-      //   addDoc(colRef, recipe)
-      //     .then((docRef) => {
-      //       console.log("Document written with ID: ", docRef.id);
-
-      //       // Update the recipe document with the recipe_id
-      //       updateDoc(docRef, { recipe_id: docRef.id })
-      //         .then(() => {
-      //           console.log("Document updated successfully.");
-      //           this.$router.push("/community-page");
-      //           this.showToast();
-      //         })
-      //         .catch((error) => {
-      //           console.error("Error updating document: ", error);
-      //         });
-      //     })
-      //     .catch((error) => {
-      //       console.error("Error adding document: ", error);
-      //     });
     },
   },
 };
