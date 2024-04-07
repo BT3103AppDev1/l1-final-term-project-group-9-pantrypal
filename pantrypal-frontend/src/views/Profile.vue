@@ -7,7 +7,7 @@
       <UserProfileEdit v-if="selected === 'settings' && Object.keys(userData).length !== 0" :userData="userData"
         @userData="handleUserDataUpdate" />
       <UserProfileLikedRecipes v-if="selected === 'likedRecipes'" :userData="userData" @updateLiked="fetchUserStats" />
-      <UserProfileMyCookbook v-if="selected === 'myCookbook'" :userData="userData" />
+      <UserProfileMyCookbook v-if="selected === 'myCookbook'" :userData="userData" @updateLiked="fetchUserStats" />
       <UserProfileStats v-if="selected === 'stats'" :userData="userData" :lastStatsUpdate="lastStatsUpdate" :key="refreshKey"/>
     </div>
   </div>
