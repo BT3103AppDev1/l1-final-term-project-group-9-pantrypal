@@ -8,12 +8,11 @@
           alt="profile pic"
           class="profile"
         />
-        <!-- <img :src="profilePicUrl || userData.profile_img_url || '../assets/profile.svg'" alt="profile pic" class="profile" /> -->
         <input type="file" @change="onFileSelected" hidden ref="fileInput" />
         <div v-if="selected === 'settings'">
-            <button @click="triggerFileInput">
-                <img class="plus-icon" src="../assets/profile-plus-icon.png" height="10px"/>
-            </button>
+          <button @click="triggerFileInput">
+            <img class="plus-icon" src="../assets/profile-plus-icon.png" height="10px" />
+          </button>
         </div>
       </div>
       <div class="personal-details">
@@ -81,8 +80,11 @@ export default {
   emits: ["selected"],
   watch: {
     profilePicUrl(newVal) {
-      localStorage.setItem("userData", JSON.stringify({ ...this.userData, profile_img_url: newVal }));
-    }
+      localStorage.setItem(
+        "userData",
+        JSON.stringify({ ...this.userData, profile_img_url: newVal })
+      );
+    },
   },
   methods: {
     selectedSettings() {
@@ -171,10 +173,10 @@ export default {
 }
 
 .profile-pic {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 150px;
 }
 
 .profile-pic img {
@@ -213,22 +215,21 @@ h3 {
   border-radius: 16px;
   color: #3c1f11;
 }
- 
+
 button {
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    height: 30px;
-    padding: 0;
-    position: relative;
-    top: -40px;
-    left: 40px;
-    
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  height: 30px;
+  padding: 0;
+  position: relative;
+  top: -40px;
+  left: 40px;
 }
 
 .profile-pic button .plus-icon {
-    display: inline-block;
-    width: 30px;
-    height: 30px;
+  display: inline-block;
+  width: 30px;
+  height: 30px;
 }
 </style>

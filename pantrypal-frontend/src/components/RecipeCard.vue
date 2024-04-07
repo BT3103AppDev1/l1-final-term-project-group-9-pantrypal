@@ -71,11 +71,14 @@ export default {
   },
   methods: {
     toggleRecipeDetails() {
-      this.$router.push({ name: "RecipeDetailsPage", params: { id: this.recipe.recipe_id } });
+      this.$router.push({
+        name: "RecipeDetailsPage",
+        params: { id: this.recipe.recipe_id },
+      });
     },
     updateLiked() {
-      this.$emit('updateLiked');
-    }
+      this.$emit("updateLiked");
+    },
   },
 };
 </script>
@@ -108,7 +111,6 @@ export default {
   width: 100%;
   height: 100%;
   object-fit: cover;
-
 }
 
 .recipe-details {
@@ -118,7 +120,6 @@ export default {
   flex: 0.4;
   display: flex;
   flex-direction: column;
-
 }
 
 .recipe-name-container {
@@ -128,7 +129,6 @@ export default {
   display: flex;
   align-items: center;
 }
-
 
 .info {
   flex: 0.43;
@@ -154,13 +154,12 @@ export default {
   flex-direction: row;
   flex: 0.02;
   align-items: center;
-
 }
 
 .user-id {
   font-style: italic;
   font-size: 0.75rem;
-  flex: 0.8
+  flex: 0.8;
 }
 
 .like {
@@ -168,7 +167,7 @@ export default {
   border: none;
   cursor: pointer;
   background-color: #cbdf99;
-  flex: 0.1
+  flex: 0.1;
 }
 
 .like-button {

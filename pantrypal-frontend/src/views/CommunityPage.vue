@@ -3,7 +3,12 @@
     <TopBar whichPage="feed" />
     <div class="filterBar">
       <div class="search-bar">
-        <input type="text" class="search-input" placeholder="Search name or ingredients..." v-model="searchQuery" />
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Search name or ingredients..."
+          v-model="searchQuery"
+        />
         <img class="search-button" src="../assets/search-icon.svg" alt="Search Icon" />
       </div>
       <div class="category-bar-text">
@@ -11,8 +16,14 @@
       </div>
       <div class="category-bar-dropdown">
         <div class="dropdown-container">
-          <dropdown class="my-dropdown-toggle" :options="arrayOfCategories" :selected="category" :placeholder="'All'"
-            :closeOnOutsideClick="true" v-on:updateOption="filterUsingCategory">
+          <dropdown
+            class="my-dropdown-toggle"
+            :options="arrayOfCategories"
+            :selected="category"
+            :placeholder="'All'"
+            :closeOnOutsideClick="true"
+            v-on:updateOption="filterUsingCategory"
+          >
           </dropdown>
         </div>
       </div>
@@ -21,8 +32,14 @@
       </div>
       <div class="category-bar-dropdown">
         <div class="dropdown-container">
-          <dropdown class="my-dropdown-toggle" :options="arrayOfSorts" :selected="sort" :placeholder="'Most Recent'"
-            :closeOnOutsideClick="true" v-on:updateOption="filterUsingSort">
+          <dropdown
+            class="my-dropdown-toggle"
+            :options="arrayOfSorts"
+            :selected="sort"
+            :placeholder="'Most Recent'"
+            :closeOnOutsideClick="true"
+            v-on:updateOption="filterUsingSort"
+          >
           </dropdown>
         </div>
       </div>
@@ -36,8 +53,12 @@
     </div>
     <!-- recipe card list -->
     <div class="recipe-list">
-      <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe"
-        @toggle="toggleRecipeDetails" />
+      <RecipeCard
+        v-for="recipe in filteredRecipes"
+        :key="recipe.recipe_id"
+        :recipe="recipe"
+        @toggle="toggleRecipeDetails"
+      />
     </div>
 
     <!-- Back to Top button 
@@ -48,8 +69,6 @@
     -->
 
     <CircleButton logo="src/assets/plus-icon.png" @click="toggleCreateRecipe" />
-
-
   </div>
 </template>
 
@@ -73,7 +92,7 @@ export default {
     RecipeImage,
     CreateRecipe,
     CircleButton,
-    RecipeCardPlaceholder
+    RecipeCardPlaceholder,
   },
   data() {
     return {
@@ -111,17 +130,15 @@ export default {
       this.filterByNameOrIngredients();
       localStorage.setItem("searchQuery", value);
     },
-
   },
   created() {
     this.fetchRecipes();
     this.router = router;
-    window.addEventListener('scroll', this.handleScroll);
-
+    window.addEventListener("scroll", this.handleScroll);
   },
   destroyed() {
     // Remove the scroll event listener when component is destroyed
-    window.removeEventListener('scroll', this.handleScroll);
+    window.removeEventListener("scroll", this.handleScroll);
   },
   mounted() {
     const storedSearchQuery = localStorage.getItem("searchQuery");
@@ -166,15 +183,13 @@ export default {
           .includes(this.searchQuery.toLowerCase());
         let ingredientsMatch = false;
         recipe.ingredients.forEach((ingredient) => {
-          if (
-            ingredient.toLowerCase().includes(this.searchQuery.toLowerCase())
-          ) {
+          if (ingredient.toLowerCase().includes(this.searchQuery.toLowerCase())) {
             ingredientsMatch = true;
           }
         });
         return nameMatch || ingredientsMatch;
       });
-      this.filteredRecipesByName = this.filteredRecipes
+      this.filteredRecipesByName = this.filteredRecipes;
     },
 
     async filterUsingCategory(payload) {
@@ -186,7 +201,9 @@ export default {
         const recipesIDlist = docSnap.data().recipes;
         if (recipesIDlist.length != 0) {
           this.filteredRecipes = this.filteredRecipesByName;
-          this.filteredRecipes = this.filteredRecipes.filter(recipe => recipesIDlist.includes(recipe.recipe_id));
+          this.filteredRecipes = this.filteredRecipes.filter((recipe) =>
+            recipesIDlist.includes(recipe.recipe_id)
+          );
         }
       }
     },
@@ -212,20 +229,17 @@ export default {
     handleScroll() {
       // Show the button when user scrolls down beyond 300px
       this.showBackToTop = window.scrollY > 250;
-
     },
     // Method to scroll to the top of the page
     scrollToTop() {
       window.scrollTo({
         top: 0,
-        behavior: 'smooth' // Smooth scrolling
+        behavior: "smooth", // Smooth scrolling
       });
-
-    }
-  }
+    },
+  },
 };
 </script>
-
 
 <style scoped>
 .community-page {
@@ -342,7 +356,7 @@ export default {
   border: none;
   background-color: transparent;
   display: flex;
-  flex-direction: column
+  flex-direction: column;
 }
 
 /* Show the button when scrolling down */

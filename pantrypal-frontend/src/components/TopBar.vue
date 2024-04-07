@@ -29,11 +29,16 @@
     </div>
     <div class="thirdContainer">
       <button class="logOutButton" @click="logout">
-        <p class="logOutButton-text">Log out</p>
+        <p class="logOutButton-text">Log Out</p>
       </button>
       <button type="button" class="profileButton" @click="goToProfile()">
-        <ProfileImage :path="userData.profile_img_url" :ifCard="true" alt="profile pic" class="profile"
-          @click="goToProfile()" />
+        <ProfileImage
+          :path="profilePicUrl || userData.profile_img_url"
+          :ifCard="true"
+          alt="profile pic"
+          class="profile"
+          @click="goToProfile()"
+        />
       </button>
     </div>
   </div>
@@ -50,8 +55,8 @@ export default {
   props: {
     whichPage: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   components: {
     ProfileImage,
@@ -63,7 +68,7 @@ export default {
   },
   mounted() {
     let localUserData = localStorage.getItem("userData");
-    console.log(localUserData)
+    console.log(localUserData);
     if (localUserData && localUserData !== "" && localUserData !== "undefined") {
       this.userData = JSON.parse(localUserData);
     } else {
