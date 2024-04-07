@@ -17,7 +17,7 @@
         </label>
         <label for="publishToCommunity">Publish to Community</label>
       </div>
-      <RecipeImage :path="selectedRecipe.recipe_img_url" :ifCard="false" />
+      <!-- <RecipeImage :path="selectedRecipe.recipe_img_url" :ifCard="false" /> -->
     </div>
     <div class="second">
       <div class="title-row">
@@ -25,24 +25,27 @@
         <LikeButton v-if="likeExists" :recipe="selectedRecipe" />
       </div>
       <div class="warning" v-if="selectedRecipe.AIgenerated">
-        <img clas="warning-logo" src="../assets/warning-icon.png" height="16px" />
+        <img
+          clas="warning-logo"
+          src="../assets/warning-icon.png"
+          height="16px"
+        />
         <span
-          >This recipe is AI-generated and PantryPal has not verified it for accuracy and
-          safety.</span
+          >This recipe is AI-generated and PantryPal has not verified it for
+          accuracy and safety.</span
         >
       </div>
       <p>
         <i v-if="likeExists">
           By @{{ username }},
           {{
-            new Date(selectedRecipe.created_date.seconds * 1000).toLocaleDateString(
-              "en-GB",
-              {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              }
-            )
+            new Date(
+              selectedRecipe.created_date.seconds * 1000
+            ).toLocaleDateString("en-GB", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })
           }}
         </i>
         <i v-else>
@@ -65,7 +68,10 @@
       </p>
       <span class="allergens-container">
         <p><b>CONTAINS:</b></p>
-        <template v-for="(allergen, index) in selectedRecipe.allergens" :key="index">
+        <template
+          v-for="(allergen, index) in selectedRecipe.allergens"
+          :key="index"
+        >
           <span>{{ allergen }}</span>
           <p v-if="index < selectedRecipe.allergens.length - 1">,</p>
         </template>
@@ -85,7 +91,10 @@
       <div class="recipe-section">
         <h3>Ingredients:</h3>
         <ul class="checkbox-list">
-          <li v-for="(ingredient, index) in selectedRecipe.ingredients" :key="index">
+          <li
+            v-for="(ingredient, index) in selectedRecipe.ingredients"
+            :key="index"
+          >
             <!--using likeExists to remove checkbox-->
             <input
               v-if="!likeExists"
@@ -189,10 +198,10 @@ export default {
         name: "RecipeEdit",
         params: { id: this.selectedRecipe.recipe_id },
       });
+    },
 
     goBack() {
       window.history.length > 1 ? this.$router.go(-1) : this.$router.push("/");
-
     },
   },
 };

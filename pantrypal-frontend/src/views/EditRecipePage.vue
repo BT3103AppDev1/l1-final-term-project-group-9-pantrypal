@@ -190,15 +190,8 @@
 import Multiselect from "vue-multiselect";
 import TopBar from "@/components/TopBar.vue";
 import SaveRecipeButton from "../components/SaveRecipeButton.vue";
-import {
-  auth,
-  app,
-  db,
-  storage,
-  getUserInfoFromID,
-  fetchCategories,
-} from "../firebase.js";
-import { ref as storageRef } from "firebase/storage";
+import { auth, app, db, storage, fetchCategories } from "../firebase.js";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import {
   getFirestore,
   doc,
@@ -211,7 +204,6 @@ import {
   arrayUnion,
   arrayRemove,
 } from "firebase/firestore";
-import { v4 as uuidv4 } from "uuid";
 import { useToast } from "vue-toastification";
 import "vue-toastification/dist/index.css";
 
@@ -277,17 +269,66 @@ export default {
     chooseFile() {
       this.$refs.fileInput.click();
     },
-    handleImageUpload(event) {
+    async handleImageUpload(event) {
       const file = event.target.files[0]; // Get the file from the input
-      if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          this.recipeData.imageSrc = e.target.result; // Data URL is ready and set
-        };
-        reader.readAsDataURL(file); // Read the file
-      } else {
+      if (!file || (file.type !== "image/jpeg" && file.type !== "image/png")) {
         this.imageNotValid();
+        return;
       }
+
+      try {
+        const blob = await this.convertFileToBlob(file);
+        const downloadUrl = await this.uploadImageToFirebase(blob, file.name);
+        this.recipeData.imageSrc = downloadUrl;
+      } catch (error) {
+        console.error("Failed to upload image", error);
+      }
+    },
+
+    async uploadImageToFirebase(blob, path) {
+      return new Promise((resolve, reject) => {
+        const storageRef = ref(storage, `recipeImg/${path}`);
+        const uploadTask = uploadBytesResumable(storageRef, blob);
+
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log("Upload is " + progress + "% done");
+          },
+          (error) => {
+            // Handle unsuccessful uploads
+            console.error("Upload failed", error);
+            reject(error); // Reject the promise on error
+          },
+          () => {
+            // Handle successful uploads on complete
+            getDownloadURL(uploadTask.snapshot.ref)
+              .then((downloadURL) => {
+                console.log("File available at", downloadURL);
+                resolve(downloadURL); // Resolve the promise with the download URL
+              })
+              .catch((error) => {
+                console.error("Failed to get download URL", error);
+                reject(error); // Reject the promise if getting the download URL fails
+              });
+          }
+        );
+      });
+    },
+    convertFileToBlob(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const blob = new Blob([new Uint8Array(reader.result)], {
+            type: file.type,
+          });
+          resolve(blob);
+        };
+        reader.onerror = reject;
+        reader.readAsArrayBuffer(file);
+      });
     },
     addIngredient() {
       this.recipeData.ingredients.push("");
@@ -324,52 +365,82 @@ export default {
         params: { id: this.selectedRecipe.recipe_id },
       });
     },
+    // validateForm() {
+    //   if (
+    //     !this.recipeData.recipe_name ||
+    //     !this.recipeData.description ||
+    //     !this.recipeData.allergen_info ||
+    //     (!this.recipeData.cook_time_hours &&
+    //       !this.recipeData.cook_time_minutes) ||
+    //     !this.recipeData.category.length ||
+    //     !this.recipeData.serving_size ||
+    //     !this.recipeData.ingredients.length ||
+    //     !this.recipeData.directions.length
+    //   ) {
+    //     // at least one field is empty
+    //     this.fillAllFields();
+    //     // alert(
+    //     //   "Please fill in all fields properly before submitting the recipe."
+    //     // );
+    //     return false;
+    //   }
+    //   return true;
+    // },
     validateForm() {
-      // if (
-      //   isNaN(this.recipeData.cook_time_hours) ||
-      //   isNaN(this.recipeData.cook_time_minutes)
-      // ) {
-      //   alert("Please enter valid cook time values.");
-      //   return false;
-      // }
-      // if (isNaN(this.recipeData.serving_size)) {
-      //   alert("Please enter valid serving size values.");
-      //   return false;
-      // }
-      if (
-        !this.recipeData.recipe_name ||
-        !this.recipeData.description ||
-        !this.recipeData.allergen_info ||
-        (!this.recipeData.cook_time_hours &&
-          !this.recipeData.cook_time_minutes) ||
-        !this.recipeData.category.length ||
-        !this.recipeData.serving_size ||
-        !this.recipeData.ingredients.length ||
-        !this.recipeData.directions.length
-      ) {
-        // at least one field is empty
-        this.fillAllFields();
-        // alert(
-        //   "Please fill in all fields properly before submitting the recipe."
-        // );
-        return false;
+      const missingFields = [];
+      if (!this.recipeData.recipe_name) {
+        missingFields.push("Title");
       }
-      return true;
+      if (!this.recipeData.description) {
+        missingFields.push("Description");
+      }
+      if (!this.recipeData.allergen_info) {
+        missingFields.push("Allergen Information");
+      }
+      if (
+        !this.recipeData.cook_time_hours &&
+        !this.recipeData.cook_time_minutes
+      ) {
+        missingFields.push("Cook Time");
+      }
+      if (!this.recipeData.category.length) {
+        missingFields.push("Category");
+      }
+      if (!this.recipeData.serving_size) {
+        missingFields.push("Serving Size");
+      }
+      if (!this.recipeData.ingredients.length) {
+        missingFields.push("Ingredients");
+      }
+      if (!this.recipeData.directions.length) {
+        missingFields.push("Directions");
+      }
+      return missingFields;
     },
+
     imageNotValid() {
       this.toast.error("Please select a JPG or PNG image file.", {
         position: "top-center",
         hideProgressBar: true,
       });
     },
-    fillAllFields() {
-      this.toast.error(
-        "Please fill in all fields properly before submitting the recipe.",
-        {
-          position: "top-center",
-          hideProgressBar: true,
-        }
-      );
+    // fillAllFields() {
+    //   this.toast.error(
+    //     "Please fill in all fields properly before submitting the recipe.",
+    //     {
+    //       position: "top-center",
+    //       hideProgressBar: true,
+    //     }
+    //   );
+    // },
+    fillAllFields(missingFields) {
+      const message = `Please fill in the following fields: ${missingFields.join(
+        ", "
+      )}.`;
+      this.toast.error(message, {
+        position: "top-center",
+        hideProgressBar: true,
+      });
     },
     cannotSaveRecipe() {
       this.toast.error("Recipe could not be saved.", {
@@ -399,7 +470,12 @@ export default {
     },
 
     async submitRecipe() {
-      if (!this.validateForm()) {
+      //   if (!this.validateForm()) {
+      //     return;
+      //   }
+      const missingFields = this.validateForm();
+      if (missingFields.length > 0) {
+        this.fillAllFields(missingFields);
         return;
       }
       const user = auth.currentUser;

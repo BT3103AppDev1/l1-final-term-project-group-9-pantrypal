@@ -5,15 +5,34 @@
       <div class="recipe-form-content">
         <div class="createRecipeRow">
           <div class="first1">
-            <input type="file" id="recipeImage" ref="fileInput" style="display: none" @change="handleImageUpload" />
+            <input
+              type="file"
+              id="recipeImage"
+              ref="fileInput"
+              style="display: none"
+              @change="handleImageUpload"
+            />
             <div class="plus-icon-container" @click="chooseFile">
-              <img v-if="recipeData.imageSrc" :src="recipeData.imageSrc" class="uploaded-image" alt="Uploaded Image" />
-              <img :class="{ hidden: recipeData.imageSrc }" class="upload-image" src="../assets/image-upload.png"
-                alt="Upload Image" />
+              <img
+                v-if="recipeData.imageSrc"
+                :src="recipeData.imageSrc"
+                class="uploaded-image"
+                alt="Uploaded Image"
+              />
+              <img
+                :class="{ hidden: recipeData.imageSrc }"
+                class="upload-image"
+                src="../assets/image-upload.png"
+                alt="Upload Image"
+              />
             </div>
             <div class="switch-container">
               <label class="switch">
-                <input type="checkbox" id="publishToCommunity" v-model="recipeData.publish_to_community" />
+                <input
+                  type="checkbox"
+                  id="publishToCommunity"
+                  v-model="recipeData.publish_to_community"
+                />
                 <span class="slider"></span>
               </label>
               <label for="publishToCommunity">Publish to Community</label>
@@ -21,24 +40,48 @@
           </div>
           <div class="first2">
             <label for="recipeName">Title:</label>
-            <input type="text" id="recipeName" v-model="recipeData.recipe_name" />
+            <input
+              type="text"
+              id="recipeName"
+              v-model="recipeData.recipe_name"
+            />
 
             <label for="recipeDescription">Description:</label>
-            <textarea type="text" id="recipeDescription" v-model="recipeData.description" class="input-text"></textarea>
+            <textarea
+              type="text"
+              id="recipeDescription"
+              v-model="recipeData.description"
+              class="input-text"
+            ></textarea>
 
             <label for="allergenInfo">Allergen Information:</label>
-            <textarea type="text" id="allergenInfo" v-model="recipeData.allergen_info" class="input-text"></textarea>
+            <textarea
+              type="text"
+              id="allergenInfo"
+              v-model="recipeData.allergen_info"
+              class="input-text"
+            ></textarea>
 
             <!-- Added Cook Time, Category and Serving Size -->
             <div class="additional-info">
               <div class="input-group">
                 <label for="cookTime">Cook Time:</label>
                 <div class="time-input-group">
-                  <input type="number" id="cookTimeHours" v-model="recipeData.cook_time_hours" min="0"
-                    @keydown="onlyNumberInput($event, 'cook_time_hours')" />
+                  <input
+                    type="number"
+                    id="cookTimeHours"
+                    v-model="recipeData.cook_time_hours"
+                    min="0"
+                    @keydown="onlyNumberInput($event, 'cook_time_hours')"
+                  />
                   <span>hours</span>
-                  <input type="number" id="cookTimeMins" v-model="recipeData.cook_time_minutes" min="0"
-                    @keydown="onlyNumberInput($event, 'cook_time_minutes')" />
+                  <input
+                    type="number"
+                    id="cookTimeMins"
+                    v-model="recipeData.cook_time_minutes"
+                    min="0"
+                    @keydown="onlyNumberInput($event, 'cook_time_minutes')"
+                  />
                   <span>mins</span>
                 </div>
               </div>
@@ -54,8 +97,13 @@
               </div>
               <div class="input-group">
                 <label for="servingSize">Serving Size:</label>
-                <input type="number" id="servingSize" v-model="recipeData.serving_size" min="0"
-                  @keydown="onlyNumberInput($event, 'serving_size')" />
+                <input
+                  type="number"
+                  id="servingSize"
+                  v-model="recipeData.serving_size"
+                  min="0"
+                  @keydown="onlyNumberInput($event, 'serving_size')"
+                />
               </div>
             </div>
           </div>
@@ -66,9 +114,20 @@
             <div class="recipe-section">
               <label for="ingredients">Ingredients:</label>
               <div class="ingredients-container">
-                <div v-for="(ingredient, index) in recipeData.ingredients" :key="index" class="ingredient-input">
-                  <input type="text" v-model="recipeData.ingredients[index]" placeholder="e.g. 10g Apple" />
-                  <button class="remove-button" @click="removeIngredient(index)">
+                <div
+                  v-for="(ingredient, index) in recipeData.ingredients"
+                  :key="index"
+                  class="ingredient-input"
+                >
+                  <input
+                    type="text"
+                    v-model="recipeData.ingredients[index]"
+                    placeholder="e.g. 10g Apple"
+                  />
+                  <button
+                    class="remove-button"
+                    @click="removeIngredient(index)"
+                  >
                     x
                   </button>
                 </div>
@@ -86,12 +145,25 @@
             <div class="recipe-section">
               <label for="directions">Directions:</label>
               <div class="directions-container">
-                <div v-for="(direction, index) in recipeData.directions" :key="index" class="direction-step">
-                  <label :for="'direction' + direction.stepNumber">Step {{ direction.stepNumber }}</label>
+                <div
+                  v-for="(direction, index) in recipeData.directions"
+                  :key="index"
+                  class="direction-step"
+                >
+                  <label :for="'direction' + direction.stepNumber"
+                    >Step {{ direction.stepNumber }}</label
+                  >
                   <div class="direction-input">
-                    <textarea type="text" :id="'direction' + direction.stepNumber" v-model="direction.text"
-                      class="input-text"></textarea>
-                    <button class="remove-button" @click="removeDirection(index)">
+                    <textarea
+                      type="text"
+                      :id="'direction' + direction.stepNumber"
+                      v-model="direction.text"
+                      class="input-text"
+                    ></textarea>
+                    <button
+                      class="remove-button"
+                      @click="removeDirection(index)"
+                    >
                       x
                     </button>
                   </div>
@@ -118,23 +190,19 @@
 import Multiselect from "vue-multiselect";
 import TopBar from "@/components/TopBar.vue";
 import SaveRecipeButton from "../components/SaveRecipeButton.vue";
-import {
-  auth,
-  app,
-  db,
-  storage,
-  getUserInfoFromID,
-  fetchCategories,
-} from "../firebase.js";
-import { ref as storageRef } from "firebase/storage";
+import { auth, app, db, storage, fetchCategories } from "../firebase.js";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import {
   getFirestore,
   doc,
   setDoc,
   addDoc,
+  getDoc,
+  getDocs,
   collection,
   updateDoc,
   arrayUnion,
+  arrayRemove,
 } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
 import { useToast } from "vue-toastification";
@@ -176,17 +244,66 @@ export default {
     chooseFile() {
       this.$refs.fileInput.click();
     },
-    handleImageUpload(event) {
+    async handleImageUpload(event) {
       const file = event.target.files[0]; // Get the file from the input
-      if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          this.recipeData.imageSrc = e.target.result; // Data URL is ready and set
-        };
-        reader.readAsDataURL(file); // Read the file
-      } else {
+      if (!file || (file.type !== "image/jpeg" && file.type !== "image/png")) {
         this.imageNotValid();
+        return;
       }
+
+      try {
+        const blob = await this.convertFileToBlob(file);
+        const downloadUrl = await this.uploadImageToFirebase(blob, file.name);
+        this.recipeData.imageSrc = downloadUrl;
+      } catch (error) {
+        console.error("Failed to upload image", error);
+      }
+    },
+
+    async uploadImageToFirebase(blob, path) {
+      return new Promise((resolve, reject) => {
+        const storageRef = ref(storage, `recipeImg/${path}`);
+        const uploadTask = uploadBytesResumable(storageRef, blob);
+
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log("Upload is " + progress + "% done");
+          },
+          (error) => {
+            // Handle unsuccessful uploads
+            console.error("Upload failed", error);
+            reject(error); // Reject the promise on error
+          },
+          () => {
+            // Handle successful uploads on complete
+            getDownloadURL(uploadTask.snapshot.ref)
+              .then((downloadURL) => {
+                console.log("File available at", downloadURL);
+                resolve(downloadURL); // Resolve the promise with the download URL
+              })
+              .catch((error) => {
+                console.error("Failed to get download URL", error);
+                reject(error); // Reject the promise if getting the download URL fails
+              });
+          }
+        );
+      });
+    },
+    convertFileToBlob(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const blob = new Blob([new Uint8Array(reader.result)], {
+            type: file.type,
+          });
+          resolve(blob);
+        };
+        reader.onerror = reject;
+        reader.readAsArrayBuffer(file);
+      });
     },
     addIngredient() {
       this.recipeData.ingredients.push("");
@@ -220,42 +337,83 @@ export default {
     close() {
       this.$router.push("/community-page");
     },
+    // validateForm() {
+    //   if (
+    //     !this.recipeData.recipe_name ||
+    //     !this.recipeData.description ||
+    //     !this.recipeData.allergen_info ||
+    //     // !this.recipeData.imageSrc ||
+    //     (!this.recipeData.cook_time_hours &&
+    //       !this.recipeData.cook_time_minutes) ||
+    //     !this.recipeData.category.length ||
+    //     !this.recipeData.serving_size ||
+    //     !this.recipeData.ingredients.length ||
+    //     !this.recipeData.directions.length
+    //   ) {
+    //     // at least one field is empty
+    //     this.fillAllFields();
+    //     // alert(
+    //     //   "Please fill in all fields properly before submitting the recipe."
+    //     // );
+    //     return false;
+    //   }
+    //   return true;
+    // },
     validateForm() {
-      if (
-        !this.recipeData.recipe_name ||
-        !this.recipeData.description ||
-        !this.recipeData.allergen_info ||
-        // !this.recipeData.imageSrc ||
-        (!this.recipeData.cook_time_hours &&
-          !this.recipeData.cook_time_minutes) ||
-        !this.recipeData.category.length ||
-        !this.recipeData.serving_size ||
-        !this.recipeData.ingredients.length ||
-        !this.recipeData.directions.length
-      ) {
-        // at least one field is empty
-        this.fillAllFields();
-        // alert(
-        //   "Please fill in all fields properly before submitting the recipe."
-        // );
-        return false;
+      const missingFields = [];
+      if (!this.recipeData.recipe_name) {
+        missingFields.push("Title");
       }
-      return true;
+      if (!this.recipeData.description) {
+        missingFields.push("Description");
+      }
+      if (!this.recipeData.allergen_info) {
+        missingFields.push("Allergen Information");
+      }
+      if (
+        !this.recipeData.cook_time_hours &&
+        !this.recipeData.cook_time_minutes
+      ) {
+        missingFields.push("Cook Time");
+      }
+      if (!this.recipeData.category.length) {
+        missingFields.push("Category");
+      }
+      if (!this.recipeData.serving_size) {
+        missingFields.push("Serving Size");
+      }
+      if (!this.recipeData.ingredients.length) {
+        missingFields.push("Ingredients");
+      }
+      if (!this.recipeData.directions.length) {
+        missingFields.push("Directions");
+      }
+      return missingFields;
     },
+
     imageNotValid() {
       this.toast.error("Please select a JPG or PNG image file.", {
         position: "top-center",
         hideProgressBar: true,
       });
     },
-    fillAllFields() {
-      this.toast.error(
-        "Please fill in all fields properly before submitting the recipe.",
-        {
-          position: "top-center",
-          hideProgressBar: true,
-        }
-      );
+    // fillAllFields() {
+    //   this.toast.error(
+    //     "Please fill in all fields properly before submitting the recipe.",
+    //     {
+    //       position: "top-center",
+    //       hideProgressBar: true,
+    //     }
+    //   );
+    // },
+    fillAllFields(missingFields) {
+      const message = `Please fill in the following fields: ${missingFields.join(
+        ", "
+      )}.`;
+      this.toast.error(message, {
+        position: "top-center",
+        hideProgressBar: true,
+      });
     },
     cannotSaveRecipe() {
       this.toast.error("Recipe could not be saved.", {
@@ -271,7 +429,12 @@ export default {
       });
     },
     async submitRecipe() {
-      if (!this.validateForm()) {
+      //   if (!this.validateForm()) {
+      //     return;
+      //   }
+      const missingFields = this.validateForm();
+      if (missingFields.length > 0) {
+        this.fillAllFields(missingFields);
         return;
       }
       const user = auth.currentUser;
@@ -328,24 +491,6 @@ export default {
         console.error("Error adding document:", error);
         this.cannotSaveRecipe();
       }
-      //   addDoc(colRef, recipe)
-      //     .then((docRef) => {
-      //       console.log("Document written with ID: ", docRef.id);
-
-      //       // Update the recipe document with the recipe_id
-      //       updateDoc(docRef, { recipe_id: docRef.id })
-      //         .then(() => {
-      //           console.log("Document updated successfully.");
-      //           this.$router.push("/community-page");
-      //           this.showToast();
-      //         })
-      //         .catch((error) => {
-      //           console.error("Error updating document: ", error);
-      //         });
-      //     })
-      //     .catch((error) => {
-      //       console.error("Error adding document: ", error);
-      //     });
     },
   },
 };
@@ -460,11 +605,11 @@ export default {
   border-radius: 50%;
 }
 
-.switch-container input:checked+.slider {
+.switch-container input:checked + .slider {
   background-color: black;
 }
 
-.switch-container input:checked+.slider:before {
+.switch-container input:checked + .slider:before {
   transform: translateX(20px);
 }
 
