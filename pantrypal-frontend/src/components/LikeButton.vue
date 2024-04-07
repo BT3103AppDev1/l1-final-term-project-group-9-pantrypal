@@ -44,6 +44,7 @@ export default {
       const recipeDocRef = doc(db, "all_recipes", this.recipe.recipe_id);
 
       try {
+        this.$emit('updateLiked');
         if (this.recipeIsLiked) {
           this.recipe.like_count--;
           await setDoc(recipeDocRef, {

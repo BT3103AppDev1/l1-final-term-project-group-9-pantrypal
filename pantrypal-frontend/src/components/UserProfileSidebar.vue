@@ -44,6 +44,13 @@
         >
           <h3>My Cookbook</h3>
         </div>
+        <div
+          class="header"
+          :class="{ selected: selected === 'stats' }"
+          @click="selectedStats()"
+        >
+          <h3>User Stats</h3>
+        </div>
       </div>
     </div>
   </aside>
@@ -86,6 +93,9 @@ export default {
     },
     selectedMyCookbook() {
       this.$emit("selected", "myCookbook");
+    },
+    selectedStats() {
+      this.$emit("selected", "stats");
     },
 
     triggerFileInput() {
