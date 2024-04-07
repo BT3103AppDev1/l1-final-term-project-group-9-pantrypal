@@ -17,6 +17,7 @@
         </label>
         <label for="publishToCommunity">Publish to Community</label>
       </div>
+      <!-- <RecipeImage :path="selectedRecipe.recipe_img_url" :ifCard="false" /> -->
     </div>
     <div class="second">
       <div class="title-row">
@@ -24,24 +25,27 @@
         <LikeButton v-if="likeExists" :recipe="selectedRecipe" />
       </div>
       <div class="warning" v-if="selectedRecipe.AIgenerated">
-        <img clas="warning-logo" src="../assets/warning-icon.png" height="16px" />
+        <img
+          clas="warning-logo"
+          src="../assets/warning-icon.png"
+          height="16px"
+        />
         <span
-          >This recipe is AI-generated and PantryPal has not verified it for accuracy and
-          safety.</span
+          >This recipe is AI-generated and PantryPal has not verified it for
+          accuracy and safety.</span
         >
       </div>
       <p>
         <i v-if="likeExists">
           By @{{ username }},
           {{
-            new Date(selectedRecipe.created_date.seconds * 1000).toLocaleDateString(
-              "en-GB",
-              {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              }
-            )
+            new Date(
+              selectedRecipe.created_date.seconds * 1000
+            ).toLocaleDateString("en-GB", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })
           }}
         </i>
         <i v-else>
@@ -64,7 +68,10 @@
       </p>
       <span class="allergens-container">
         <p><b>CONTAINS:</b></p>
-        <template v-for="(allergen, index) in selectedRecipe.allergens" :key="index">
+        <template
+          v-for="(allergen, index) in selectedRecipe.allergens"
+          :key="index"
+        >
           <span>{{ allergen }}</span>
           <p v-if="index < selectedRecipe.allergens.length - 1">,</p>
         </template>
@@ -84,7 +91,10 @@
       <div class="recipe-section">
         <h3>Ingredients:</h3>
         <ul class="checkbox-list">
-          <li v-for="(ingredient, index) in selectedRecipe.ingredients" :key="index">
+          <li
+            v-for="(ingredient, index) in selectedRecipe.ingredients"
+            :key="index"
+          >
             <!--using likeExists to remove checkbox-->
             <input
               v-if="!likeExists"
@@ -108,6 +118,13 @@
           </li>
         </ol>
       </div>
+      <div
+        class="button-container"
+        v-if="user && user.uid === selectedRecipe.user_id"
+      >
+        <button class="edit-recipe-button" @click="edit">Edit Recipe</button>
+        <button class="delete-recipe-button" @click="">Delete Recipe</button>
+      </div>
     </div>
   </div>
 </template>
@@ -116,7 +133,7 @@
 import RecipeImage from "./RecipeImage.vue";
 import LikeButton from "./LikeButton.vue";
 
-import { db } from "../firebase";
+import { db, auth } from "../firebase";
 import { collection, query, where, getDocs } from "firebase/firestore";
 export default {
   components: {
@@ -127,6 +144,7 @@ export default {
     return {
       username: "",
       cookingTimeInHrAndMin: "",
+      user: auth.currentUser,
     };
   },
   props: {
@@ -175,6 +193,13 @@ export default {
     togglePublishToCommunity() {
       this.$emit("togglePublishToCommunity", this.selectedRecipe.community);
     },
+    edit() {
+      this.$router.push({
+        name: "RecipeEdit",
+        params: { id: this.selectedRecipe.recipe_id },
+      });
+    },
+
     goBack() {
       window.history.length > 1 ? this.$router.go(-1) : this.$router.push("/");
     },
@@ -324,6 +349,49 @@ export default {
 
 .switch-container input:checked + .slider:before {
   transform: translateX(20px);
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  align-items: center;
+}
+
+.edit-recipe-button {
+  background-color: #a7bf6a;
+  border: none;
+  color: white;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 15px;
+  width: auto;
+  height: auto;
+  margin: 0 20px;
+  font-size: 14px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.edit-recipe-button:hover {
+  background-color: #596639;
+}
+
+.delete-recipe-button {
+  background-color: #ff4b4b;
+  border: none;
+  color: white;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 15px;
+  width: auto;
+  height: auto;
+  margin: 0 20px;
+  font-size: 14px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.delete-recipe-button:hover {
+  background-color: #cc3333;
 }
 
 .warning {

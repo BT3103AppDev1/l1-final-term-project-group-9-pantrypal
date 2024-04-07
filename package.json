@@ -1,6 +1,10 @@
 {
   "dependencies": {
+    "chartkick": "^5.0.1",
+    "node-fetch": "^3.3.2",
     "uuid": "^9.0.1",
+    "vue": "^2.7.16",
+    "vue-chartkick": "^0.5.3",
     "vue-toastification": "^1.7.14"
   }
 }

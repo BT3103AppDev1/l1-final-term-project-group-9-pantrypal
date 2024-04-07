@@ -11,6 +11,7 @@ import RecipeDetailsPage from '@/views/RecipeDetailsPage.vue'
 import NotFound from '@/views/NotFound.vue';
 import Profile from '@/views/Profile.vue';
 import CreateRecipePage from '@/views/CreateRecipePage.vue'
+import EditRecipePage from '@/views/EditRecipePage.vue'
 
 
 
@@ -65,6 +66,13 @@ const routes = [
         name: 'RecipeCreate',
         component: CreateRecipePage,
         meta: { requiresAuth: true}
+    },
+    {
+        path: '/edit-recipe/:id',
+        name: 'RecipeEdit',
+        component: EditRecipePage,
+        meta: { requiresAuth: true},
+        props: true
     },
    
 ]
