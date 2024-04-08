@@ -1,6 +1,11 @@
 <template>
   <aside class="sidebar">
     <div class="profile-container">
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
       <div class="profile-pic">
         <ProfileImage
           :path="profilePicUrl || userData.profile_img_url"
@@ -162,7 +167,7 @@ export default {
   justify-content: center;
   text-align: center;
   position: sticky;
-  height: 100vh;
+  height: 95.5vh;
   top: 0;
   overflow-y: hidden;
 }
