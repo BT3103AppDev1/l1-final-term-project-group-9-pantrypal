@@ -529,6 +529,7 @@ export default {
 }
 
 .circle-button {
+  position: absolute;
   background-color: #bd6b16;
   width: 40px;
   height: 40px;
