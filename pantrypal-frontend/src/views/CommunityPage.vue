@@ -3,12 +3,7 @@
     <TopBar whichPage="feed" />
     <div class="filterBar">
       <div class="search-bar">
-        <input
-          type="text"
-          class="search-input"
-          placeholder="Search name or ingredients..."
-          v-model="searchQuery"
-        />
+        <input type="text" class="search-input" placeholder="Search name or ingredients..." v-model="searchQuery" />
         <img class="search-button" src="../assets/search-icon.svg" alt="Search Icon" />
       </div>
       <div class="category-bar-text">
@@ -16,14 +11,8 @@
       </div>
       <div class="category-bar-dropdown">
         <div class="dropdown-container">
-          <dropdown
-            class="my-dropdown-toggle"
-            :options="arrayOfCategories"
-            :selected="category"
-            :placeholder="'All'"
-            :closeOnOutsideClick="true"
-            v-on:updateOption="filterUsingCategory"
-          >
+          <dropdown class="my-dropdown-toggle" :options="arrayOfCategories" :selected="category" :placeholder="'All'"
+            :closeOnOutsideClick="true" v-on:updateOption="filterUsingCategory">
           </dropdown>
         </div>
       </div>
@@ -32,14 +21,8 @@
       </div>
       <div class="category-bar-dropdown">
         <div class="dropdown-container">
-          <dropdown
-            class="my-dropdown-toggle"
-            :options="arrayOfSorts"
-            :selected="sort"
-            :placeholder="'Most Recent'"
-            :closeOnOutsideClick="true"
-            v-on:updateOption="filterUsingSort"
-          >
+          <dropdown class="my-dropdown-toggle" :options="arrayOfSorts" :selected="sort" :placeholder="'Most Recent'"
+            :closeOnOutsideClick="true" v-on:updateOption="filterUsingSort">
           </dropdown>
         </div>
       </div>
@@ -53,14 +36,13 @@
     </div>
     <!-- recipe card list -->
     <div class="recipe-list">
-      <RecipeCard
-        v-for="recipe in filteredRecipes"
-        :key="recipe.recipe_id"
-        :recipe="recipe"
-        @toggle="toggleRecipeDetails"
-      />
-    </div>
+      <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe"
+        @toggle="toggleRecipeDetails" />
 
+    </div>
+    <div class="NoSearchResultsContainer">
+      <text v-if="this.filteredRecipes.length == 0">No Search Results Found</text>
+    </div>
     <!-- Back to Top button 
     <button class="back-to-top" @click="scrollToTop" v-show="showBackToTop">
       <img src="../assets/BackToTop.svg" alt="Back To Top" />
@@ -135,6 +117,7 @@ export default {
     this.fetchRecipes();
     this.router = router;
     window.addEventListener("scroll", this.handleScroll);
+
   },
   destroyed() {
     // Remove the scroll event listener when component is destroyed
@@ -187,13 +170,18 @@ export default {
             ingredientsMatch = true;
           }
         });
-        return nameMatch || ingredientsMatch;
+        const categoryMatch = this.category.name === 'All' || Object.keys(this.category).length === 0 || recipe.categories.includes(this.category.name);
+        return (nameMatch || ingredientsMatch) && categoryMatch
       });
       this.filteredRecipesByName = this.filteredRecipes;
     },
 
     async filterUsingCategory(payload) {
       this.category = payload;
+      if (this.searchQuery == "") {
+        this.filteredRecipes = this.allCommunityRecipes;
+        this.filteredRecipesByName = this.allCommunityRecipes;
+      }
       if (this.category.name == "All") {
         this.filteredRecipes = this.filteredRecipesByName;
       } else {
@@ -358,6 +346,13 @@ export default {
   display: flex;
   flex-direction: column;
 }
+
+.NoSearchResultsContainer {
+
+  display: flex;
+  justify-content: center;
+}
+
 
 /* Show the button when scrolling down */
 .back-to-top.show {
