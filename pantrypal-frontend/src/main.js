@@ -4,6 +4,7 @@ import router from './router/index.js'
 import './styles/main.css'
 import Toast from 'vue-toastification'
 import 'vue-toastification/dist/index.css'
+import 'chart.js';
 import VueChartkick from 'vue-chartkick'
 import 'chartkick/chart.js'
 

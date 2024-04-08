@@ -166,6 +166,22 @@ export default {
             this.filteredRecipes = this.filteredRecipes.sort((a, b) => {
                 return b.like_count - a.like_count;
             });
+        }, async fetchRecipesFromCookbook(cookbook) {
+            const recipes = [];
+
+            for (const recipeId of cookbook) {
+                try {
+                    const recipeDocSnapshot = await getDoc(doc(db, "all_recipes", recipeId));
+                    if (recipeDocSnapshot.exists()) {
+                        const recipeData = recipeDocSnapshot.data();
+                        recipes.push(recipeData);
+                    }
+                } catch (error) {
+                    console.error("Error fetching recipe from Firebase:", error);
+                }
+            }
+
+            return recipes;
         },
 
         async updateLikedRecipes(likedRecipes) {
