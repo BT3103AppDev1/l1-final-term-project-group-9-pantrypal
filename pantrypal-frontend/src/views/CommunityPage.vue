@@ -1,6 +1,10 @@
 <template>
   <div class="community-page">
-    <TopBar whichPage="feed" />
+    <TopBar whichPage="feed" :showNavbar="showTopBar" />
+    <br />
+    <br />
+    <br />
+    <br />
     <div class="filterBar">
       <div class="search-bar">
         <input type="text" class="search-input" placeholder="Search name or ingredients..." v-model="searchQuery" />
@@ -105,6 +109,9 @@ export default {
       showCreateRecipe: false,
       showBackToTop: false,
       isDataLoaded: false,
+      // for top bar
+      showTopBar: true,
+      lastScrollPosition: 0,
     };
   },
   watch: {
@@ -120,7 +127,6 @@ export default {
 
   },
   destroyed() {
-    // Remove the scroll event listener when component is destroyed
     window.removeEventListener("scroll", this.handleScroll);
   },
   mounted() {
@@ -128,6 +134,7 @@ export default {
     if (storedSearchQuery) {
       this.searchQuery = storedSearchQuery;
     }
+    window.addEventListener("scroll", this.handleScroll);
   },
 
   methods: {
@@ -217,6 +224,18 @@ export default {
     handleScroll() {
       // Show the button when user scrolls down beyond 300px
       this.showBackToTop = window.scrollY > 250;
+      const currentScrollPosition = window.scrollY || document.documentElement.scrollTop;
+      if (currentScrollPosition < 0) {
+        return;
+      }
+      if (currentScrollPosition > this.lastScrollPosition) {
+        // Scrolling down
+        this.showTopBar = false;
+      } else {
+        // Scrolling up
+        this.showTopBar = true;
+      }
+      this.lastScrollPosition = currentScrollPosition;
     },
     // Method to scroll to the top of the page
     scrollToTop() {
@@ -322,6 +341,7 @@ export default {
   flex-wrap: wrap;
   align-self: flex-start;
   flex-direction: row;
+  justify-content: center;
 }
 
 .plus-icon-container {
