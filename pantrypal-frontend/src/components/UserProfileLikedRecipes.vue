@@ -33,7 +33,8 @@
         <!-- recipe card list -->
         <div class="recipe-container">
             <div class="recipe-list">
-                <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe" @updateLiked="updateLiked" />
+                <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe"
+                    @updateLiked="updateLiked" />
             </div>
         </div>
     </div>
@@ -170,24 +171,24 @@ export default {
         async updateLikedRecipes(likedRecipes) {
             this.filteredRecipes = [];
             this.allLikedRecipes = [];
-            likedRecipes.forEach(async (recipeId) => {
-                const recipeDocSnapshot = await getDoc(doc(db, "all_recipes", recipeId));
-                const recipeData = recipeDocSnapshot.data();
-                if (
-                    !this.allLikedRecipes.some(
-                        (recipe) => recipe.recipe_id === recipeData.recipe_id
-                    )
-                ) {
-                    this.allLikedRecipes.push(recipeData);
+            for (const recipeId of likedRecipes) {
+                try {
+                    const recipeDocSnapshot = await getDoc(doc(db, "all_recipes", recipeId));
+                    if (recipeDocSnapshot.exists()) {
+                        const recipeData = recipeDocSnapshot.data();
+                        if (!this.allLikedRecipes.some(recipe => recipe.recipe_id === recipeData.recipe_id)) {
+                            this.allLikedRecipes.push(recipeData);
+                        }
+                        if (!this.filteredRecipes.some(recipe => recipe.recipe_id === recipeData.recipe_id)) {
+                            this.filteredRecipes.push(recipeData);
+                        }
+                    } else {
+                        console.error(`Recipe with ID ${recipeId} does not exist.`);
+                    }
+                } catch (error) {
+                    console.error("Error fetching recipe:", error);
                 }
-                if (
-                    !this.filteredRecipes.some(
-                        (recipe) => recipe.recipe_id === recipeData.recipe_id
-                    )
-                ) {
-                    this.filteredRecipes.push(recipeData);
-                }
-            });
+            }
         }
     }
 };
