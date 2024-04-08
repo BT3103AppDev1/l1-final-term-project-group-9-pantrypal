@@ -20,7 +20,7 @@
               />
               <div class="img-button-container">
                 <CircleButton
-                  logo="src/assets/plus-icon.png"
+                  logo="/src/assets/plus-icon.png"
                   class="circle-button"
                 />
               </div>
@@ -337,7 +337,7 @@ export default {
       }
     },
     close() {
-      this.$router.push("/community-page");
+      window.history.length > 1 ? this.$router.go(-1) : this.$router.push("/");
     },
     validateForm() {
       const missingFields = [];

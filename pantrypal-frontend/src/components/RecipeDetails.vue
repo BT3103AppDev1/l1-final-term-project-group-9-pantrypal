@@ -1,9 +1,9 @@
 <template>
+  <button class="back-button" @click="goBack">
+    <i class="fas fa-arrow-left"></i> Back
+  </button>
   <div class="horizontalRow">
     <div class="first">
-      <button class="back-button" @click="goBack">
-        <i class="fas fa-arrow-left"></i> Back
-      </button>
       <RecipeImage :path="selectedRecipe.recipe_img_url" :ifCard="false" />
       <div v-if="!likeExists" class="switch-container">
         <label class="switch">
@@ -32,6 +32,16 @@
         <span
           >This recipe is AI-generated and PantryPal has not verified it for
           accuracy and safety.</span
+        >
+      </div>
+      <div class="warning" v-if="selectedRecipe.editted">
+        <img
+          clas="warning-logo"
+          src="../assets/warning-icon.png"
+          height="16px"
+        />
+        <span
+          >This recipe has been edited since its previous revision.</span
         >
       </div>
       <p>
@@ -119,7 +129,7 @@
       </div>
       <div
         class="button-container"
-        v-if="user && user.uid === selectedRecipe.user_id"
+        v-if="user && user.uid === selectedRecipe.user_id && likeExists"
       >
         <button class="edit-recipe-button" @click="edit">Edit Recipe</button>
         <button class="delete-recipe-button" @click="confirmDelete">
