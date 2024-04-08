@@ -1,6 +1,6 @@
 <template>
   <img v-if="ifCard" class="topBar" :src="renderedUrl" alt="" />
-  <img v-else class="topBar" :src="renderedUrl" alt="" />
+  <img v-else class="" :src="renderedUrl" alt="" />
 </template>
 
 <script>
