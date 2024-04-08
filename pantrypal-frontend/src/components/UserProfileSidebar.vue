@@ -9,7 +9,7 @@
       <div class="profile-pic">
         <ProfileImage
           :path="profilePicUrl || userData.profile_img_url"
-          :ifCard="true"
+          :ifCard="false"
           alt="profile pic"
           class="profile"
         />
