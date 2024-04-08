@@ -15,7 +15,10 @@
             <div class="plus-icon-container" @click="chooseFile">
               <img :src="recipeData.imageSrc" class="uploaded-image" alt="Image Upload" />
               <div class="img-button-container">
-                <CircleButton logo="src/assets/plus-icon.png" class="circle-button" />
+                <CircleButton
+                  logo="/src/assets/plus-icon.png"
+                  class="circle-button"
+                />
               </div>
             </div>
             <div class="switch-container">
@@ -319,7 +322,7 @@ export default {
       }
     },
     close() {
-      this.$router.push("/community-page");
+      window.history.length > 1 ? this.$router.go(-1) : this.$router.push("/");
     },
     validateForm() {
       const missingFields = [];
