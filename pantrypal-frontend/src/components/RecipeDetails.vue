@@ -268,6 +268,16 @@ export default {
           my_cookbook: arrayRemove(this.selectedRecipe.recipe_id),
         });
 
+        const LikedDocsSnapshot = await getDocs(collection(db, "users"));
+        LikedDocsSnapshot.forEach((doc) => {
+          const user = doc.data();
+          if (user.liked_recipes.includes(this.selectedRecipe.recipe_id)) {
+            updateDoc(doc.ref, {
+              liked_recipes: arrayRemove(this.selectedRecipe.recipe_id),
+            });
+          }
+        });
+
         this.toast.success("Recipe deleted successfully!", {
           timeout: 2000,
           position: "top-center",
