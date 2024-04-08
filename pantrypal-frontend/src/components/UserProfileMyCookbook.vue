@@ -8,11 +8,7 @@
           placeholder="Search name or ingredients..."
           v-model="searchQuery"
         />
-        <img
-          class="search-button"
-          src="../assets/search-icon.svg"
-          alt="Search Icon"
-        />
+        <img class="search-button" src="../assets/search-icon.svg" alt="Search Icon" />
       </div>
       <div class="category-bar-text">
         <p>Category:</p>
@@ -64,11 +60,7 @@
     <div class="NoSearchResultsContainer">
       <text v-if="this.filteredRecipes.length == 0">No Search Results Found</text>
     </div>
-    </div>
-    <CircleButton
-      logo="/src/assets/plus-icon.png"
-      @click="toggleCreateRecipe"
-    />
+    <CircleButton logo="/src/assets/plus-icon.png" @click="toggleCreateRecipe" />
   </div>
 </template>
 
@@ -135,15 +127,11 @@ export default {
       this.$emit("updateLiked");
     },
     async fetchRecipes() {
-      const userDocSnapshot = await getDoc(
-        doc(db, "users", auth.currentUser.uid)
-      );
+      const userDocSnapshot = await getDoc(doc(db, "users", auth.currentUser.uid));
       const myRecipes = userDocSnapshot.data().my_cookbook || [];
       this.filteredRecipes = await Promise.all(
         myRecipes.map(async (recipeId) => {
-          const recipeDocSnapshot = await getDoc(
-            doc(db, "all_recipes", recipeId)
-          );
+          const recipeDocSnapshot = await getDoc(doc(db, "all_recipes", recipeId));
           return recipeDocSnapshot.data();
         })
       );
@@ -158,9 +146,7 @@ export default {
           .includes(this.searchQuery.toLowerCase());
         let ingredientsMatch = false;
         recipe.ingredients.forEach((ingredient) => {
-          if (
-            ingredient.toLowerCase().includes(this.searchQuery.toLowerCase())
-          ) {
+          if (ingredient.toLowerCase().includes(this.searchQuery.toLowerCase())) {
             ingredientsMatch = true;
           }
         });
