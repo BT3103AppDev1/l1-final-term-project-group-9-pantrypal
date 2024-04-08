@@ -167,7 +167,7 @@ export default {
   justify-content: center;
   text-align: center;
   position: sticky;
-  height: 95.5vh;
+  height: 95.9vh;
   top: 0;
   overflow-y: hidden;
 }
