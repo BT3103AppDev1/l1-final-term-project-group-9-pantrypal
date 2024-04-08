@@ -20,7 +20,7 @@
               />
               <div class="img-button-container">
                 <CircleButton
-                  logo="src/assets/plus-icon.png"
+                  logo="/src/assets/plus-icon.png"
                   class="circle-button"
                 />
               </div>
@@ -475,6 +475,7 @@ export default {
         recipe_name: this.recipeData.recipe_name,
         serving_size: parseInt(this.recipeData.serving_size),
         user_id: userId,
+        editted: true,
       };
       const db = getFirestore(app);
       const colRef = collection(db, "all_recipes");
