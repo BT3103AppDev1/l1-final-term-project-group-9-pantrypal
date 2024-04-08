@@ -123,7 +123,9 @@
         v-if="user && user.uid === selectedRecipe.user_id"
       >
         <button class="edit-recipe-button" @click="edit">Edit Recipe</button>
-        <button class="delete-recipe-button" @click="">Delete Recipe</button>
+        <button class="delete-recipe-button" @click="confirmDelete">
+          Delete Recipe
+        </button>
       </div>
     </div>
   </div>
@@ -132,9 +134,27 @@
 <script>
 import RecipeImage from "./RecipeImage.vue";
 import LikeButton from "./LikeButton.vue";
+import ConfirmToast from "@/components/ConfirmToast.vue";
 
-import { db, auth } from "../firebase";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { auth, app, db, storage, fetchCategories } from "../firebase.js";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  addDoc,
+  getDoc,
+  getDocs,
+  collection,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
+  deleteDoc,
+  where,
+  query,
+} from "firebase/firestore";
+import { useToast } from "vue-toastification";
+import "vue-toastification/dist/index.css";
+
 export default {
   components: {
     RecipeImage,
@@ -159,6 +179,10 @@ export default {
     likeExists: {
       type: Boolean,
     },
+  },
+  setup() {
+    const toast = useToast();
+    return { toast };
   },
   mounted() {
     this.fetchRecipeUsernameAndCookingTime();
@@ -198,6 +222,59 @@ export default {
         name: "RecipeEdit",
         params: { id: this.selectedRecipe.recipe_id },
       });
+    },
+
+    confirmDelete() {
+      this.toast.warning({
+        position: "top-center",
+        timeout: false, // Disable auto-dismiss
+        hideProgressBar: true,
+        closeButton: false,
+        component: ConfirmToast,
+        props: {
+          onConfirm: () => this.deleteRecipe(),
+          onCancel: () => this.toast.clear(),
+        },
+      });
+    },
+
+    async deleteRecipe() {
+      try {
+        // Delete the recipe from the all_recipes collection
+        const recipeRef = doc(db, "all_recipes", this.selectedRecipe.recipe_id);
+        await deleteDoc(recipeRef);
+
+        // Delete the recipe from the categories collection
+        const categoryDocsSnapshot = await getDocs(
+          collection(db, "categories")
+        );
+        categoryDocsSnapshot.forEach((doc) => {
+          const category = doc.data();
+          if (!this.selectedRecipe.categories.includes(category.name)) {
+            updateDoc(doc.ref, {
+              recipes: arrayRemove(this.selectedRecipe.recipe_id),
+            });
+          }
+        });
+
+        // Delete the recipe from the user_id collection
+        const userRef = doc(db, "users", this.selectedRecipe.user_id);
+        await updateDoc(userRef, {
+          my_cookbook: arrayRemove(this.selectedRecipe.recipe_id),
+        });
+
+        this.toast.success("Recipe deleted successfully!", {
+          timeout: 2000,
+          position: "top-center",
+          hideProgressBar: true,
+        });
+        this.$router.push("/community-page");
+      } catch (error) {
+        this.toast.error("Failed to delete recipe: " + error.message, {
+          position: "top-center",
+          hideProgressBar: true,
+        });
+      }
     },
 
     goBack() {
