@@ -23,7 +23,7 @@ export default {
   },
   computed: {
     renderedUrl() {
-      console.log(this.path)
+      console.log(this.path);
       return this.path && this.path.trim() !== "" ? this.path : this.defaultProfileUrl;
     },
   },

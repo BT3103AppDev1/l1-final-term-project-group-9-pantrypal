@@ -1,5 +1,5 @@
 <template>
-  <div class="topBar">
+  <div class="topBar" :class="{ 'topBar--hidden': !showNavbar }">
     <button class="firstContainer" @click="goToCommunityPage()">
       <img src="../assets/logo.jpg" alt="PantryPal Logo" class="logo" />
     </button>
@@ -41,8 +41,8 @@
         />
       </button>
     </div>
+    <hr />
   </div>
-  <hr />
 </template>
 
 <script>
@@ -64,6 +64,8 @@ export default {
   data() {
     return {
       userData: {},
+      showNavbar: true,
+      lastScrollPosition: 0,
     };
   },
   mounted() {
@@ -74,6 +76,10 @@ export default {
     } else {
       this.fetchUserData();
     }
+    window.addEventListener("scroll", this.handleScroll);
+  },
+  beforeDestroy() {
+    window.removeEventListener("scroll", this.handleScroll);
   },
   methods: {
     goToCommunityPage() {
@@ -103,18 +109,38 @@ export default {
         localStorage.setItem("userData", JSON.stringify(this.userData));
       }
     },
+    handleScroll() {
+      const currentScrollPosition = window.scrollY || document.documentElement.scrollTop;
+      if (currentScrollPosition < 0) {
+        return;
+      }
+      if (Math.abs(currentScrollPosition - this.lastScrollPosition) < 60) {
+        return;
+      }
+      this.showNavbar = currentScrollPosition < this.lastScrollPosition;
+      this.lastScrollPosition = currentScrollPosition;
+    },
   },
 };
 </script>
 <style>
 .topBar {
-  margin: 15px 0px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
+  /* margin: 15px 0px; */
   padding: 0 5rem;
   background-color: #fff;
-  height: 60px;
+  height: 90px;
+  transition: top 0.3s;
+  z-index: 1000;
+  position: fixed;
+  width: 90%;
+  max-width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.topBar--hidden {
+  top: -90px;
 }
 
 .logo {
@@ -126,28 +152,20 @@ export default {
   background-color: transparent;
   border: none;
   cursor: pointer;
+  padding: 0px 20px;
+  font-size: 20px;
+  font-weight: 800;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 5px 0px;
 }
 
 .button-text {
-  padding: 0px 20px;
-  font-size: 20px;
-  font-weight: 800;
   color: rgb(126, 216, 108);
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin: 5px 0px;
 }
 
 .button-text-selected {
-  padding: 0px 20px;
-  font-size: 20px;
-  font-weight: 800;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
   color: darkgreen;
-  margin: 5px 0px;
 }
 
 .button-text:hover {
@@ -171,6 +189,7 @@ export default {
 
 .thirdContainer {
   flex: 0.3;
+  /* width: 20%; */
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -200,9 +219,13 @@ export default {
   padding: 0;
   background-color: transparent;
   border: none;
+  margin-bottom: 75px;
+  margin-right: 150px;
 }
 
 .profile {
+  margin: 0;
+  padding: 0;
   border-radius: 50%;
   height: 60px;
   width: 60px;
@@ -212,6 +235,7 @@ export default {
 hr {
   margin: 0;
   border: 0;
-  border-top: 1.4px solid #dddddd;
+  border-top: 1.4px solid black;
+  /* #dddddd; */
 }
 </style>
