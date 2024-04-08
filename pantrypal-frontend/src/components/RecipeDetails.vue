@@ -17,7 +17,6 @@
         </label>
         <label for="publishToCommunity">Publish to Community</label>
       </div>
-      <!-- <RecipeImage :path="selectedRecipe.recipe_img_url" :ifCard="false" /> -->
     </div>
     <div class="second">
       <div class="title-row">
@@ -129,6 +128,7 @@
       </div>
     </div>
   </div>
+  <!-- <ConfirmDialog v-if="showConfirmation" @confirm="deleteRecipe" @cancel="hideConfirmDialog" /> -->
 </template>
 
 <script>
@@ -181,7 +181,12 @@ export default {
     },
   },
   setup() {
-    const toast = useToast();
+    const toast = useToast({
+      position: "top-center",
+      timeout: false,
+      hideProgressBar: true,
+      closeButton: false,
+    });
     return { toast };
   },
   mounted() {
@@ -226,15 +231,15 @@ export default {
 
     confirmDelete() {
       this.toast.warning({
-        position: "top-center",
-        timeout: false, // Disable auto-dismiss
-        hideProgressBar: true,
-        closeButton: false,
         component: ConfirmToast,
         props: {
           onConfirm: () => this.deleteRecipe(),
           onCancel: () => this.toast.clear(),
         },
+        position: "top-center",
+        timeout: false,
+        hideProgressBar: true,
+        closeButton: false,
       });
     },
 
