@@ -14,17 +14,16 @@
             />
             <div class="plus-icon-container" @click="chooseFile">
               <img
-                v-if="recipeData.imageSrc"
                 :src="recipeData.imageSrc"
                 class="uploaded-image"
-                alt="Uploaded Image"
+                alt="Image Upload"
               />
-              <img
-                :class="{ hidden: recipeData.imageSrc }"
-                class="upload-image"
-                src="../assets/image-upload.png"
-                alt="Upload Image"
-              />
+              <div class="img-button-container">
+                <CircleButton
+                  logo="src/assets/plus-icon.png"
+                  class="circle-button"
+                />
+              </div>
             </div>
             <div class="switch-container">
               <label class="switch">
@@ -190,6 +189,7 @@
 import Multiselect from "vue-multiselect";
 import TopBar from "@/components/TopBar.vue";
 import SaveRecipeButton from "../components/SaveRecipeButton.vue";
+import CircleButton from "@/components/CircleButton.vue";
 import { auth, app, db, storage, fetchCategories } from "../firebase.js";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import {
@@ -213,6 +213,7 @@ export default {
     Multiselect,
     TopBar,
     SaveRecipeButton,
+    CircleButton,
   },
   setup() {
     const toast = useToast();
@@ -221,7 +222,8 @@ export default {
   data() {
     return {
       recipeData: {
-        imageSrc: null,
+        imageSrc:
+          "https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1",
         publish_to_community: false,
         recipe_name: "",
         serving_size: "",
@@ -337,28 +339,6 @@ export default {
     close() {
       this.$router.push("/community-page");
     },
-    // validateForm() {
-    //   if (
-    //     !this.recipeData.recipe_name ||
-    //     !this.recipeData.description ||
-    //     !this.recipeData.allergen_info ||
-    //     // !this.recipeData.imageSrc ||
-    //     (!this.recipeData.cook_time_hours &&
-    //       !this.recipeData.cook_time_minutes) ||
-    //     !this.recipeData.category.length ||
-    //     !this.recipeData.serving_size ||
-    //     !this.recipeData.ingredients.length ||
-    //     !this.recipeData.directions.length
-    //   ) {
-    //     // at least one field is empty
-    //     this.fillAllFields();
-    //     // alert(
-    //     //   "Please fill in all fields properly before submitting the recipe."
-    //     // );
-    //     return false;
-    //   }
-    //   return true;
-    // },
     validateForm() {
       const missingFields = [];
       if (!this.recipeData.recipe_name) {
@@ -367,9 +347,9 @@ export default {
       if (!this.recipeData.description) {
         missingFields.push("Description");
       }
-      if (!this.recipeData.allergen_info) {
-        missingFields.push("Allergen Information");
-      }
+      // if (!this.recipeData.allergen_info) {
+      //   missingFields.push("Allergen Information");
+      // }
       if (
         !this.recipeData.cook_time_hours &&
         !this.recipeData.cook_time_minutes
@@ -397,15 +377,6 @@ export default {
         hideProgressBar: true,
       });
     },
-    // fillAllFields() {
-    //   this.toast.error(
-    //     "Please fill in all fields properly before submitting the recipe.",
-    //     {
-    //       position: "top-center",
-    //       hideProgressBar: true,
-    //     }
-    //   );
-    // },
     fillAllFields(missingFields) {
       const message = `Please fill in the following fields: ${missingFields.join(
         ", "
@@ -429,9 +400,6 @@ export default {
       });
     },
     async submitRecipe() {
-      //   if (!this.validateForm()) {
-      //     return;
-      //   }
       const missingFields = this.validateForm();
       if (missingFields.length > 0) {
         this.fillAllFields(missingFields);
@@ -525,10 +493,6 @@ export default {
   margin-bottom: 5px;
 }
 
-.recioe-form-content {
-  position: fixed;
-}
-
 .createRecipeRow {
   display: flex;
   flex-direction: row;
@@ -553,12 +517,24 @@ export default {
   border-radius: 20px;
 }
 
-.upload-image {
-  width: 100%;
+.plus-icon-container {
+  position: relative;
+  margin-bottom: 20px;
 }
 
-.hidden {
-  display: none;
+.img-button-container {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
+.circle-button {
+  background-color: #bd6b16;
+  width: 40px;
+  height: 40px;
+  bottom: -10px;
+  right: -10px;
+  z-index: 1;
 }
 
 .switch-container {
