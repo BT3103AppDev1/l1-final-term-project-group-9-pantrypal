@@ -13,11 +13,7 @@
               @change="handleImageUpload"
             />
             <div class="plus-icon-container" @click="chooseFile">
-              <img
-                :src="recipeData.imageSrc"
-                class="uploaded-image"
-                alt="Image Upload"
-              />
+              <img :src="recipeData.imageSrc" class="uploaded-image" alt="Image Upload" />
               <div class="img-button-container">
                 <CircleButton
                   logo="/src/assets/plus-icon.png"
@@ -39,11 +35,7 @@
           </div>
           <div class="first2">
             <label for="recipeName">Title:</label>
-            <input
-              type="text"
-              id="recipeName"
-              v-model="recipeData.recipe_name"
-            />
+            <input type="text" id="recipeName" v-model="recipeData.recipe_name" />
 
             <label for="recipeDescription">Description:</label>
             <textarea
@@ -123,10 +115,7 @@
                     v-model="recipeData.ingredients[index]"
                     placeholder="e.g. 10g Apple"
                   />
-                  <button
-                    class="remove-button"
-                    @click="removeIngredient(index)"
-                  >
+                  <button class="remove-button" @click="removeIngredient(index)">
                     x
                   </button>
                 </div>
@@ -159,10 +148,7 @@
                       v-model="direction.text"
                       class="input-text"
                     ></textarea>
-                    <button
-                      class="remove-button"
-                      @click="removeDirection(index)"
-                    >
+                    <button class="remove-button" @click="removeDirection(index)">
                       x
                     </button>
                   </div>
@@ -270,8 +256,7 @@ export default {
         uploadTask.on(
           "state_changed",
           (snapshot) => {
-            const progress =
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
             console.log("Upload is " + progress + "% done");
           },
           (error) => {
@@ -350,10 +335,7 @@ export default {
       // if (!this.recipeData.allergen_info) {
       //   missingFields.push("Allergen Information");
       // }
-      if (
-        !this.recipeData.cook_time_hours &&
-        !this.recipeData.cook_time_minutes
-      ) {
+      if (!this.recipeData.cook_time_hours && !this.recipeData.cook_time_minutes) {
         missingFields.push("Cook Time");
       }
       if (!this.recipeData.category.length) {
@@ -378,9 +360,7 @@ export default {
       });
     },
     fillAllFields(missingFields) {
-      const message = `Please fill in the following fields: ${missingFields.join(
-        ", "
-      )}.`;
+      const message = `Please fill in the following fields: ${missingFields.join(", ")}.`;
       this.toast.error(message, {
         position: "top-center",
         hideProgressBar: true,
@@ -415,9 +395,7 @@ export default {
       }
 
       const recipe = {
-        allergens: this.recipeData.allergen_info
-          .split(",")
-          .map((word) => word.trim()),
+        allergens: this.recipeData.allergen_info.split(",").map((word) => word.trim()),
         categories: this.recipeData.category,
         community: this.recipeData.publish_to_community,
         cook_time:
@@ -438,10 +416,7 @@ export default {
       const db = getFirestore(app);
       const colRef = collection(db, "all_recipes");
       try {
-        const recipeRef = await setDoc(
-          doc(db, "all_recipes", recipe_id),
-          recipe
-        );
+        const recipeRef = await setDoc(doc(db, "all_recipes", recipe_id), recipe);
         await updateDoc(doc(db, "users", recipe.user_id), {
           my_cookbook: arrayUnion(recipe.recipe_id),
         });
@@ -478,7 +453,6 @@ export default {
   align-items: center;
   overflow-y: visible;
 }
-
 .recipe-form {
   font-family: "Arial", sans-serif;
   background-color: white;

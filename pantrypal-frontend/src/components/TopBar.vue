@@ -34,7 +34,7 @@
       <button type="button" class="profileButton" @click="goToProfile()">
         <ProfileImage
           :path="profilePicUrl || userData.profile_img_url"
-          :ifCard="true"
+          :ifCard="false"
           alt="profile pic"
           class="profile"
           @click="goToProfile()"
@@ -219,8 +219,8 @@ export default {
   padding: 0;
   background-color: transparent;
   border: none;
-  margin-bottom: 75px;
-  margin-right: 150px;
+  /* margin-bottom: 75px; */
+  /* margin-right: 150px; */
 }
 
 .profile {

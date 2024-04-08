@@ -61,6 +61,10 @@
         />
       </div>
     </div>
+    <div class="NoSearchResultsContainer">
+      <text v-if="this.filteredRecipes.length == 0">No Search Results Found</text>
+    </div>
+    </div>
     <CircleButton
       logo="/src/assets/plus-icon.png"
       @click="toggleCreateRecipe"
@@ -210,7 +214,7 @@ export default {
 .myCookbook-page {
   width: 90%;
   margin: auto;
-  margin-top: 0;
+  margin-top: 100px;
 }
 
 .filterBar {
@@ -306,5 +310,10 @@ export default {
   flex-wrap: wrap;
   align-self: flex-start;
   flex-direction: row;
+}
+
+.NoSearchResultsContainer {
+  display: flex;
+  justify-content: center;
 }
 </style>

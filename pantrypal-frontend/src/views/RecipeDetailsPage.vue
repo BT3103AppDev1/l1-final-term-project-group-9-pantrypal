@@ -1,9 +1,18 @@
 <template>
-  <div>
+  <div class="main-recipe-details">
     <TopBar whichPage="feed" />
     <div class="recipe-content">
-      <RecipeDetails v-if="selectedRecipe" :selectedRecipe="selectedRecipe" :selectedIngredients="selectedIngredients"
-        :likeExists="true" />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <RecipeDetails
+        v-if="selectedRecipe"
+        :selectedRecipe="selectedRecipe"
+        :selectedIngredients="selectedIngredients"
+        :likeExists="true"
+      />
     </div>
   </div>
 </template>
@@ -40,13 +49,17 @@ export default {
 };
 </script>
 <style>
+.main-recipe-details {
+  background-color: white;
+}
 .recipe-content {
   background-color: white;
   /* padding: 20px; */
   border-radius: 8px;
   height: 90%;
-  margin: 30px;
+  /* margin: 30px; */
   margin-left: 70px;
   margin-right: 70px;
+  /* margin-top: 90px; */
 }
 </style>
