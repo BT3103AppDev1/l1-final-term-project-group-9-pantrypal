@@ -301,6 +301,7 @@ export default {
 
 @media screen and (max-width: 1330px) {
   .recipe-list {
+    margin: 10px auto 0;
     display: flex;
     flex-wrap: wrap;
     width: 690px;
