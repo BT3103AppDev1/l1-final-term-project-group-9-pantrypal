@@ -1,24 +1,26 @@
 <template>
   <div class="user-profile-stats">
-    <div class="favourite-category">
-      <h2>Favourite Categories</h2>
-      <div v-if="Object.keys(categoryList).length > 0" class="category-charts">
-        <div class="category-liked">
-          <pie-chart class="pie-category-liked" :data="categoryList"></pie-chart>
+    <div class="stats">
+      <div class="favourite-category">
+        <h2>Favourite Categories</h2>
+        <div v-if="Object.keys(categoryList).length > 0" class="category-charts">
+          <div class="category-liked">
+            <pie-chart class="pie-category-liked" :data="categoryList"></pie-chart>
+          </div>
+        </div>
+        <div v-else>
+          <p>No recipes liked</p>
         </div>
       </div>
-      <div v-else>
-        <p>No recipes liked</p>
-      </div>
-    </div>
-    <div class="numberOfRecipesCreated">
-      <h2>Number of recipes created</h2>
-      <div class="category-liked">
-        <column-chart
-          :data="recipesCreatedData"
-          xtitle="Month"
-          ytitle="Number of Recipes Created"
-        ></column-chart>
+      <div class="numberOfRecipesCreated">
+        <h2>Number of recipes created</h2>
+        <div class="category-liked">
+          <column-chart
+            :data="recipesCreatedData"
+            xtitle="Month"
+            ytitle="Number of Recipes Created"
+          ></column-chart>
+        </div>
       </div>
     </div>
   </div>
@@ -189,7 +191,14 @@ export default {
 
 <style scoped>
 .user-profile-stats {
-  margin-top: 90px;
-  width: 90%;
+  display: flex;
+  justify-content: center;
+  padding: 90px 100px;
+}
+
+.stats {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
 }
 </style>
