@@ -175,7 +175,6 @@ export default {
         }
       }
       this.myCookbookRecipes = recipes;
-      console.log(this.myCookbookRecipes);
       this.fetchRecipeCreationData();
       this.fetchLeftoverPastMonth();
       // can add other functions here for common leftovers Barchart and fav category
@@ -227,22 +226,19 @@ export default {
         const lastMonthDate = new Date(currentDate.setMonth(currentDate.getMonth() - 1));
         const lastMonthMidnight = new Date(lastMonthDate.getFullYear(), lastMonthDate.getMonth(), lastMonthDate.getDate());
 
-        console.log(lastMonthMidnight);
 
         const leftoversPastMonth = this.myCookbookRecipes
             .filter((recipe) => {
                 const creationDate = new Date(recipe.created_date.seconds * 1000);
-                console.log(creationDate);
                 return creationDate >= lastMonthMidnight;
             })
             .filter((recipe) => recipe.leftovers)
             .map((recipe) => recipe.leftovers);
 
         const allLeftovers = leftoversPastMonth.flat();
-        console.log(allLeftovers);
 
         const distinctLeftovers = allLeftovers.filter((value, index, self) => self.indexOf(value) === index);
-        console.log(distinctLeftovers);
+
         const fuse = new Fuse(distinctLeftovers, { threshold: 0.1 });
 
         const leftoverCounts = {};
@@ -271,8 +267,17 @@ export default {
             }
         }
         });
-        this.leftoverPastMonth = leftoverCounts;
-        console.log(leftoverCounts);
+        
+        const sortedLeftoverCounts = Object.entries(leftoverCounts)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 10)
+            .reduce((obj, [key, value]) => {
+            obj[key] = value;
+            return obj;
+            }, {});
+
+        this.leftoverPastMonth = sortedLeftoverCounts;
+        console.log(sortedLeftoverCounts);
     },
   },
 };
