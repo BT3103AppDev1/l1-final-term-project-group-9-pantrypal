@@ -303,7 +303,24 @@ export default {
   display: flex;
   flex-wrap: wrap;
   width: 1030px;
-  /* justify-content: space-around; */
+}
+
+@media screen and (max-width: 1030px) {
+  .recipe-list {
+    margin: 10px auto 0;
+    display: flex;
+    flex-wrap: wrap;
+    width: 690px;
+  }
+}
+
+@media screen and (max-width: 690px) {
+  .recipe-list {
+    margin: 10px auto 0;
+    display: flex;
+    flex-wrap: wrap;
+    width: 340px;
+  }
 }
 
 /* .recipe-list > .placeholder-card,
@@ -311,27 +328,7 @@ export default {
   width: calc(25% - 20px);
   margin: 10px;
 }
-
-@media screen and (max-width: 1200px) {
-  .recipe-list > .placeholder-card,
-  .recipe-list > .RecipeCard {
-    width: calc(33.33% - 20px);
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .recipe-list > .placeholder-card,
-  .recipe-list > .RecipeCard {
-    width: calc(50% - 20px);
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .recipe-list > .placeholder-card,
-  .recipe-list > .RecipeCard {
-    width: calc(100% - 20px);
-  }
-} */
+*/
 
 /* .recipe-list > .placeholder-card,
 .recipe-list > .RecipeCard {
