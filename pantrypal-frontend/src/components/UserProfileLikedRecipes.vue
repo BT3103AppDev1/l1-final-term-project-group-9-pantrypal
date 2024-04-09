@@ -247,7 +247,7 @@ export default {
 
 .filterBar {
   display: flex;
-  padding: 0 2rem;
+  padding: 0 4rem;
   margin: 1rem 0;
 }
 
