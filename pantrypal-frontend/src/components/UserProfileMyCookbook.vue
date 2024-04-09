@@ -290,12 +290,30 @@ export default {
 }
 
 .recipe-list {
-  margin: 1rem;
-  flex: 0.9;
+  margin: 10px auto 0;
+  /* flex: 0.9; */
+  width: 1030px;
   display: flex;
   flex-wrap: wrap;
   align-self: flex-start;
   flex-direction: row;
+}
+
+@media screen and (max-width: 1330px) {
+  .recipe-list {
+    display: flex;
+    flex-wrap: wrap;
+    width: 690px;
+  }
+}
+
+@media screen and (max-width: 990px) {
+  .recipe-list {
+    margin: 10px auto 0;
+    display: flex;
+    flex-wrap: wrap;
+    width: 340px;
+  }
 }
 
 .NoSearchResultsContainer {
