@@ -114,7 +114,7 @@ export default {
       if (currentScrollPosition < 0) {
         return;
       }
-      if (Math.abs(currentScrollPosition - this.lastScrollPosition) < 60) {
+      if (Math.abs(currentScrollPosition - this.lastScrollPosition) < 20) {
         return;
       }
       this.showNavbar = currentScrollPosition < this.lastScrollPosition;
@@ -137,10 +137,12 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  top: 0px;
+  transition: top 0.2s ease-in-out;
 }
 
 .topBar--hidden {
-  top: -90px;
+    top: -90px;
 }
 
 .logo {
@@ -148,7 +150,6 @@ export default {
 }
 
 .custom-button {
-  padding: 0;
   background-color: transparent;
   border: none;
   cursor: pointer;
@@ -162,10 +163,12 @@ export default {
 
 .button-text {
   color: rgb(126, 216, 108);
+  margin: 0;
 }
 
 .button-text-selected {
   color: darkgreen;
+  margin: 0;
 }
 
 .button-text:hover {

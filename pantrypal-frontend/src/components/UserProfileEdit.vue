@@ -234,6 +234,8 @@ export default {
   font-size: 16px;
   cursor: pointer;
   transition: background-color 0.3s;
+  color: white;
+  font-weight: bold;
 }
 
 .user-profile-edit .save-changes-btn:hover {

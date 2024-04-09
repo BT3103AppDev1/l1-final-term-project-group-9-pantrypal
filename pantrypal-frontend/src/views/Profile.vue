@@ -4,11 +4,14 @@
     <div class="content-container">
       <UserProfileSidebar :selected="selected" @selected="changeSelected($event)" :userData="userData"
         @refreshProfilePic="refreshProfilePic" />
-      <UserProfileEdit v-if="selected === 'settings' && Object.keys(userData).length !== 0" :userData="userData"
-        @userData="handleUserDataUpdate" />
+			<div v-if="selected === 'settings'" class="view-container">
+				<UserProfileEdit v-if="selected === 'settings' && Object.keys(userData).length !== 0" :userData="userData" @userData="handleUserDataUpdate" />
+			</div>
       <UserProfileLikedRecipes v-if="selected === 'likedRecipes'" :userData="userData" @updateLiked="fetchUserStats" />
       <UserProfileMyCookbook v-if="selected === 'myCookbook'" :userData="userData" @updateLiked="fetchUserStats" />
-      <UserProfileStats v-if="selected === 'stats'" :userData="userData" :lastStatsUpdate="lastStatsUpdate" :key="refreshKey"/>
+			<div v-if="selected === 'stats'" class="stats-container">
+				<UserProfileStats v-if="selected === 'stats'" :userData="userData" :lastStatsUpdate="lastStatsUpdate" :key="refreshKey"/>
+			</div>
     </div>
   </div>
 </template>
@@ -72,5 +75,21 @@ export default {
 <style scoped>
 .content-container {
   display: flex;
+}
+
+.view-container {
+	width: 100%;
+	justify-content: center;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+
+}
+
+.stats-container {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
 </style>

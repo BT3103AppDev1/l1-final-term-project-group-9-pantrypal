@@ -1,17 +1,33 @@
 <template>
   <div class="user-profile-stats">
-    <div class="stats">
+    
+
       <div class="favourite-category">
         <h2>Favourite Categories</h2>
         <div v-if="Object.keys(categoryList).length > 0" class="category-charts">
           <div class="category-liked">
-            <pie-chart class="pie-category-liked" :data="categoryList"></pie-chart>
+            <pie-chart class="pie-category-liked" :data="categoryList" :colors="['#596639', '#CBDF99', '#8AB3A5', '#BAD7BC', '#DCAA83', '#BD6B16', '#406344', '#2F4858']"></pie-chart>
           </div>
         </div>
         <div v-else>
           <p>No recipes liked</p>
         </div>
       </div>
+
+      <!--INSERT YUENNING'S PIE CHART HERE-->
+      <div class="favourite-category">
+        <h2>Favourite Categories</h2>
+        <div v-if="Object.keys(categoryList).length > 0" class="category-charts">
+          <div class="category-liked">
+            <pie-chart class="pie-category-liked" :data="categoryList" :colors="['#596639', '#CBDF99', '#8AB3A5', '#BAD7BC', '#DCAA83', '#BD6B16', '#406344', '#2F4858']"></pie-chart>
+          </div>
+        </div>
+        <div v-else>
+          <p>No recipes liked</p>
+        </div>
+      </div>
+      <!--UNTIL HERE-->
+
       <div class="numberOfRecipesCreated">
         <h2>Number of recipes created</h2>
         <div class="category-liked">
@@ -19,11 +35,27 @@
             :data="recipesCreatedData"
             xtitle="Month"
             ytitle="Number of Recipes Created"
+            :colors="['#BD6B16']"
           ></column-chart>
         </div>
       </div>
+
+      <div class="pastMonthLeftovers">
+        <h2>Leftovers for the Past Month</h2>
+        <div class="category-liked">
+          <bar-chart
+            :data="leftoverPastMonth"
+            xtitle="Counts"
+            ytitle="Leftovers"
+            :colors = "['#596639']"
+            loading="Loading..."
+            xstep="1"
+          ></bar-chart>
+        </div>
+      </div>
+
     </div>
-  </div>
+  
 </template>
 
 <script>
@@ -32,6 +64,7 @@ import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import "chart.js";
 import VueChartkick from "vue-chartkick";
 import "chartkick/chart.js";
+import Fuse from 'https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.mjs'
 
 export default {
   name: "UserProfileStats",
@@ -47,7 +80,8 @@ export default {
       categoryList: {},
       userData: {},
       myCookbookRecipes: [],
-      recipesCreatedData: {},
+      recipesCreatedData: null,
+      leftoverPastMonth: null,
     };
   },
   mounted() {
@@ -141,7 +175,9 @@ export default {
         }
       }
       this.myCookbookRecipes = recipes;
+      console.log(this.myCookbookRecipes);
       this.fetchRecipeCreationData();
+      this.fetchLeftoverPastMonth();
       // can add other functions here for common leftovers Barchart and fav category
       // that need cookbook recipes data
       //
@@ -184,6 +220,59 @@ export default {
 
       const recipeData = monthLabels.map((month) => [month, recipeCounts[month]]);
       this.recipesCreatedData = recipeData;
+      console.log(recipeData);
+    },
+    async fetchLeftoverPastMonth() {
+        const currentDate = new Date();
+        const lastMonthDate = new Date(currentDate.setMonth(currentDate.getMonth() - 1));
+        const lastMonthMidnight = new Date(lastMonthDate.getFullYear(), lastMonthDate.getMonth(), lastMonthDate.getDate());
+
+        console.log(lastMonthMidnight);
+
+        const leftoversPastMonth = this.myCookbookRecipes
+            .filter((recipe) => {
+                const creationDate = new Date(recipe.created_date.seconds * 1000);
+                console.log(creationDate);
+                return creationDate >= lastMonthMidnight;
+            })
+            .filter((recipe) => recipe.leftovers)
+            .map((recipe) => recipe.leftovers);
+
+        const allLeftovers = leftoversPastMonth.flat();
+        console.log(allLeftovers);
+
+        const distinctLeftovers = allLeftovers.filter((value, index, self) => self.indexOf(value) === index);
+        console.log(distinctLeftovers);
+        const fuse = new Fuse(distinctLeftovers, { threshold: 0.1 });
+
+        const leftoverCounts = {};
+        allLeftovers.forEach((leftover) => {
+        // Use Fuse.js to find the closest match in the allLeftovers array
+        const matches = fuse.search(leftover);
+
+        if (matches.length > 0) {
+            // Sort the matches by score in ascending order
+            matches.sort((a, b) => a.score - b.score);
+
+            // Get the top 1 highest matching result
+            const topMatch = matches[0];
+            const matchedValue = topMatch.item;
+
+            if (matchedValue in leftoverCounts) {
+                leftoverCounts[matchedValue]++;
+            } else {
+                leftoverCounts[matchedValue] = 1;
+            }
+        } else {
+            if (leftover in leftoverCounts) {
+                leftoverCounts[leftover]++;
+            } else {
+                leftoverCounts[leftover] = 1;
+            }
+        }
+        });
+        this.leftoverPastMonth = leftoverCounts;
+        console.log(leftoverCounts);
     },
   },
 };
@@ -191,11 +280,22 @@ export default {
 
 <style scoped>
 .user-profile-stats {
-  display: flex;
+  display: grid;
+  grid-gap: 3rem 8rem;
   justify-content: center;
-  padding: 90px 100px;
+  grid-template-columns: 1fr 1fr;
+  flex-wrap: wrap;
+  padding: 80px 50px;
+  text-align: center;
+  width: 80%;
 }
 
+@media (max-width: 1024px) {
+  .user-profile-stats {
+      display: block;
+      width:min-content;
+  }
+}
 .stats {
   display: flex;
   justify-content: center;
