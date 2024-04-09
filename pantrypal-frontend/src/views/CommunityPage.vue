@@ -1,60 +1,80 @@
 <template>
+  <TopBar whichPage="feed" :showNavbar="showTopBar" />
+
   <div class="community-page">
-    <TopBar whichPage="feed" :showNavbar="showTopBar" />
-    <br />
-    <br />
-    <br />
-    <br />
-    <div class="filterBar">
-      <div class="search-bar">
-        <input type="text" class="search-input" placeholder="Search name or ingredients..." v-model="searchQuery" />
-        <img class="search-button" src="../assets/search-icon.svg" alt="Search Icon" />
-      </div>
-      <div class="category-bar-text">
-        <p>Category:</p>
-      </div>
-      <div class="category-bar-dropdown">
-        <div class="dropdown-container">
-          <dropdown class="my-dropdown-toggle" :options="arrayOfCategories" :selected="category" :placeholder="'All'"
-            :closeOnOutsideClick="true" v-on:updateOption="filterUsingCategory">
-          </dropdown>
+    <div class="filters">
+      <div class="filterBar">
+        <div class="search-bar">
+          <input
+            type="text"
+            class="search-input"
+            placeholder="Search name or ingredients..."
+            v-model="searchQuery"
+          />
+          <img class="search-button" src="../assets/search-icon.svg" alt="Search Icon" />
+        </div>
+        <div class="category-bar-text">
+          <p>Category:</p>
+        </div>
+        <div class="category-bar-dropdown">
+          <div class="dropdown-container">
+            <dropdown
+              class="my-dropdown-toggle"
+              :options="arrayOfCategories"
+              :selected="category"
+              :placeholder="'All'"
+              :closeOnOutsideClick="true"
+              v-on:updateOption="filterUsingCategory"
+            >
+            </dropdown>
+          </div>
+        </div>
+        <div class="sortby-bar-text">
+          <p>Sort By:</p>
+        </div>
+        <div class="category-bar-dropdown">
+          <div class="dropdown-container">
+            <dropdown
+              class="my-dropdown-toggle"
+              :options="arrayOfSorts"
+              :selected="sort"
+              :placeholder="'Most Recent'"
+              :closeOnOutsideClick="true"
+              v-on:updateOption="filterUsingSort"
+            >
+            </dropdown>
+          </div>
         </div>
       </div>
-      <div class="sortby-bar-text">
-        <p>Sort By:</p>
-      </div>
-      <div class="category-bar-dropdown">
-        <div class="dropdown-container">
-          <dropdown class="my-dropdown-toggle" :options="arrayOfSorts" :selected="sort" :placeholder="'Most Recent'"
-            :closeOnOutsideClick="true" v-on:updateOption="filterUsingSort">
-          </dropdown>
+    </div>
+    <div class="main-content">
+      <!-- RecipeCards######### -->
+      <div v-if="!isDataLoaded" class="recipe-list">
+        <div v-for="i in 15" :key="i" class="placeholder-card">
+          <RecipeCardPlaceholder />
         </div>
       </div>
-    </div>
-
-    <!-- RecipeCards######### -->
-    <div v-if="!isDataLoaded" class="recipe-list">
-      <div v-for="i in 15" :key="i" class="placeholder-card">
-        <RecipeCardPlaceholder />
+      <!-- recipe card list -->
+      <div class="recipe-list">
+        <RecipeCard
+          v-for="recipe in filteredRecipes"
+          :key="recipe.recipe_id"
+          :recipe="recipe"
+          @toggle="toggleRecipeDetails"
+        />
       </div>
-    </div>
-    <!-- recipe card list -->
-    <div class="recipe-list">
-      <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe"
-        @toggle="toggleRecipeDetails" />
-
-    </div>
-    <div class="NoSearchResultsContainer">
-      <text v-if="this.filteredRecipes.length == 0">No Search Results Found</text>
-    </div>
-    <!-- Back to Top button 
+      <div class="NoSearchResultsContainer">
+        <text v-if="this.filteredRecipes.length == 0">No Search Results Found</text>
+      </div>
+      <!-- Back to Top button 
     <button class="back-to-top" @click="scrollToTop" v-show="showBackToTop">
       <img src="../assets/BackToTop.svg" alt="Back To Top" />
       <text>Back To Top</text>
     </button>
     -->
 
-    <CircleButton logo="src/assets/plus-icon.png" @click="toggleCreateRecipe" />
+      <CircleButton logo="src/assets/plus-icon.png" @click="toggleCreateRecipe" />
+    </div>
   </div>
 </template>
 
@@ -124,7 +144,6 @@ export default {
     this.fetchRecipes();
     this.router = router;
     window.addEventListener("scroll", this.handleScroll);
-
   },
   destroyed() {
     window.removeEventListener("scroll", this.handleScroll);
@@ -177,8 +196,11 @@ export default {
             ingredientsMatch = true;
           }
         });
-        const categoryMatch = this.category.name === 'All' || Object.keys(this.category).length === 0 || recipe.categories.includes(this.category.name);
-        return (nameMatch || ingredientsMatch) && categoryMatch
+        const categoryMatch =
+          this.category.name === "All" ||
+          Object.keys(this.category).length === 0 ||
+          recipe.categories.includes(this.category.name);
+        return (nameMatch || ingredientsMatch) && categoryMatch;
       });
       this.filteredRecipesByName = this.filteredRecipes;
     },
@@ -251,9 +273,108 @@ export default {
 <style scoped>
 .community-page {
   margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+.filters {
+  margin-top: 100px;
+  width: 80%;
+}
+
+.main-content {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 20px;
+}
+
+.NoSearchResultsContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.recipe-list {
+  margin: 10px auto 0;
+  display: flex;
+  flex-wrap: wrap;
+  width: 1030px;
+  /* justify-content: space-around; */
+}
+
+/* .recipe-list > .placeholder-card,
+.recipe-list > .RecipeCard {
+  width: calc(25% - 20px);
+  margin: 10px;
+}
+
+@media screen and (max-width: 1200px) {
+  .recipe-list > .placeholder-card,
+  .recipe-list > .RecipeCard {
+    width: calc(33.33% - 20px);
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .recipe-list > .placeholder-card,
+  .recipe-list > .RecipeCard {
+    width: calc(50% - 20px);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .recipe-list > .placeholder-card,
+  .recipe-list > .RecipeCard {
+    width: calc(100% - 20px);
+  }
+} */
+
+/* .recipe-list > .placeholder-card,
+.recipe-list > .RecipeCard {
+  width: calc(25% - 20px);
+  margin: 10px;
+}
+
+@media screen and (max-width: 1200px) {
+  .recipe-list > .placeholder-card,
+  .recipe-list > .RecipeCard {
+    width: calc(33.33% - 20px);
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .recipe-list > .placeholder-card,
+  .recipe-list > .RecipeCard {
+    width: calc(50% - 20px);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .recipe-list > .placeholder-card,
+  .recipe-list > .RecipeCard {
+    width: calc(100% - 20px);
+  }
+} */
+
+/* .community-page {
+  margin: 0 auto;
   min-height: 1000px;
 }
 
+.recipe-list {
+  margin: 60px;
+  display: flex;
+  flex-wrap: wrap;
+  align-self: flex-start;
+  flex-direction: row;
+  justify-content: center;
+}
+
+*/
 .filterBar {
   display: flex;
   padding: 0 4rem;
@@ -335,15 +456,6 @@ export default {
   text-align: center;
 }
 
-.recipe-list {
-  margin: 60px;
-  display: flex;
-  flex-wrap: wrap;
-  align-self: flex-start;
-  flex-direction: row;
-  justify-content: center;
-}
-
 .plus-icon-container {
   position: fixed;
   bottom: 20px;
@@ -366,15 +478,13 @@ export default {
   display: flex;
   flex-direction: column;
 }
-
+/*
 .NoSearchResultsContainer {
-
   display: flex;
   justify-content: center;
 }
 
-
-/* Show the button when scrolling down */
+Show the button when scrolling down
 .back-to-top.show {
   display: block;
 }
@@ -382,5 +492,5 @@ export default {
 .back-to-top img {
   width: 60px;
   height: 60px;
-}
+} */
 </style>
