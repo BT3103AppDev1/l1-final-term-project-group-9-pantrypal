@@ -241,6 +241,7 @@ export default {
 <style scoped>
 .liked-recipes-page {
   width: 90%;
+  margin: auto;
   margin-top: 100px;
 }
 
@@ -328,19 +329,22 @@ export default {
 .recipe-container {
   display: flex;
   justify-content: center;
+  margin: 0 100px;
 }
 
 .recipe-list {
   margin: 10px auto 0;
   /* flex: 0.9; */
-  width: 1030px;
+  /* width: 1030px;
   display: flex;
   flex-wrap: wrap;
-  align-self: flex-start;
-  flex-direction: row;
+  align-self: flex-start; */
+  /* flex-direction: row; */
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 }
 
-@media screen and (max-width: 1330px) {
+/* @media screen and (max-width: 1330px) {
   .recipe-list {
     margin: 10px auto 0;
     display: flex;
@@ -356,7 +360,7 @@ export default {
     flex-wrap: wrap;
     width: 340px;
   }
-}
+} */
 
 .NoSearchResultsContainer {
   display: flex;

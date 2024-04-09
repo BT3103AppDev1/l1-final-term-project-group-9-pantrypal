@@ -49,13 +49,14 @@
     </div>
     <div class="main-content">
       <!-- RecipeCards######### -->
-      <div v-if="!isDataLoaded" class="recipe-list">
-        <div v-for="i in 15" :key="i" class="placeholder-card">
-          <RecipeCardPlaceholder />
-        </div>
+      <div class="recipe-list" v-if="!isDataLoaded" >
+          <RecipeCardPlaceholder
+            v-for="i in 15" 
+            :key="i" 
+          />
       </div>
       <!-- recipe card list -->
-      <div class="recipe-list">
+      <div class="recipe-list" v-else>
         <RecipeCard
           v-for="recipe in filteredRecipes"
           :key="recipe.recipe_id"
@@ -274,108 +275,39 @@ export default {
 .community-page {
   margin: 0 auto;
   display: flex;
-  justify-content: center;
+  /* justify-content: center; */
+  padding: 70px 0px;
   align-items: center;
   min-height: 100vh;
   flex-direction: column;
 }
 
 .filters {
-  margin-top: 100px;
-  width: 80%;
+  width: 100%;
 }
 
 .main-content {
   display: flex;
   flex-wrap: wrap;
   width: 100%;
-  max-width: 1200px;
-  padding: 0 20px;
 }
 
 .NoSearchResultsContainer {
-  display: flex;
-  justify-content: center;
+    display: flex;
+    justify-content: center;
 }
 
 .recipe-list {
-  margin: 10px auto 0;
-  display: flex;
-  flex-wrap: wrap;
-  width: 1030px;
+    margin: 10px 100px 50px;
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 }
 
-@media screen and (max-width: 1030px) {
-  .recipe-list {
-    margin: 10px auto 0;
-    display: flex;
-    flex-wrap: wrap;
-    width: 690px;
-  }
-}
-
-@media screen and (max-width: 690px) {
-  .recipe-list {
-    margin: 10px auto 0;
-    display: flex;
-    flex-wrap: wrap;
-    width: 340px;
-  }
-}
-
-/* .recipe-list > .placeholder-card,
-.recipe-list > .RecipeCard {
-  width: calc(25% - 20px);
-  margin: 10px;
-}
-*/
-
-/* .recipe-list > .placeholder-card,
-.recipe-list > .RecipeCard {
-  width: calc(25% - 20px);
-  margin: 10px;
-}
-
-@media screen and (max-width: 1200px) {
-  .recipe-list > .placeholder-card,
-  .recipe-list > .RecipeCard {
-    width: calc(33.33% - 20px);
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .recipe-list > .placeholder-card,
-  .recipe-list > .RecipeCard {
-    width: calc(50% - 20px);
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .recipe-list > .placeholder-card,
-  .recipe-list > .RecipeCard {
-    width: calc(100% - 20px);
-  }
-} */
-
-/* .community-page {
-  margin: 0 auto;
-  min-height: 1000px;
-}
-
-.recipe-list {
-  margin: 60px;
-  display: flex;
-  flex-wrap: wrap;
-  align-self: flex-start;
-  flex-direction: row;
-  justify-content: center;
-}
-
-*/
 .filterBar {
   display: flex;
-  padding: 0 4rem;
-  margin: 2rem 0;
+  margin: 3rem 6rem 0;
+  justify-content: space-between;
 }
 
 .search-bar {
