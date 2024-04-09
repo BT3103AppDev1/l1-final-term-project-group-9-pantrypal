@@ -85,7 +85,7 @@ export default {
 
 <style scoped>
 .recipe-card {
-  width: 300px;
+  /* max-width: 400px; */
   height: 350px;
   border: 1px solid #ccc;
   border-radius: 20px;

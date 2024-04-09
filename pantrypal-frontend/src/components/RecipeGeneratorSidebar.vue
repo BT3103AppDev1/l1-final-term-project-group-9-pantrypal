@@ -31,10 +31,10 @@ export default {
   justify-content: center;
   text-align: center;
   position: sticky;
-  height: 88vh;
+  height: 95.9vh;
   top: 0;
   overflow-y: hidden;
-  margin-top: 70px;
+  padding-top: 70px;
 }
 
 .menu-container {

@@ -31,7 +31,7 @@ export default {
 
 <style scoped>
 .recipe-card {
-    width: 300px;
+    /* width: 300px; */
     height: 350px;
     border: 1px solid #ccc;
     border-radius: 20px;
