@@ -2,12 +2,7 @@
   <div class="myCookbook-page">
     <div class="filterBar">
       <div class="search-bar">
-        <input
-          type="text"
-          class="search-input"
-          placeholder="Search name or ingredients..."
-          v-model="searchQuery"
-        />
+        <input type="text" class="search-input" placeholder="Search name or ingredients..." v-model="searchQuery" />
         <img class="search-button" src="../assets/search-icon.svg" alt="Search Icon" />
       </div>
       <div class="category-bar-text">
@@ -15,14 +10,8 @@
       </div>
       <div class="category-bar-dropdown">
         <div class="dropdown-container">
-          <dropdown
-            class="my-dropdown-toggle"
-            :options="arrayOfCategories"
-            :selected="category"
-            :placeholder="'All'"
-            :closeOnOutsideClick="true"
-            v-on:updateOption="filterUsingCategory"
-          >
+          <dropdown class="my-dropdown-toggle" :options="arrayOfCategories" :selected="category" :placeholder="'All'"
+            :closeOnOutsideClick="true" v-on:updateOption="filterUsingCategory">
           </dropdown>
         </div>
       </div>
@@ -31,14 +20,8 @@
       </div>
       <div class="category-bar-dropdown">
         <div class="dropdown-container">
-          <dropdown
-            class="my-dropdown-toggle"
-            :options="arrayOfSorts"
-            :selected="sort"
-            :placeholder="'Most Recent'"
-            :closeOnOutsideClick="true"
-            v-on:updateOption="filterUsingSort"
-          >
+          <dropdown class="my-dropdown-toggle" :options="arrayOfSorts" :selected="sort" :placeholder="'Most Recent'"
+            :closeOnOutsideClick="true" v-on:updateOption="filterUsingSort">
           </dropdown>
         </div>
       </div>
@@ -49,12 +32,8 @@
     <!-- recipe card list -->
     <div class="recipe-container">
       <div class="recipe-list">
-        <RecipeCard
-          v-for="recipe in filteredRecipes"
-          :key="recipe.recipe_id"
-          :recipe="recipe"
-          @updateLiked="updateLiked"
-        />
+        <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe"
+          @updateLiked="updateLiked" />
       </div>
     </div>
     <div class="NoSearchResultsContainer">
@@ -103,6 +82,7 @@ export default {
       sort: {},
       myRecipes: [],
       filteredRecipes: [],
+      filteredRecipesByName: [],
       searchQuery: "",
       selectedRecipe: null,
       selectedIngredients: [],
@@ -146,24 +126,33 @@ export default {
           .includes(this.searchQuery.toLowerCase());
         let ingredientsMatch = false;
         recipe.ingredients.forEach((ingredient) => {
-          if (ingredient.toLowerCase().includes(this.searchQuery.toLowerCase())) {
+          if (
+            ingredient.toLowerCase().includes(this.searchQuery.toLowerCase())
+          ) {
             ingredientsMatch = true;
           }
         });
-        return nameMatch || ingredientsMatch;
+        const categoryMatch =
+          this.category.name === "All" ||
+          Object.keys(this.category).length === 0 ||
+          recipe.categories.includes(this.category.name);
+        return (nameMatch || ingredientsMatch) && categoryMatch;
       });
+      this.filteredRecipesByName = this.filteredRecipes;
     },
-
     async filterUsingCategory(payload) {
       this.category = payload;
-      if (this.category.name == "All") {
+      if (this.category.name == "All" && this.searchQuery == "") {
         this.filteredRecipes = this.myRecipes;
+        this.filteredRecipesByName = this.myRecipes;
+      } else if (this.category.name == "All") {
+        this.filteredRecipes = this.filteredRecipesByName;
       } else {
-        this.filteredRecipes = [];
         const docSnap = await getDoc(doc(db, "categories", payload.name));
         const recipesIDlist = docSnap.data().recipes;
         if (recipesIDlist.length != 0) {
-          this.filteredRecipes = this.myRecipes.filter((recipe) =>
+          this.filteredRecipes = this.filteredRecipesByName;
+          this.filteredRecipes = this.filteredRecipesByName.filter((recipe) =>
             recipesIDlist.includes(recipe.recipe_id)
           );
         }

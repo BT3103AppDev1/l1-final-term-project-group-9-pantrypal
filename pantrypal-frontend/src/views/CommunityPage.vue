@@ -5,12 +5,7 @@
     <div class="filters">
       <div class="filterBar">
         <div class="search-bar">
-          <input
-            type="text"
-            class="search-input"
-            placeholder="Search name or ingredients..."
-            v-model="searchQuery"
-          />
+          <input type="text" class="search-input" placeholder="Search name or ingredients..." v-model="searchQuery" />
           <img class="search-button" src="../assets/search-icon.svg" alt="Search Icon" />
         </div>
         <div class="category-bar-text">
@@ -18,14 +13,8 @@
         </div>
         <div class="category-bar-dropdown">
           <div class="dropdown-container">
-            <dropdown
-              class="my-dropdown-toggle"
-              :options="arrayOfCategories"
-              :selected="category"
-              :placeholder="'All'"
-              :closeOnOutsideClick="true"
-              v-on:updateOption="filterUsingCategory"
-            >
+            <dropdown class="my-dropdown-toggle" :options="arrayOfCategories" :selected="category" :placeholder="'All'"
+              :closeOnOutsideClick="true" v-on:updateOption="filterUsingCategory">
             </dropdown>
           </div>
         </div>
@@ -34,14 +23,8 @@
         </div>
         <div class="category-bar-dropdown">
           <div class="dropdown-container">
-            <dropdown
-              class="my-dropdown-toggle"
-              :options="arrayOfSorts"
-              :selected="sort"
-              :placeholder="'Most Recent'"
-              :closeOnOutsideClick="true"
-              v-on:updateOption="filterUsingSort"
-            >
+            <dropdown class="my-dropdown-toggle" :options="arrayOfSorts" :selected="sort" :placeholder="'Most Recent'"
+              :closeOnOutsideClick="true" v-on:updateOption="filterUsingSort">
             </dropdown>
           </div>
         </div>
@@ -49,20 +32,13 @@
     </div>
     <div class="main-content">
       <!-- RecipeCards######### -->
-      <div class="recipe-list" v-if="!isDataLoaded" >
-          <RecipeCardPlaceholder
-            v-for="i in 15" 
-            :key="i" 
-          />
+      <div class="recipe-list" v-if="!isDataLoaded">
+        <RecipeCardPlaceholder v-for="i in 15" :key="i" />
       </div>
       <!-- recipe card list -->
       <div class="recipe-list" v-else>
-        <RecipeCard
-          v-for="recipe in filteredRecipes"
-          :key="recipe.recipe_id"
-          :recipe="recipe"
-          @toggle="toggleRecipeDetails"
-        />
+        <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe"
+          @toggle="toggleRecipeDetails" />
       </div>
       <div class="NoSearchResultsContainer">
         <text v-if="this.filteredRecipes.length == 0">No Search Results Found</text>
@@ -208,18 +184,18 @@ export default {
 
     async filterUsingCategory(payload) {
       this.category = payload;
-      if (this.searchQuery == "") {
+      if (this.category.name == "All" && this.searchQuery == "") {
         this.filteredRecipes = this.allCommunityRecipes;
         this.filteredRecipesByName = this.allCommunityRecipes;
-      }
-      if (this.category.name == "All") {
+        this.filteredRecipes = this.filteredRecipesByName;
+      } else if (this.category.name == "All") {
         this.filteredRecipes = this.filteredRecipesByName;
       } else {
         const docSnap = await getDoc(doc(db, "categories", payload.name));
         const recipesIDlist = docSnap.data().recipes;
         if (recipesIDlist.length != 0) {
           this.filteredRecipes = this.filteredRecipesByName;
-          this.filteredRecipes = this.filteredRecipes.filter((recipe) =>
+          this.filteredRecipes = this.filteredRecipesByName.filter((recipe) =>
             recipesIDlist.includes(recipe.recipe_id)
           );
         }
@@ -294,15 +270,15 @@ export default {
 }
 
 .NoSearchResultsContainer {
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 }
 
 .recipe-list {
-    margin: 10px 100px 50px;
-    display: grid;
-    width: 100%;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  margin: 10px 100px 50px;
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 }
 
 .filterBar {
@@ -408,6 +384,7 @@ export default {
   display: flex;
   flex-direction: column;
 }
+
 /*
 .NoSearchResultsContainer {
   display: flex;
