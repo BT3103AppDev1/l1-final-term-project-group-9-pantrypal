@@ -43,6 +43,7 @@
               type="text"
               id="recipeName"
               v-model="recipeData.recipe_name"
+              maxlength="50"
             />
 
             <label for="recipeDescription">Description:</label>
@@ -122,6 +123,7 @@
                     type="text"
                     v-model="recipeData.ingredients[index]"
                     placeholder="e.g. 10g Apple"
+                    maxlength="30"
                   />
                   <button
                     class="remove-button"
@@ -390,10 +392,18 @@ export default {
       if (!this.recipeData.serving_size) {
         missingFields.push("Serving Size");
       }
-      if (!this.recipeData.ingredients.length) {
+      if (
+        !this.recipeData.ingredients.every(
+          (ingredient) => ingredient.trim() !== ""
+        )
+      ) {
         missingFields.push("Ingredients");
       }
-      if (!this.recipeData.directions.length) {
+      if (
+        !this.recipeData.directions.every(
+          (direction) => direction.text.trim() !== ""
+        )
+      ) {
         missingFields.push("Directions");
       }
       return missingFields;
@@ -433,7 +443,7 @@ export default {
       const categoryDocsSnapshot = await getDocs(collection(db, "categories"));
       categoryDocsSnapshot.forEach((doc) => {
         const category = doc.data();
-        if (!this.recipeData.category.includes(category.name)) {
+        if (!this.recipeData.category.includes(category.category_name)) {
           updateDoc(doc.ref, {
             recipes: arrayRemove(this.selectedRecipe.recipe_id),
           });
@@ -455,6 +465,9 @@ export default {
         this.recipeData.imageSrc =
           "https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1";
       }
+
+      cookTimeHours = this.recipeData.cook_time_hours || 0;
+      cookTimeMinutes = this.recipeData.cook_time_minutes || 0;
 
       const recipe = {
         allergens: this.recipeData.allergen_info
@@ -485,8 +498,7 @@ export default {
           recipe
         );
         this.removeRecipeFromCategories();
-        console.log(this.categories);
-        this.recipeData.categories.forEach((cat) =>
+        recipe.categories.forEach((cat) =>
           updateDoc(doc(db, "categories", cat), {
             recipes: arrayUnion(recipe.recipe_id),
           })
