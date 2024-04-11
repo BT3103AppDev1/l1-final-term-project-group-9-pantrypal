@@ -12,6 +12,7 @@
             id="publishToCommunity"
             v-model="selectedRecipe.community"
             @change="togglePublishToCommunity"
+            :disabled="disabled"
           />
           <span class="slider"></span>
         </label>
@@ -177,6 +178,9 @@ export default {
     },
     likeExists: {
       type: Boolean,
+    },
+    disabled: {
+        type: Boolean,
     },
   },
   setup() {
