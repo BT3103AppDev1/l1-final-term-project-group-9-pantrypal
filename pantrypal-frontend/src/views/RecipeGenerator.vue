@@ -19,6 +19,7 @@
             :selectedRecipe="recipe"
             :selectedIngredients="selectedIngredients"
             :likeExists="false"
+            :disabled="disabled"
           />
           <CircleButton logo="src/assets/chefbot-button.png" @click="toggleChefBot" />
           <ChefBot
