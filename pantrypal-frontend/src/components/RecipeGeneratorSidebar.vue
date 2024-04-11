@@ -1,14 +1,18 @@
 <template>
   <aside class="sidebar">
     <div class="menu-container">
+      <img src="../assets/recipe-generator-map.png" height="500px"/>
       <div class="header" :class="{ selected: selected === 'input' }">
         <h3>Input Leftovers</h3>
       </div>
       <div class="header" :class="{ selected: selected === 'generate' }">
         <h3>Generate Recipe</h3>
       </div>
-      <div class="header" :class="{ selected: selected === 'save' }">
+      <div class="header save" :class="{ selected: selected === 'save' }">
         <h3>Save Recipe</h3>
+      </div>
+      <div>
+        <h3>And Start Cooking!</h3>
       </div>
     </div>
   </aside>
@@ -40,10 +44,15 @@ export default {
 .menu-container {
   padding-top: 5rem;
   height: fit-content;
+  position: relative;
 }
 
 .header {
-  margin-bottom: 2rem;
+  margin-bottom: 6.5rem;
+}
+
+.save {
+  margin-bottom: 10rem;
 }
 
 h3 {
@@ -58,5 +67,12 @@ h3 {
   padding: 5px 5px;
   border-radius: 16px;
   color: #3c1f11;
+}
+
+img {
+  position: absolute;
+  top: 85px;
+  left: -30px;
+  z-index: 1;
 }
 </style>
