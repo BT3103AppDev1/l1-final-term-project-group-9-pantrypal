@@ -13,7 +13,11 @@
               @change="handleImageUpload"
             />
             <div class="plus-icon-container" @click="chooseFile">
-              <img :src="recipeData.imageSrc" class="uploaded-image" alt="Image Upload" />
+              <img
+                :src="recipeData.imageSrc"
+                class="uploaded-image"
+                alt="Image Upload"
+              />
               <div class="img-button-container">
                 <CircleButton
                   logo="/src/assets/plus-icon.png"
@@ -35,7 +39,12 @@
           </div>
           <div class="first2">
             <label for="recipeName">Title:</label>
-            <input type="text" id="recipeName" v-model="recipeData.recipe_name" />
+            <input
+              type="text"
+              id="recipeName"
+              v-model="recipeData.recipe_name"
+              maxlength="50"
+            />
 
             <label for="recipeDescription">Description:</label>
             <textarea
@@ -114,8 +123,12 @@
                     type="text"
                     v-model="recipeData.ingredients[index]"
                     placeholder="e.g. 10g Apple"
+                    maxlength="30"
                   />
-                  <button class="remove-button" @click="removeIngredient(index)">
+                  <button
+                    class="remove-button"
+                    @click="removeIngredient(index)"
+                  >
                     x
                   </button>
                 </div>
@@ -148,7 +161,10 @@
                       v-model="direction.text"
                       class="input-text"
                     ></textarea>
-                    <button class="remove-button" @click="removeDirection(index)">
+                    <button
+                      class="remove-button"
+                      @click="removeDirection(index)"
+                    >
                       x
                     </button>
                   </div>
@@ -256,7 +272,8 @@ export default {
         uploadTask.on(
           "state_changed",
           (snapshot) => {
-            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
             console.log("Upload is " + progress + "% done");
           },
           (error) => {
@@ -335,7 +352,10 @@ export default {
       // if (!this.recipeData.allergen_info) {
       //   missingFields.push("Allergen Information");
       // }
-      if (!this.recipeData.cook_time_hours && !this.recipeData.cook_time_minutes) {
+      if (
+        !this.recipeData.cook_time_hours &&
+        !this.recipeData.cook_time_minutes
+      ) {
         missingFields.push("Cook Time");
       }
       if (!this.recipeData.category.length) {
@@ -344,10 +364,18 @@ export default {
       if (!this.recipeData.serving_size) {
         missingFields.push("Serving Size");
       }
-      if (!this.recipeData.ingredients.length) {
+      if (
+        !this.recipeData.ingredients.every(
+          (ingredient) => ingredient.trim() !== ""
+        )
+      ) {
         missingFields.push("Ingredients");
       }
-      if (!this.recipeData.directions.length) {
+      if (
+        !this.recipeData.directions.every(
+          (direction) => direction.text.trim() !== ""
+        )
+      ) {
         missingFields.push("Directions");
       }
       return missingFields;
@@ -360,7 +388,9 @@ export default {
       });
     },
     fillAllFields(missingFields) {
-      const message = `Please fill in the following fields: ${missingFields.join(", ")}.`;
+      const message = `Please fill in the following fields: ${missingFields.join(
+        ", "
+      )}.`;
       this.toast.error(message, {
         position: "top-center",
         hideProgressBar: true,
@@ -394,13 +424,16 @@ export default {
           "https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1";
       }
 
+      cookTimeHours = this.recipeData.cook_time_hours || 0;
+      cookTimeMinutes = this.recipeData.cook_time_minutes || 0;
+
       const recipe = {
-        allergens: this.recipeData.allergen_info.split(",").map((word) => word.trim()),
+        allergens: this.recipeData.allergen_info
+          .split(",")
+          .map((word) => word.trim()),
         categories: this.recipeData.category,
         community: this.recipeData.publish_to_community,
-        cook_time:
-          parseInt(this.recipeData.cook_time_hours) * 60 +
-          parseInt(this.recipeData.cook_time_minutes),
+        cookTime: parseInt(cookTimeHours) * 60 + parseInt(cookTimeMinutes),
         created_date: new Date(),
         description: this.recipeData.description,
         directions: this.recipeData.directions.map((d) => d.text),
@@ -416,17 +449,18 @@ export default {
       const db = getFirestore(app);
       const colRef = collection(db, "all_recipes");
       try {
-        const recipeRef = await setDoc(doc(db, "all_recipes", recipe_id), recipe);
-        await updateDoc(doc(db, "users", recipe.user_id), {
-          my_cookbook: arrayUnion(recipe.recipe_id),
-        });
-
-        console.log(this.categories);
-        this.recipeData.categories.forEach((cat) =>
+        const recipeRef = await setDoc(
+          doc(db, "all_recipes", recipe_id),
+          recipe
+        );
+        recipe.categories.forEach((cat) =>
           updateDoc(doc(db, "categories", cat), {
             recipes: arrayUnion(recipe.recipe_id),
           })
         );
+        await updateDoc(doc(db, "users", recipe.user_id), {
+          my_cookbook: arrayUnion(recipe.recipe_id),
+        });
         console.log("Document updated successfully.");
         this.$router.push("/community-page");
         this.recipeSavedSuccess();
