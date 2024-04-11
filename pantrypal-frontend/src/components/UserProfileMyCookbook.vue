@@ -37,7 +37,7 @@
       </div>
     </div>
     <div class="NoSearchResultsContainer">
-      <text v-if="this.filteredRecipes.length == 0">No Search Results Found</text>
+      <text v-if="this.filteredRecipes.length == 0 && isDataLoaded">No Search Results Found</text>
     </div>
     <CircleButton logo="/src/assets/plus-icon.png" @click="toggleCreateRecipe" />
   </div>
@@ -87,6 +87,7 @@ export default {
       selectedRecipe: null,
       selectedIngredients: [],
       showCreateRecipe: false,
+      isDataLoaded: false,
     };
   },
   watch: {
@@ -118,6 +119,7 @@ export default {
       this.myRecipes = this.filteredRecipes;
       this.sortByMostRecent();
       this.sortAllByMostRecent();
+      this.isDataLoaded = true;
     },
     filterByNameOrIngredients() {
       this.filteredRecipes = this.myRecipes.filter((recipe) => {
