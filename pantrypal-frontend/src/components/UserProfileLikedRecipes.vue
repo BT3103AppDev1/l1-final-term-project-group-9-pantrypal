@@ -32,14 +32,18 @@
 
         <!-- recipe card list -->
         <div class="recipe-container">
+            <div class="recipe-list" v-if="!isDataLoaded">
+                <RecipeCardPlaceholder v-for="i in 15" :key="i" />
+            </div>
             <div class="recipe-list">
                 <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe"
                     @updateLiked="updateLiked" />
             </div>
         </div>
         <div class="NoSearchResultsContainer">
-            <text v-if="this.filteredRecipes.length == 0">No Search Results Found</text>
+            <text v-if="this.filteredRecipes.length == 0 && isDataLoaded">No Search Results Found</text>
         </div>
+
     </div>
 </template>
 
@@ -56,12 +60,14 @@ import {
 } from "firebase/firestore";
 import dropdown from "vue-dropdowns";
 import RecipeImage from "@/components/RecipeImage.vue";
+import RecipeCardPlaceholder from "./RecipeCardPlaceholder.vue";
 
 export default {
     components: {
         RecipeCard,
         dropdown,
         RecipeImage,
+        RecipeCardPlaceholder
     },
     data() {
         return {
@@ -90,6 +96,7 @@ export default {
             selectedRecipe: null,
             selectedIngredients: [],
             showCreateRecipe: false,
+            isDataLoaded: false,
         };
     },
     watch: {
@@ -186,10 +193,10 @@ export default {
             });
         },
         async updateLikedRecipes(likedRecipes) {
-            this.filteredRecipes = [];
-            this.allLikedRecipes = [];
-            for (const recipeId of likedRecipes) {
-                try {
+            try {
+                this.filteredRecipes = [];
+                this.allLikedRecipes = [];
+                const promises = likedRecipes.map(async (recipeId) => {
                     const recipeDocSnapshot = await getDoc(
                         doc(db, "all_recipes", recipeId)
                     );
@@ -204,11 +211,14 @@ export default {
                     } else {
                         console.error(`Recipe with ID ${recipeId} does not exist.`);
                     }
-                } catch (error) {
-                    console.error("Error fetching recipe:", error);
-                }
+                });
+                await Promise.all(promises);
+                this.isDataLoaded = true;
+            } catch (error) {
+                console.error("Error fetching recipes:", error);
             }
-        },
+        }
+
     },
 };
 </script>
