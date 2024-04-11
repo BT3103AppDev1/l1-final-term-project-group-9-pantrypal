@@ -215,7 +215,7 @@ export default {
 
 <style scoped>
 .liked-recipes-page {
-    width: 90%;
+    width: calc(100% - 224px);
     margin: auto;
     margin-top: 100px;
 }
@@ -302,13 +302,13 @@ export default {
 }
 
 .recipe-container {
-    display: flex;
-    justify-content: center;
-    margin: 0 100px;
+    /* display: flex;
+    justify-content: center; */
+    margin: 0 80px;
 }
 
 .recipe-list {
-    margin: 10px auto 0;
+    margin: 10px 0px;
     /* flex: 0.9; */
     /* width: 1030px;
   display: flex;
