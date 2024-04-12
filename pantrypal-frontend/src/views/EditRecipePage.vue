@@ -466,8 +466,8 @@ export default {
           "https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1";
       }
 
-      cookTimeHours = this.recipeData.cook_time_hours || 0;
-      cookTimeMinutes = this.recipeData.cook_time_minutes || 0;
+      const cookTimeHours = this.recipeData.cook_time_hours || "0";
+      const cookTimeMinutes = this.recipeData.cook_time_minutes || "0";
 
       const recipe = {
         allergens: this.recipeData.allergen_info
@@ -475,9 +475,7 @@ export default {
           .map((word) => word.trim()),
         categories: this.recipeData.category,
         community: this.recipeData.publish_to_community,
-        cook_time:
-          parseInt(this.recipeData.cook_time_hours) * 60 +
-          parseInt(this.recipeData.cook_time_minutes),
+        cook_time: parseInt(cookTimeHours) * 60 + parseInt(cookTimeMinutes),
         created_date: new Date(),
         description: this.recipeData.description,
         directions: this.recipeData.directions.map((d) => d.text),

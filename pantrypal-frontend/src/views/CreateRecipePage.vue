@@ -424,8 +424,8 @@ export default {
           "https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1";
       }
 
-      cookTimeHours = this.recipeData.cook_time_hours || 0;
-      cookTimeMinutes = this.recipeData.cook_time_minutes || 0;
+      const cookTimeHours = this.recipeData.cook_time_hours || "0";
+      const cookTimeMinutes = this.recipeData.cook_time_minutes || "0";
 
       const recipe = {
         allergens: this.recipeData.allergen_info
