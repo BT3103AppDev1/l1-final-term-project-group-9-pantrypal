@@ -21,7 +21,7 @@
             :likeExists="false"
             :disabled="disabled"
           />
-          <CircleButton logo="src/assets/chefbot-button.png" @click="toggleChefBot" />
+          <CircleButton logo="./chefbot-button.png" @click="toggleChefBot" />
           <ChefBot
             :key="componentKey"
             :selectedRecipe="recipe"
@@ -197,7 +197,7 @@ export default {
 
     async fetchImageAsBlob(imageUrl) {
       const response = await fetch(
-        `http://localhost:3000/fetch-image?url=${encodeURIComponent(imageUrl)}`
+        `https://us-central1-pantrypal-e1225.cloudfunctions.net/api/fetch-image?url=${encodeURIComponent(imageUrl)}`
       );
       if (!response.ok) {
         throw new Error(`Network response was not ok for URL: ${imageUrl}`);

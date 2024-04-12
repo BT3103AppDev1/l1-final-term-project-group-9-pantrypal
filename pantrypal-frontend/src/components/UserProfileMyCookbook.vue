@@ -39,7 +39,7 @@
     <div class="NoSearchResultsContainer">
       <text v-if="this.filteredRecipes.length == 0 && isDataLoaded">No Search Results Found</text>
     </div>
-    <CircleButton logo="/src/assets/plus-icon.png" @click="toggleCreateRecipe" />
+    <CircleButton logo="./plus-icon.png" @click="toggleCreateRecipe" />
   </div>
 </template>
 
