@@ -20,7 +20,7 @@
               />
               <div class="img-button-container">
                 <CircleButton
-                  logo="/src/assets/plus-icon.png"
+                logo="./plus-icon.png"
                   class="circle-button"
                 />
               </div>

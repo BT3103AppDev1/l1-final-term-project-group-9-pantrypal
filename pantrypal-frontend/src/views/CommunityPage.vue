@@ -50,7 +50,7 @@
     </button>
     -->
 
-      <CircleButton logo="src/assets/plus-icon.png" @click="toggleCreateRecipe" />
+      <CircleButton logo="./plus-icon.png" @click="toggleCreateRecipe" />
     </div>
   </div>
 </template>

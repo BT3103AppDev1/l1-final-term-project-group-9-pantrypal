@@ -8,16 +8,16 @@ let fetch;
 const bodyParser = require('body-parser');
 const chatGptController = require('./chatGpt.controller');
 
+const functions = require('firebase-functions');
+
 const app = express();
-app.use(cors({
-  origin: 'http://localhost:5173' 
-}));
+app.use(cors());
 app.use(bodyParser.json());
 
 app.post('/chatbot', chatGptController.askToChatGpt);
 app.post('/initial-recipe', chatGptController.generateInitialRecipe);
 
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
@@ -36,3 +36,5 @@ app.get('/fetch-image', async (req, res) => {
     res.status(500).send('Failed to fetch image');
   }
 });
+
+exports.api = functions.https.onRequest(app);

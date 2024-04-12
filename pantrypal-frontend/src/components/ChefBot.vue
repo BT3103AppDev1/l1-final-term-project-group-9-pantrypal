@@ -89,7 +89,7 @@
                 }));
         
                 await axios
-                    .post('http://localhost:3000/chatbot', {
+                    .post('https://us-central1-pantrypal-e1225.cloudfunctions.net/api/chatbot', {
                         message,
                         conversationHistory, 
                         selectedRecipe: this.selectedRecipe,

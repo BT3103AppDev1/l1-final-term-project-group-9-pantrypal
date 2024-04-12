@@ -62,7 +62,7 @@ export default {
         payload.first = true;
       }
       axios
-        .post("http://localhost:3000/initial-recipe", payload)
+        .post("https://us-central1-pantrypal-e1225.cloudfunctions.net/api/initial-recipe", payload)
         .then((response) => {
           if (response.status === 400) {
             this.showErrorModal = true;
