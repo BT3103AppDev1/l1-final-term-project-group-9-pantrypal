@@ -13,8 +13,6 @@ import Profile from '@/views/Profile.vue';
 import CreateRecipePage from '@/views/CreateRecipePage.vue'
 import EditRecipePage from '@/views/EditRecipePage.vue'
 
-
-
 const routes = [
     {
         path: '/',
@@ -83,7 +81,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-    const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+    const requiresAuth = to.matched.some(record => record.meta && record.meta.requiresAuth);
 
     onAuthStateChanged(auth, (user) => {
         console.log(user);
