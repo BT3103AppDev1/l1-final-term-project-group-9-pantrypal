@@ -32,13 +32,8 @@
         <p class="logOutButton-text">Log Out</p>
       </button>
       <button type="button" class="profileButton" @click="goToProfile()">
-        <ProfileImage
-          :path="profilePicUrl || userData.profile_img_url"
-          :ifCard="false"
-          alt="profile pic"
-          class="profile"
-          @click="goToProfile()"
-        />
+        <ProfileImage :path="profilePicUrl || userData.profile_img_url" :ifCard="false" alt="profile pic"
+          class="profile" @click="goToProfile()" />
       </button>
     </div>
     <hr />
@@ -83,7 +78,6 @@ export default {
   },
   methods: {
     goToCommunityPage() {
-      console.log("test");
       this.$router.push("/community-page");
     },
     goToRecipeGenerator() {
@@ -142,7 +136,7 @@ export default {
 }
 
 .topBar--hidden {
-    top: -90px;
+  top: -90px;
 }
 
 .logo {
