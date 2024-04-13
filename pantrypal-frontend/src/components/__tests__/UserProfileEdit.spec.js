@@ -1,15 +1,19 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import UserProfileEdit from '@/components/UserProfileEdit.vue';
-import { useToast } from 'vue-toastification';
+import UserProfileSidebar from '@/components/UserProfileSidebar.vue';
 import { useRouter } from 'vue-router';
 import flushPromises from 'flush-promises';
-import { db, auth } from '@/firebase.js'
 import { doc, updateDoc, setDoc } from 'firebase/firestore';
+import { ref, getDownloadURL, uploadBytesResumable } from 'firebase/storage';
+
 
 vi.mock('@/firebase.js', () => {
     const updateDoc = vi.fn(() => Promise.resolve());
     const doc = vi.fn(() => ({ updateDoc }));
+    const storage = {
+      ref: vi.fn(() => mockStorageRef)
+    };
     const db = {
         doc: vi.fn(() => doc()),
       };
@@ -28,6 +32,7 @@ vi.mock('@/firebase.js', () => {
     return {
         auth,
         db,
+        storage
     };
   });
 
@@ -49,6 +54,29 @@ vi.mock('vue-router', () => ({
     push: vi.fn(),
   })),
 }));
+
+vi.mock('firebase/storage', () => {
+  const getDownloadURL = vi.fn(() => Promise.resolve('https://example.com/photo.jpg'));
+
+  const uploadBytesResumable = vi.fn((storageRef, file) => {
+    const mockSnapshot = { ref: { getDownloadURL } };
+    return {
+      snapshot: mockSnapshot,
+      on: (event, progress, error, complete) => {
+        if (event === 'state_changed') {
+          progress({ bytesTransferred: file.size, totalBytes: file.size });
+        }
+        complete();
+      }
+    };
+  });
+
+  return { ref: vi.fn(), uploadBytesResumable, getDownloadURL };
+});
+
+
+
+
 
 describe('UserProfileEdit Component', () => {
   let wrapper;
@@ -120,5 +148,63 @@ describe('UserProfileEdit Component', () => {
     await wrapper.find('.second-form').trigger('submit.prevent');
     await flushPromises();
     expect(EmptySpy).toHaveBeenCalled();
+  });
+});
+
+describe('UserProfileSidebar Component', () => {
+  let wrapper;
+  let toast;
+  let storage;
+
+  beforeEach(() => {
+    toast = {
+      success: vi.fn(),
+      error: vi.fn()
+    };
+    storage = {
+      ref: vi.fn(() => mockStorageRef)
+    };
+    wrapper = mount(UserProfileSidebar, {
+      props: {
+        selected: 'settings',
+        userData: {
+          username: 'testuser',
+          profile_img_url: 'https://example.com/oldphoto.jpg'
+        },
+      },
+      global: {
+        mocks: {
+          $router: useRouter(),
+          $toast: toast,
+          $storage: storage,
+          $firestore: {
+            collection: vi.fn(() => ({
+                path: 'mockPath',
+                doc: vi.fn(() => ({
+                    id: 'mockDocId',
+                    collection: vi.fn(),
+                })),
+                })),
+         },
+        },
+        stubs: ['ProfileImage']
+      }
+    });
+  });
+
+  it('uploads a new profile picture and updates the user data', async () => {
+    const file = new File(['content'], 'photo.jpg', { type: 'image/jpeg' });
+    const fileInput = wrapper.find('input[type="file"]');
+  
+    // Trigger file input selection
+    await wrapper.vm.onFileSelected({ target: { files: [file] } });
+  
+    // Wait for async operations to complete, including our simulated upload delay
+    await flushPromises();
+  
+    // Assertions
+    expect(uploadBytesResumable).toHaveBeenCalled();
+    expect(getDownloadURL).toHaveBeenCalled();
+    expect(wrapper.vm.profilePicUrl).toBe('https://example.com/photo.jpg');
   });
 });

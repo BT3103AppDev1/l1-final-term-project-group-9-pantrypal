@@ -132,6 +132,7 @@ export default {
         },
         () => {
           // Handle successful uploads on complete
+          console.log("HI")
           getDownloadURL(uploadTask.snapshot.ref)
             .then((downloadURL) => {
               console.log("File available at", downloadURL);
