@@ -2,7 +2,7 @@
   <div class="user-profile-edit">
     <PasswordConfirmationModal :isVisible="showPasswordModal" @update:isVisible="showPasswordModal = $event" @confirm="handlePasswordConfirm" />
     <h2>Edit User Details</h2>
-    <form @submit.prevent="saveChangesDetails" class="user-form">
+    <form @submit.prevent="saveChangesDetails" class="user-form first-form">
       <div class="form-group">
         <label for="email">Email Address</label>
         <input type="email" id="email" v-model="email" disabled class="input-field non-editable" />
@@ -18,7 +18,7 @@
       </div>
     </form>
     <h2>Change Password</h2>
-    <form @submit.prevent="saveChangesPassword" class="user-form">
+    <form @submit.prevent="saveChangesPassword" class="user-form second-form">
       <div class="form-group">
         <label for="newPassword">New Password</label>
         <input type="password" id="newPassword" v-model="newPassword" class="input-field" />
@@ -62,13 +62,10 @@ export default {
       passwordUpdateComplete: true,
     }
   },
-  setup() {
-        const toast = useToast();
-        return { toast };
-  },
   created() {
     this.email = this.userData.email;
     this.username = this.userData.username;
+    this.toast = useToast();
   },
   methods: {
     async saveChangesDetails() {
@@ -86,15 +83,14 @@ export default {
         }
       } catch (error) {
         console.error("Error updating profile:", error);
-        alert(error.message);
       }
     },
     async saveChangesPassword() {
       try {
         const user = auth.currentUser;
-        if (this.newPassword) {
+        
           await this.changePassword(this.newPassword);
-        }
+        
 
         if (this.newPassword && !this.passwordUpdateComplete) {
             this.triggerToastPasswordComplete();
@@ -106,7 +102,6 @@ export default {
         }
       } catch (error) {
         console.error("Error updating profile:", error);
-        alert(error.message);
       }
     },
     async changePassword() {
@@ -115,6 +110,7 @@ export default {
             return;
         }
         if (!this.newPassword || !this.confirmPassword) {
+          
             this.triggerToastPasswordTooShort();
             return;
         }
