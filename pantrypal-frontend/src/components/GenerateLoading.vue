@@ -55,7 +55,7 @@ export default {
         categories: this.categories,
         dietaryRestrictions: this.dietaryRestrictions,
       };
-      if (this.previousRecipe !== null) {
+      if (this.prev_recipe_name !== null) {
         payload.prev_recipe_name = this.prev_recipe_name;
         payload.first = false;
       } else {
@@ -75,7 +75,6 @@ export default {
         .catch((error) => {
           this.showErrorModal = true;
           console.error("Error fetching recipe:", error);
-          console.log(this.showErrorModal + "hi");
         });
     },
     handleModalClose() {
