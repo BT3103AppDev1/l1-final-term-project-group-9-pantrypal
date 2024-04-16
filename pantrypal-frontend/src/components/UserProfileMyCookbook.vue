@@ -2,7 +2,12 @@
   <div class="myCookbook-page">
     <div class="filterBar">
       <div class="search-bar">
-        <input type="text" class="search-input" placeholder="Search name or ingredients..." v-model="searchQuery" />
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Search name or ingredients..."
+          v-model="searchQuery"
+        />
         <img class="search-button" src="../assets/search-icon.svg" alt="Search Icon" />
       </div>
       <div class="category-bar-text">
@@ -10,8 +15,14 @@
       </div>
       <div class="category-bar-dropdown">
         <div class="dropdown-container">
-          <dropdown class="my-dropdown-toggle" :options="arrayOfCategories" :selected="category" :placeholder="'All'"
-            :closeOnOutsideClick="true" v-on:updateOption="filterUsingCategory">
+          <dropdown
+            class="my-dropdown-toggle"
+            :options="arrayOfCategories"
+            :selected="category"
+            :placeholder="'All'"
+            :closeOnOutsideClick="true"
+            v-on:updateOption="filterUsingCategory"
+          >
           </dropdown>
         </div>
       </div>
@@ -20,8 +31,14 @@
       </div>
       <div class="category-bar-dropdown">
         <div class="dropdown-container">
-          <dropdown class="my-dropdown-toggle" :options="arrayOfSorts" :selected="sort" :placeholder="'Most Recent'"
-            :closeOnOutsideClick="true" v-on:updateOption="filterUsingSort">
+          <dropdown
+            class="my-dropdown-toggle"
+            :options="arrayOfSorts"
+            :selected="sort"
+            :placeholder="'Most Recent'"
+            :closeOnOutsideClick="true"
+            v-on:updateOption="filterUsingSort"
+          >
           </dropdown>
         </div>
       </div>
@@ -32,12 +49,18 @@
     <!-- recipe card list -->
     <div class="recipe-container">
       <div class="recipe-list">
-        <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe"
-          @updateLiked="updateLiked" />
+        <RecipeCard
+          v-for="recipe in filteredRecipes"
+          :key="recipe.recipe_id"
+          :recipe="recipe"
+          @updateLiked="updateLiked"
+        />
       </div>
     </div>
     <div class="NoSearchResultsContainer">
-      <text v-if="this.filteredRecipes.length == 0 && isDataLoaded">No Search Results Found</text>
+      <text v-if="this.filteredRecipes.length == 0 && isDataLoaded"
+        >No Search Results Found</text
+      >
     </div>
     <CircleButton logo="./plus-icon.png" @click="toggleCreateRecipe" />
   </div>
@@ -46,7 +69,7 @@
 <script>
 import RecipeCard from "../components/RecipeCard.vue";
 import { db, auth } from "../firebase.js";
-import { collection, getDocs, getDoc, doc } from "firebase/firestore";
+import { getDoc, doc } from "firebase/firestore";
 import dropdown from "vue-dropdowns";
 import RecipeImage from "@/components/RecipeImage.vue";
 import CircleButton from "@/components/CircleButton.vue";
@@ -59,7 +82,10 @@ export default {
     CircleButton,
   },
   props: {
-    userData: {},
+    userData: {
+      type: Object,
+      required: true,
+    },
   },
   data() {
     return {
@@ -108,8 +134,8 @@ export default {
       this.$emit("updateLiked");
     },
     async fetchRecipes() {
-      const userDocSnapshot = await getDoc(doc(db, "users", auth.currentUser.uid));
-      const myRecipes = userDocSnapshot.data().my_cookbook || [];
+      console.log(this.userData);
+      const myRecipes = this.userData.my_cookbook || [];
       this.filteredRecipes = await Promise.all(
         myRecipes.map(async (recipeId) => {
           const recipeDocSnapshot = await getDoc(doc(db, "all_recipes", recipeId));
@@ -128,9 +154,7 @@ export default {
           .includes(this.searchQuery.toLowerCase());
         let ingredientsMatch = false;
         recipe.ingredients.forEach((ingredient) => {
-          if (
-            ingredient.toLowerCase().includes(this.searchQuery.toLowerCase())
-          ) {
+          if (ingredient.toLowerCase().includes(this.searchQuery.toLowerCase())) {
             ingredientsMatch = true;
           }
         });
@@ -292,7 +316,6 @@ export default {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 }
-
 
 /* @media screen and (max-width: 1330px) {
   .recipe-list {
