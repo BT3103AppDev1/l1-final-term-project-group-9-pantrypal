@@ -32,8 +32,12 @@
         <p class="logOutButton-text">Log Out</p>
       </button>
       <button type="button" class="profileButton" @click="goToProfile()">
-        <ProfileImage :path="profilePicUrl || userData.profile_img_url" :ifCard="false" alt="profile pic"
-          class="profile" @click="goToProfile()" />
+        <ProfileImage
+          :path="profilePicUrl || userData.profile_img_url"
+          alt="profile pic"
+          class="profile"
+          @click="goToProfile()"
+        />
       </button>
     </div>
     <hr />
