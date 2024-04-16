@@ -9,7 +9,6 @@
       <div class="profile-pic">
         <ProfileImage
           :path="profilePicUrl || userData.profile_img_url"
-          :ifCard="false"
           alt="profile pic"
           class="profile"
         />
@@ -132,7 +131,7 @@ export default {
         },
         () => {
           // Handle successful uploads on complete
-          console.log("HI")
+          console.log("HI");
           getDownloadURL(uploadTask.snapshot.ref)
             .then((downloadURL) => {
               console.log("File available at", downloadURL);

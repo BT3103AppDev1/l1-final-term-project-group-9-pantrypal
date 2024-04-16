@@ -1,13 +1,12 @@
 <template>
-  <img v-if="ifCard" class="topBar" :src="renderedUrl" alt="" />
-  <img v-else class="" :src="renderedUrl" alt="" />
+  <img class="" :src="renderedUrl" alt="" />
 </template>
 
 <script>
 export default {
   data() {
     return {
-      defaultProfileUrl: null,
+      defaultProfileUrl: "@/assets/profile.svg",
     };
   },
   props: {
