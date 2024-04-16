@@ -1,12 +1,14 @@
 <template>
-
   <div class="like">
     <button class="like-button" @click.stop="toggleLikeRecipe">
-      <i class="fa" :class="['fa-thumbs-up', { liked: !recipeIsLiked }]" aria-hidden="true"></i>
+      <i
+        class="fa"
+        :class="['fa-thumbs-up', { liked: !recipeIsLiked }]"
+        aria-hidden="true"
+      ></i>
     </button>
     <span>{{ recipe.like_count }}</span>
   </div>
-
 </template>
 
 <script>
@@ -35,16 +37,11 @@ export default {
   },
   methods: {
     async toggleLikeRecipe() {
-      if (!auth.currentUser) {
-        this.$router.push("/login");
-        return;
-      }
-
       const user = auth.currentUser;
       const recipeDocRef = doc(db, "all_recipes", this.recipe.recipe_id);
 
       try {
-        this.$emit('updateLiked');
+        this.$emit("updateLiked");
         if (this.recipeIsLiked) {
           this.recipe.like_count--;
           await setDoc(recipeDocRef, {
@@ -97,7 +94,6 @@ export default {
   border: none;
   cursor: pointer;
   background: none;
-
 }
 
 .like-button {
