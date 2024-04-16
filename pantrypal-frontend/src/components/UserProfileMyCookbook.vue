@@ -134,8 +134,8 @@ export default {
       this.$emit("updateLiked");
     },
     async fetchRecipes() {
-      const userDocSnapshot = await getDoc(doc(db, "users", this.userData.uid));
-      const myRecipes = userDocSnapshot.data().my_cookbook || [];
+      console.log(this.userData);
+      const myRecipes = this.userData.my_cookbook || [];
       this.filteredRecipes = await Promise.all(
         myRecipes.map(async (recipeId) => {
           const recipeDocSnapshot = await getDoc(doc(db, "all_recipes", recipeId));

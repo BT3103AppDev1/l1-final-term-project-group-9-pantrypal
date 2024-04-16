@@ -20,6 +20,15 @@ describe('UserProfileLikedRecipes Component', () => {
           })),
         }),
       };
+
+      const auth = {
+        currentUser: {
+          uid: '456',
+          user_id: '456',
+          username: 'test',
+        },
+      };
+    
   
       wrapper = mount(UserProfileLikedRecipes, {
         props: {

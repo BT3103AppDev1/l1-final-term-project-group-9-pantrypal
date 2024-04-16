@@ -139,14 +139,20 @@ export default {
       });
     }
   },
+
   methods: {
     updateLiked() {
       this.$emit("updateLiked");
     },
     async fetchRecipes() {
-      const userDocSnapshot = await getDoc(doc(db, "users", this.userData.uid));
-      const likedRecipes = userDocSnapshot.data().liked_recipes || [];
-      this.updateLikedRecipes(likedRecipes);
+      if (auth.currentUser) {
+        const userDocSnapshot = await getDoc(doc(db, "users", auth.currentUser.uid));
+        const likedRecipes = userDocSnapshot.data().liked_recipes || [];
+        this.updateLikedRecipes(likedRecipes);
+      } else {
+        const likedRecipes = this.userData.liked_recipes || [];
+        this.updateLikedRecipes(likedRecipes);
+      }
     },
 
     filterByNameOrIngredients() {
