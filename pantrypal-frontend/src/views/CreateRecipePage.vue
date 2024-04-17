@@ -19,10 +19,7 @@
                 alt="Image Upload"
               />
               <div class="img-button-container">
-                <CircleButton
-                logo="./plus-icon.png"
-                  class="circle-button"
-                />
+                <CircleButton logo="./plus-icon.png" class="circle-button" />
               </div>
             </div>
             <div class="switch-container">
@@ -198,13 +195,9 @@ import {
   getFirestore,
   doc,
   setDoc,
-  addDoc,
-  getDoc,
-  getDocs,
   collection,
   updateDoc,
   arrayUnion,
-  arrayRemove,
 } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
 import { useToast } from "vue-toastification";
@@ -249,15 +242,18 @@ export default {
       this.$refs.fileInput.click();
     },
     async handleImageUpload(event) {
-      const file = event.target.files[0]; // Get the file from the input
+      const file = event.target.files[0];
       if (!file || (file.type !== "image/jpeg" && file.type !== "image/png")) {
         this.imageNotValid();
         return;
       }
 
       try {
+        console.log("Converting file to blob...");
         const blob = await this.convertFileToBlob(file);
+        console.log("Uploading image to Firebase...");
         const downloadUrl = await this.uploadImageToFirebase(blob, file.name);
+        console.log("Image uploaded, URL: ", downloadUrl);
         this.recipeData.imageSrc = downloadUrl;
       } catch (error) {
         console.error("Failed to upload image", error);
