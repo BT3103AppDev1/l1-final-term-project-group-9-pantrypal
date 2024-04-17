@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { mount } from '@vue/test-utils';
-import CreateRecipePage from '@/views/CreateRecipePage.vue'; 
+import EditRecipePage from '@/views/EditRecipePage.vue'; 
 import TopBar from '@/components/TopBar.vue';
 import CircleButton from '@/components/CircleButton.vue';
 import SaveRecipeButton from '@/components/SaveRecipeButton.vue';
@@ -17,7 +17,7 @@ import {
   getDocs
 } from "firebase/firestore";
 import { useToast } from 'vue-toastification';
-import VueRouter from 'vue-router';
+import { useRouter } from 'vue-router';
 import { createRouter, createWebHistory } from 'vue-router';
 
 
@@ -53,7 +53,18 @@ vi.mock("firebase/firestore", () => {
   // Create a mock for the document snapshot
   const docSnapshotMock = {
     exists: () => true,
-    data: vi.fn(() => ({ field1: 'value1', field2: 'value2' })),
+    data: vi.fn(() => ({
+        recipe_img_url: "https://example.com/old-photo.jpg",
+        community: true,
+        recipe_name: "Old Recipe",
+        description: "Old description",
+        allergens: ["Nuts", "Dairy"],
+        cook_time: 120,
+        categories: ["Dessert"],
+        ingredients: ["1 cup sugar", "2 cups flour"],
+        directions: ["Mix ingredients", "Bake"],
+        serving_size: 2
+    })),
     id: 'doc1',
   };
 
@@ -101,11 +112,11 @@ vi.mock('vue-toastification', () => ({
   })),
 }));
 
-const routes = [{ path: '/', name: 'home' }];
-const router = createRouter({
-  history: createWebHistory(),
-  routes,
-});
+vi.mock('vue-router', () => ({
+    useRouter: vi.fn(() => ({
+      push: vi.fn(),
+    })),
+  }));
 
 // Mocking global components that might not be directly tested or are irrelevant for specific tests
 const globalComponents = {
@@ -114,18 +125,21 @@ const globalComponents = {
     TopBar,
     CircleButton,
     SaveRecipeButton
+  },
+  mocks: {
+    $router: useRouter(),
   }
 };
 
-describe('CreateRecipePage', () => {
+describe('EditRecipePage', () => {
   let wrapper;
   let toast;
   let originalAddEventListener;
   let originalRemoveEventListener;
   let originalHistory;
 
-  beforeEach(async () => {
-    wrapper = mount(CreateRecipePage, { global: globalComponents });
+  beforeEach( async () => {
+    wrapper = mount(EditRecipePage, { global: globalComponents });
     toast = wrapper.vm.toast;
     originalAddEventListener = window.addEventListener;
     originalRemoveEventListener = window.removeEventListener;
@@ -140,6 +154,7 @@ describe('CreateRecipePage', () => {
       pushState: vi.fn(),  // If needed by other parts of your component or application
       replaceState: vi.fn()  // If needed by other parts of your component or application
   };
+  vi.spyOn(wrapper.vm, 'fetchRecipeDetails');
   vi.spyOn(wrapper.vm, 'submitRecipe');
   await wrapper.vm.$nextTick();
   });
@@ -155,36 +170,35 @@ describe('CreateRecipePage', () => {
     expect(wrapper.find('.create-recipe-modal').exists()).toBe(true);
   });
 
-  it('initializes with the correct default data', () => {
-    const defaultData = {
-      imageSrc: "https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1",
-      publish_to_community: false,
-      recipe_name: "",
-      serving_size: "",
-      description: "",
-      allergen_info: "",
+  it('calls fetchRecipeDetails on component creation', async () => {
+    await wrapper.vm.$nextTick();
+    // Check if fetchRecipeDetails was called during component creation
+    expect(wrapper.vm.fetchRecipeDetails).toHaveBeenCalled();
+  });
+
+  it('fetches recipe details and updates recipeData correctly', async () => {
+    await wrapper.vm.fetchRecipeDetails();
+
+    expect(wrapper.vm.recipeData).toEqual({
+      imageSrc: "https://example.com/old-photo.jpg",
+      publish_to_community: true,
+      recipe_name: "Old Recipe",
+      serving_size: 2,
+      description: "Old description",
+      allergen_info: "Nuts, Dairy",
       allergens: [],
-      cook_time_hours: "",
-      cook_time_minutes: "",
-      categories: ['Dessert', 'Main'], 
-      category: [],
-      ingredients: [""],
-      directions: [{ stepNumber: 1, text: "" }],
-    };
-
-    // Check if the initial data matches the expected default data
-    expect(wrapper.vm.recipeData).toEqual(expect.objectContaining(defaultData));
-
-    // You can also check individual properties
-    expect(wrapper.vm.recipeData.publish_to_community).toBe(false);
-    expect(wrapper.vm.recipeData.recipe_name).toBe('');
-    expect(wrapper.vm.recipeData.ingredients).toEqual(['']);
-    expect(wrapper.vm.recipeData.directions).toEqual([{ stepNumber: 1, text: '' }]);
+      cook_time_hours: 2,
+      cook_time_minutes: 0,
+      categories: ["Dessert", "Main"],
+      category: ["Dessert"],
+      ingredients: ["1 cup sugar", "2 cups flour"],
+      directions: [{ stepNumber: 1, text: "Mix ingredients" }, { stepNumber: 2, text: "Bake" }],
+    });
   });
 
 
   it('uploads an image and sets imageSrc correctly', async () => {
-    const wrapper = mount(CreateRecipePage);
+    const wrapper = mount(EditRecipePage);
     const file = new File(['image content'], 'test-image.png', { type: 'image/png' });
 
     await wrapper.vm.handleImageUpload({ target: { files: [file] } });
@@ -197,31 +211,34 @@ describe('CreateRecipePage', () => {
 
   it('adds an ingredient when add more button is clicked', async () => {
     await wrapper.find('.add-more-button').trigger('click');
-    expect(wrapper.vm.recipeData.ingredients.length).toBe(2);
+    expect(wrapper.vm.recipeData.ingredients.length).toBe(3);
   });
 
   it('removes an ingredient when remove button is clicked', async () => {
     await wrapper.vm.addIngredient(); // Add a second ingredient to test removal
-    expect(wrapper.vm.recipeData.ingredients.length).toBe(2); // Confirm addition
+    expect(wrapper.vm.recipeData.ingredients.length).toBe(3); // Confirm addition
     await wrapper.find('.ingredient-input .remove-button').trigger('click');
-    expect(wrapper.vm.recipeData.ingredients.length).toBe(1); // Confirm removal
+    expect(wrapper.vm.recipeData.ingredients.length).toBe(2); // Confirm removal
   });
 
   it('adds a direction when add more button is clicked', async () => {
     await wrapper.find('.second2 .add-more-button').trigger('click');
-    expect(wrapper.vm.recipeData.directions.length).toBe(2);
+    expect(wrapper.vm.recipeData.directions.length).toBe(3);
   });
 
   it('removes a direction when remove button is clicked', async () => {
     await wrapper.vm.addDirection(); // Add a second direction to test removal
-    expect(wrapper.vm.recipeData.directions.length).toBe(2); // Confirm addition
+    expect(wrapper.vm.recipeData.directions.length).toBe(3); // Confirm addition
     await wrapper.findAll('.direction-step .remove-button').at(0).trigger('click');
-    expect(wrapper.vm.recipeData.directions.length).toBe(1); // Confirm removal
+    expect(wrapper.vm.recipeData.directions.length).toBe(2); // Confirm removal
   });
 
   it('allows only numeric input in cook time fields', async () => {
     const cookTimeHoursInput = wrapper.find('#cookTimeHours');
     const cookTimeMinsInput = wrapper.find('#cookTimeMins');
+
+    await cookTimeHoursInput.setValue('');
+    await cookTimeMinsInput.setValue('');
 
     // Simulate key press for a non-numeric value
     await cookTimeHoursInput.setValue('e');
@@ -293,60 +310,16 @@ describe('CreateRecipePage', () => {
     expect(toast.success).toHaveBeenCalledWith("Recipe was successfully created!", expect.anything());
   });
 
-  it('routes to the home page on cancel', async () => {
-    const wrapper = mount(CreateRecipePage, {
-      global: {
-        plugins: [router]
-      }
-    });
+  it('should navigate to the RecipeDetailsPage when close is called', async () => {
+    // Assume there's a selected recipe for navigation purpose
+    wrapper.vm.selectedRecipe = { recipe_id: '123' };
 
-    await router.isReady();
-
-    // Simulate the cancel button click
     await wrapper.find('.cancel-button').trigger('click');
 
-    // Check if the router goes to the previous page or root
-    expect(router.currentRoute.value.path).toBe('/'); // Modify this according to your logic
-  });
-
-  it('routes to the previous page on cancel when history length is more than 1', async () => {
-    window.history.length = 2;  // Simulate history length greater than 1
-
-    const wrapper = mount(CreateRecipePage, {
-      global: {
-        plugins: [router]
-      }
+    expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
+      name: "RecipeDetailsPage",
+      params: { id: '123' }
     });
-
-    await router.isReady();
-    const spy = vi.spyOn(router, 'go');
-
-    // Simulate the cancel button click
-    await wrapper.find('.cancel-button').trigger('click');
-
-    // Check if the router goes to the previous page
-    expect(spy).toHaveBeenCalledWith(-1);
-    spy.mockRestore();
-  });
-
-  it('routes to the home page on cancel when history length is 1 or less', async () => {
-    window.history.length = 1;  // Simulate history length of 1
-
-    const wrapper = mount(CreateRecipePage, {
-      global: {
-        plugins: [router]
-      }
-    });
-
-    await router.isReady();
-    const spy = vi.spyOn(router, 'push');
-
-    // Simulate the cancel button click
-    await wrapper.find('.cancel-button').trigger('click');
-
-    // Check if the router pushes to the home page
-    expect(spy).toHaveBeenCalledWith('/');
-    spy.mockRestore();
   });
 
   it('submits a recipe with valid data', async () => {
@@ -363,6 +336,8 @@ describe('CreateRecipePage', () => {
     // Mock method to simulate successful submission
     await wrapper.vm.submitRecipe();
     expect(wrapper.vm.submitRecipe).toHaveBeenCalled();
+    expect(toast.success).toHaveBeenCalled();
+    expect(toast.success).toHaveBeenCalledWith("Recipe was successfully created!", expect.anything());
   });
 
 });
