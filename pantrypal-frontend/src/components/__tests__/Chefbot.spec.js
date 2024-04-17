@@ -54,9 +54,8 @@ describe('ChefBot', () => {
             selectedRecipe: { recipe_name: 'Test Recipe' },
             }
         );
-        setTimeout(() => {
-            expect(wrapper.text()).toContain('Mock response');
-        });
+        await wrapper.vm.$nextTick();
+        expect(wrapper.text()).toContain('Mock response');
     });
 
     it('should scroll to the bottom of the message box', async () => {

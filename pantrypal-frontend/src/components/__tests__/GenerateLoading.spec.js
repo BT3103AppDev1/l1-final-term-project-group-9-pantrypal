@@ -62,14 +62,13 @@ describe('Generate Loading', () => {
     });
 
     it('should show the error modal on failed recipe fetch', async () => {
-    
         axios.post.mockRejectedValue(new Error('Network error'));
-
+      
         await wrapper.vm.fetchRecipe();
-        setTimeout(() => {
-            expect(wrapper.vm.showErrorModal).toBe(true);
-        }, 100);
-    });
+        await nextTick();
+      
+        expect(wrapper.vm.showErrorModal).toBe(true);
+      });
 
     it('should close the error modal and emit the "back" event', () => {
         wrapper.vm.showErrorModal = true;
