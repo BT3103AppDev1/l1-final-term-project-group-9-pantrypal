@@ -5,20 +5,16 @@
       <p>(Liked Recipes)</p>
       <div v-if="Object.keys(categoryList).length > 0" class="category-charts">
         <div class="category-liked">
-          <pie-chart
-            class="pie-category-liked"
-            :data="categoryList"
-            :colors="[
-              '#596639',
-              '#CBDF99',
-              '#8AB3A5',
-              '#BAD7BC',
-              '#DCAA83',
-              '#BD6B16',
-              '#406344',
-              '#2F4858',
-            ]"
-          ></pie-chart>
+          <pie-chart class="pie-category-liked" :data="categoryList" :colors="[
+            '#596639',
+            '#CBDF99',
+            '#8AB3A5',
+            '#BAD7BC',
+            '#DCAA83',
+            '#BD6B16',
+            '#406344',
+            '#2F4858',
+          ]"></pie-chart>
         </div>
       </div>
       <div v-else>
@@ -32,20 +28,16 @@
       <p>(My Cookbook)</p>
       <div v-if="Object.keys(myCookbookCategoryList).length > 0" class="category-charts">
         <div class="category-liked">
-          <pie-chart
-            class="pie-category-liked"
-            :data="myCookbookCategoryList"
-            :colors="[
-              '#596639',
-              '#CBDF99',
-              '#8AB3A5',
-              '#BAD7BC',
-              '#DCAA83',
-              '#BD6B16',
-              '#406344',
-              '#2F4858',
-            ]"
-          ></pie-chart>
+          <pie-chart class="pie-category-liked" :data="myCookbookCategoryList" :colors="[
+            '#596639',
+            '#CBDF99',
+            '#8AB3A5',
+            '#BAD7BC',
+            '#DCAA83',
+            '#BD6B16',
+            '#406344',
+            '#2F4858',
+          ]"></pie-chart>
         </div>
       </div>
       <div v-else>
@@ -57,26 +49,16 @@
     <div class="numberOfRecipesCreated">
       <h2>Number of recipes created</h2>
       <div class="category-liked">
-        <column-chart
-          :data="recipesCreatedData"
-          xtitle="Month"
-          ytitle="Number of Recipes Created"
-          :colors="['#BD6B16']"
-        ></column-chart>
+        <column-chart :data="recipesCreatedData" xtitle="Month" ytitle="Number of Recipes Created"
+          :colors="['#BD6B16']"></column-chart>
       </div>
     </div>
 
     <div class="pastMonthLeftovers">
       <h2>Leftovers for the Past Month</h2>
       <div class="category-liked">
-        <bar-chart
-          :data="leftoverPastMonth"
-          xtitle="Counts"
-          ytitle="Leftovers"
-          :colors="['#596639']"
-          loading="Loading..."
-          xstep="1"
-        ></bar-chart>
+        <bar-chart :data="leftoverPastMonth" xtitle="Counts" ytitle="Leftovers" :colors="['#596639']"
+          loading="Loading..." xstep="1"></bar-chart>
       </div>
     </div>
   </div>
@@ -86,15 +68,11 @@
 import { auth, db } from "../firebase";
 import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import "chart.js";
-import VueChartkick from "vue-chartkick";
 import "chartkick/chart.js";
-import Fuse from "https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.mjs";
+import Fuse from "fuse.js";
 
 export default {
   name: "UserProfileStats",
-  components: {
-    VueChartkick,
-  },
   props: {
     lastStatsUpdate: Number,
   },
@@ -443,6 +421,7 @@ export default {
     width: min-content;
   }
 }
+
 .stats {
   display: flex;
   justify-content: center;
