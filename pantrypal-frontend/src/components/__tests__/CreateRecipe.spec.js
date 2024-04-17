@@ -101,7 +101,8 @@ vi.mock('vue-toastification', () => ({
   })),
 }));
 
-const routes = [{ path: '/', name: 'home' }];
+const routes = [{ path: '/', name: 'home' },
+{ path: '/community-page', name: 'community-page' },];
 const router = createRouter({
   history: createWebHistory(),
   routes,
@@ -114,7 +115,8 @@ const globalComponents = {
     TopBar,
     CircleButton,
     SaveRecipeButton
-  }
+  },
+  plugins: [router],
 };
 
 describe('CreateRecipePage', () => {
@@ -126,6 +128,7 @@ describe('CreateRecipePage', () => {
 
   beforeEach(async () => {
     wrapper = mount(CreateRecipePage, { global: globalComponents });
+    await router.isReady();
     toast = wrapper.vm.toast;
     originalAddEventListener = window.addEventListener;
     originalRemoveEventListener = window.removeEventListener;
@@ -294,13 +297,6 @@ describe('CreateRecipePage', () => {
   });
 
   it('routes to the home page on cancel', async () => {
-    const wrapper = mount(CreateRecipePage, {
-      global: {
-        plugins: [router]
-      }
-    });
-
-    await router.isReady();
 
     // Simulate the cancel button click
     await wrapper.find('.cancel-button').trigger('click');
@@ -312,13 +308,6 @@ describe('CreateRecipePage', () => {
   it('routes to the previous page on cancel when history length is more than 1', async () => {
     window.history.length = 2;  // Simulate history length greater than 1
 
-    const wrapper = mount(CreateRecipePage, {
-      global: {
-        plugins: [router]
-      }
-    });
-
-    await router.isReady();
     const spy = vi.spyOn(router, 'go');
 
     // Simulate the cancel button click
@@ -332,13 +321,6 @@ describe('CreateRecipePage', () => {
   it('routes to the home page on cancel when history length is 1 or less', async () => {
     window.history.length = 1;  // Simulate history length of 1
 
-    const wrapper = mount(CreateRecipePage, {
-      global: {
-        plugins: [router]
-      }
-    });
-
-    await router.isReady();
     const spy = vi.spyOn(router, 'push');
 
     // Simulate the cancel button click
@@ -360,9 +342,15 @@ describe('CreateRecipePage', () => {
     wrapper.vm.recipeData.cook_time_minutes = '30';
     wrapper.vm.recipeData.category = ['Dessert'];
 
+    const pushSpy = vi.spyOn(router, 'push');
     // Mock method to simulate successful submission
     await wrapper.vm.submitRecipe();
     expect(wrapper.vm.submitRecipe).toHaveBeenCalled();
+    expect(pushSpy).toHaveBeenCalledWith('/community-page');
+    expect(pushSpy).toHaveBeenCalledTimes(1);
+    pushSpy.mockRestore();
+    expect(toast.success).toHaveBeenCalled();
+    expect(toast.success).toHaveBeenCalledWith("Recipe was successfully created!", expect.anything());
   });
 
 });
