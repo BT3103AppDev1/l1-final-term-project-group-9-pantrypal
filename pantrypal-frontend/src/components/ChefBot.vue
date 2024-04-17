@@ -1,120 +1,120 @@
 <template>
-    <div class="popup-container" @mousedown.self.prevent="this.$emit('close')">
-        <div class="chatbox-container">
-            <div class="container">
-                <div class="chefbot-icon-container">
-                    <img src="../assets/chefbot-icon.png" height="85px" width="85px"/>
-                </div>
-                <div class="messageBox mt-8" ref="messageBox">
-                    <template v-for="(message, index) in messages" :key="index">
-                        <div :class="message.from == 'user' ? 'messageFromUser' : 'messageFromChatGpt'">
-                            <div :class="message.from == 'user' ? 'userMessageWrapper' : 'chatGptMessageWrapper'">
-                                <div :class="message.from == 'user' ? 'userMessageContent' : 'chatGptMessageContent'">{{ message.data }}</div>
-                            </div>
-                        </div>
-                    </template>
-                    <div v-if="isTyping" class="typing-indicator">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
-                </div>
-                <form v-on:submit.prevent="sendMessage" class="inputContainer">
-                    <input
-                        v-model="currentMessage"
-                        type="text"
-                        class="messageInput"
-                        placeholder="Ask me anything..."
-                    />
-                    <button
-                        type="submit"
-                        class="askButton"
-                    >
-                        <img src="../assets/send-icon.png" height="20px">
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
+<div class="popup-container" @mousedown.self.prevent="this.$emit('close')">
+	<div class="chatbox-container">
+			<div class="container">
+					<div class="chefbot-icon-container">
+							<img src="../assets/chefbot-icon.png" height="85px" width="85px"/>
+					</div>
+					<div class="messageBox mt-8" ref="messageBox">
+							<template v-for="(message, index) in messages" :key="index">
+									<div :class="message.from == 'user' ? 'messageFromUser' : 'messageFromChatGpt'">
+											<div :class="message.from == 'user' ? 'userMessageWrapper' : 'chatGptMessageWrapper'">
+													<div :class="message.from == 'user' ? 'userMessageContent' : 'chatGptMessageContent'">{{ message.data }}</div>
+											</div>
+									</div>
+							</template>
+							<div v-if="isTyping" class="typing-indicator">
+									<span></span>
+									<span></span>
+									<span></span>
+							</div>
+					</div>
+					<form v-on:submit.prevent="sendMessage" class="inputContainer">
+							<input
+									v-model="currentMessage"
+									type="text"
+									class="messageInput"
+									placeholder="Ask me anything..."
+							/>
+							<button
+									type="submit"
+									class="askButton"
+							>
+									<img src="../assets/send-icon.png" height="20px">
+							</button>
+					</form>
+			</div>
+	</div>
+</div>
 </template>
     
     
-    <script>
-    import axios from 'axios';
+<script>
+import axios from 'axios';
+
+export default {
+    name: 'ChefBot',
+    data() {
+        return {
+        currentMessage: '',
+        messages: [],
+        isTyping: false,
+        };
+    },
+    props: {
+        selectedRecipe: {
+        type: Object,
+        required: true,
+        },
+    },
+    mounted() {
+        console.log(this.selectedRecipe);
+        console.log("mounted");
+        const initialMessage = `Welcome to ChefBot! Let's get cooking with your selected recipe: ${this.selectedRecipe.recipe_name}. Do you have any questions?`;
+
+        this.messages.push({
+            from: 'chatGpt',
+            data: initialMessage,
+        });
+    },
+    methods: {
+        async sendMessage() {
+            const message = this.currentMessage.trim();
+
+            if (!message) return;
+
+            this.currentMessage = null;
+            
+            this.messages.push({
+                from: 'user',
+                data: message,
+            });
     
-    export default {
-        name: 'ChefBot',
-        data() {
-            return {
-            currentMessage: '',
-            messages: [],
-            isTyping: false,
-            };
-        },
-        props: {
-          selectedRecipe: {
-            type: Object,
-            required: true,
-          },
-        },
-        mounted() {
-            console.log(this.selectedRecipe);
-            console.log("mounted");
-          const initialMessage = `Welcome to ChefBot! Let's get cooking with your selected recipe: ${this.selectedRecipe.recipe_name}. Do you have any questions?`;
+            this.scrollToBottom();
+            this.isTyping = true;
 
-          this.messages.push({
-              from: 'chatGpt',
-              data: initialMessage,
-          });
-        },
-        methods: {
-            async sendMessage() {
-                const message = this.currentMessage.trim();
-
-                if (!message) return;
-
-                this.currentMessage = null;
-                
+            const conversationHistory = this.messages.map(m => ({
+                role: m.from === 'user' ? 'user' : 'assistant',
+                content: m.data,
+            }));
+    
+            await axios
+                .post('https://us-central1-pantrypal-e1225.cloudfunctions.net/api/chatbot', {
+                    message,
+                    conversationHistory, 
+                    selectedRecipe: this.selectedRecipe,
+                })
+            .then((response) => {
+                this.isTyping = false;
                 this.messages.push({
-                    from: 'user',
-                    data: message,
+                    from: 'chatGpt',
+                    data: response.data.data, 
                 });
-        
                 this.scrollToBottom();
-                this.isTyping = true;
-
-                const conversationHistory = this.messages.map(m => ({
-                    role: m.from === 'user' ? 'user' : 'assistant',
-                    content: m.data,
-                }));
-        
-                await axios
-                    .post('https://us-central1-pantrypal-e1225.cloudfunctions.net/api/chatbot', {
-                        message,
-                        conversationHistory, 
-                        selectedRecipe: this.selectedRecipe,
-                    })
-                .then((response) => {
-                    this.isTyping = false;
-                    this.messages.push({
-                        from: 'chatGpt',
-                        data: response.data.data, 
-                    });
-                    this.scrollToBottom();
-                });
-            },
-            scrollToBottom() {
-                this.$nextTick(() => {
-                    const messageBox = this.$refs.messageBox;
-                    messageBox.scrollTo({
-                        top: messageBox.scrollHeight,
-                        behavior: 'smooth'
-                    });
-                });
-            },
+            });
         },
-    };
-    </script>
+        scrollToBottom() {
+            this.$nextTick(() => {
+                const messageBox = this.$refs.messageBox;
+                messageBox.scrollTo({
+                    top: messageBox.scrollHeight,
+                    behavior: 'smooth'
+                });
+            });
+        },
+    },
+};
+</script>
     
 <style scoped>    
 .popup-container {
