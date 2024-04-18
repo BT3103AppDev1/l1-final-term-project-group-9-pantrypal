@@ -25,28 +25,35 @@
         <LikeButton v-if="likeExists" :recipe="selectedRecipe" />
       </div>
       <div class="warning" v-if="selectedRecipe.AIgenerated">
-        <img clas="warning-logo" src="../assets/warning-icon.png" height="16px" />
+        <img
+          clas="warning-logo"
+          src="../assets/warning-icon.png"
+          height="16px"
+        />
         <span
-          >This recipe is AI-generated and PantryPal has not verified it for accuracy and
-          safety.</span
+          >This recipe is AI-generated and PantryPal has not verified it for
+          accuracy and safety.</span
         >
       </div>
       <div class="warning" v-if="selectedRecipe.editted">
-        <img clas="warning-logo" src="../assets/warning-icon.png" height="16px" />
+        <img
+          clas="warning-logo"
+          src="../assets/warning-icon.png"
+          height="16px"
+        />
         <span>This recipe has been edited since its previous revision.</span>
       </div>
       <p>
         <i v-if="likeExists">
           By @{{ username }},
           {{
-            new Date(selectedRecipe.created_date.seconds * 1000).toLocaleDateString(
-              "en-GB",
-              {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              }
-            )
+            new Date(
+              selectedRecipe.created_date.seconds * 1000
+            ).toLocaleDateString("en-GB", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })
           }}
         </i>
         <i v-else>
@@ -69,7 +76,10 @@
       </p>
       <span class="allergens-container">
         <p><b>CONTAINS:</b></p>
-        <template v-for="(allergen, index) in selectedRecipe.allergens" :key="index">
+        <template
+          v-for="(allergen, index) in selectedRecipe.allergens"
+          :key="index"
+        >
           <span>{{ allergen }}</span>
           <p v-if="index < selectedRecipe.allergens.length - 1">,</p>
         </template>
@@ -89,7 +99,10 @@
       <div class="recipe-section">
         <h3>Ingredients:</h3>
         <ul class="checkbox-list">
-          <li v-for="(ingredient, index) in selectedRecipe.ingredients" :key="index">
+          <li
+            v-for="(ingredient, index) in selectedRecipe.ingredients"
+            :key="index"
+          >
             <!--using likeExists to remove checkbox-->
             <input
               v-if="!likeExists"
@@ -118,7 +131,9 @@
         v-if="user && user.uid === selectedRecipe.user_id && likeExists"
       >
         <button class="edit-recipe-button" @click="edit">Edit Recipe</button>
-        <button class="delete-recipe-button" @click="confirmDelete">Delete Recipe</button>
+        <button class="delete-recipe-button" @click="confirmDelete">
+          Delete Recipe
+        </button>
       </div>
     </div>
   </div>
@@ -246,8 +261,15 @@ export default {
         const recipeRef = doc(db, "all_recipes", this.selectedRecipe.recipe_id);
         await deleteDoc(recipeRef);
 
+        console.log("1");
+
         // Delete the recipe from the categories collection
-        const categoryDocsSnapshot = await getDocs(collection(db, "categories"));
+        const categoryDocsSnapshot = await getDocs(
+          collection(db, "categories")
+        );
+
+        console.log("2");
+
         categoryDocsSnapshot.forEach((doc) => {
           const category = doc.data();
           if (this.selectedRecipe.categories.includes(category.category_name)) {
@@ -256,11 +278,17 @@ export default {
             });
           }
         });
+
+        console.log("3");
+
         // Delete the recipe from the user_id collection
         const userRef = doc(db, "users", this.selectedRecipe.user_id);
         await updateDoc(userRef, {
           my_cookbook: arrayRemove(this.selectedRecipe.recipe_id),
         });
+
+        console.log("4");
+
         // Delete the recipe from the liked field of users
         const LikedDocsSnapshot = await getDocs(collection(db, "users"));
         LikedDocsSnapshot.forEach((doc) => {
@@ -271,6 +299,8 @@ export default {
             });
           }
         });
+
+        console.log("5");
 
         this.toast.success("Recipe deleted successfully!", {
           timeout: 2000,
