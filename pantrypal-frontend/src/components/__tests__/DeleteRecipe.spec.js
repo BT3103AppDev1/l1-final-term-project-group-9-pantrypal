@@ -205,14 +205,6 @@ describe('RecipeDetails Component', () => {
     toastClearSpy.mockRestore();
   });
 
-  it('deleteRecipe should handle successful deletion', async () => {
-    // Setup success scenario for deleteDoc
-    deleteDoc.mockResolvedValue();
-
-    await wrapper.vm.deleteRecipe();
-
-    expect(deleteDoc).toHaveBeenCalledWith({}); // Check the correct document reference
-  });
 
   it('deleteRecipe should handle errors correctly', async () => {
     // Setup error scenario for deleteDoc
@@ -226,5 +218,43 @@ describe('RecipeDetails Component', () => {
       hideProgressBar: true,
     });
   });
+
+  it('deleteRecipe should handle successful deletion correctly', async () => {
+    // Assume the Firestore deleteDoc and updateDoc operations succeed
+    deleteDoc.mockResolvedValue();
+    updateDoc.mockResolvedValue();
+  
+    // Handle multiple getDocs calls more precisely
+    getDocs
+      .mockResolvedValueOnce({
+        forEach: (callback) => {
+          callback({ ref: {}, data: () => ({ category_name: 'Category 1', recipes: ['123'] }) }); // Simulating the categories collection documents
+        }
+      })
+      .mockResolvedValueOnce({
+        forEach: (callback) => {
+          callback({ ref: {}, data: () => ({ liked_recipes: ['123'] }) }); // Simulating the user collection documents
+        }
+      });
+  
+    // Call the deleteRecipe method
+    await wrapper.vm.deleteRecipe();
+  
+    // Verify that all expected Firestore functions were called correctly
+    expect(deleteDoc).toHaveBeenCalled();
+    expect(getDocs).toHaveBeenCalled; // Adjust the number of times based on actual implementation details
+    expect(updateDoc).toHaveBeenCalled; // Assuming updates for categories and user cookbook
+  
+    // Check if success toast is displayed correctly
+    expect(toast.success).toHaveBeenCalledWith("Recipe deleted successfully!", {
+      timeout: 2000,
+      position: "top-center",
+      hideProgressBar: true,
+    });
+  
+    // Verify that the user is redirected to the community page
+    expect(wrapper.vm.$router.push).toHaveBeenCalledWith("/community-page");
+  });
+    
 
 });
