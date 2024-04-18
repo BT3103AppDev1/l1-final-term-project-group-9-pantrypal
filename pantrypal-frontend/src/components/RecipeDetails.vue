@@ -257,19 +257,14 @@ export default {
 
     async deleteRecipe() {
       try {
-        // Delete the recipe from the all_recipes collection
+        console.log("Deleting from all_recipes");
         const recipeRef = doc(db, "all_recipes", this.selectedRecipe.recipe_id);
         await deleteDoc(recipeRef);
 
-        console.log("1");
-
-        // Delete the recipe from the categories collection
+        console.log("Fetching categories");
         const categoryDocsSnapshot = await getDocs(
           collection(db, "categories")
         );
-
-        console.log("2");
-
         categoryDocsSnapshot.forEach((doc) => {
           const category = doc.data();
           if (this.selectedRecipe.categories.includes(category.category_name)) {
@@ -279,17 +274,13 @@ export default {
           }
         });
 
-        console.log("3");
-
-        // Delete the recipe from the user_id collection
+        console.log("Updating user cookbook");
         const userRef = doc(db, "users", this.selectedRecipe.user_id);
         await updateDoc(userRef, {
           my_cookbook: arrayRemove(this.selectedRecipe.recipe_id),
         });
 
-        console.log("4");
-
-        // Delete the recipe from the liked field of users
+        console.log("Fetching users to update liked recipes");
         const LikedDocsSnapshot = await getDocs(collection(db, "users"));
         LikedDocsSnapshot.forEach((doc) => {
           const user = doc.data();
@@ -300,8 +291,7 @@ export default {
           }
         });
 
-        console.log("5");
-
+        console.log("success");
         this.toast.success("Recipe deleted successfully!", {
           timeout: 2000,
           position: "top-center",
