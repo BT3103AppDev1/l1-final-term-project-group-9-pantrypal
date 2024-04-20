@@ -154,12 +154,10 @@ export default {
       } else {
         const docSnap = await getDoc(doc(db, "categories", payload.name));
         const recipesIDlist = docSnap.data().recipes;
-        if (recipesIDlist.length != 0) {
-          this.filteredRecipes = this.filteredRecipesByName;
-          this.filteredRecipes = this.filteredRecipesByName.filter((recipe) =>
-            recipesIDlist.includes(recipe.recipe_id)
-          );
-        }
+        this.filteredRecipes = this.filteredRecipesByName;
+        this.filteredRecipes = this.filteredRecipesByName.filter((recipe) =>
+          recipesIDlist.includes(recipe.recipe_id)
+        );
       }
     },
     filterUsingSort(payload) {
