@@ -2,12 +2,7 @@
   <div class="liked-recipes-page">
     <div class="filterBar">
       <div class="search-bar">
-        <input
-          type="text"
-          class="search-input"
-          placeholder="Search name or ingredients..."
-          v-model="searchQuery"
-        />
+        <input type="text" class="search-input" placeholder="Search name or ingredients..." v-model="searchQuery" />
         <img class="search-button" src="../assets/search-icon.svg" alt="Search Icon" />
       </div>
       <div class="category-bar-text">
@@ -15,14 +10,8 @@
       </div>
       <div class="category-bar-dropdown">
         <div class="dropdown-container">
-          <dropdown
-            class="my-dropdown-toggle"
-            :options="arrayOfCategories"
-            :selected="category"
-            :placeholder="'All'"
-            :closeOnOutsideClick="true"
-            v-on:updateOption="filterUsingCategory"
-          >
+          <dropdown class="my-dropdown-toggle" :options="arrayOfCategories" :selected="category" :placeholder="'All'"
+            :closeOnOutsideClick="true" v-on:updateOption="filterUsingCategory">
           </dropdown>
         </div>
       </div>
@@ -31,14 +20,8 @@
       </div>
       <div class="category-bar-dropdown">
         <div class="dropdown-container">
-          <dropdown
-            class="my-dropdown-toggle"
-            :options="arrayOfSorts"
-            :selected="sort"
-            :placeholder="'Most Recent'"
-            :closeOnOutsideClick="true"
-            v-on:updateOption="filterUsingSort"
-          >
+          <dropdown class="my-dropdown-toggle" :options="arrayOfSorts" :selected="sort" :placeholder="'Most Recent'"
+            :closeOnOutsideClick="true" v-on:updateOption="filterUsingSort">
           </dropdown>
         </div>
       </div>
@@ -52,18 +35,12 @@
         <RecipeCardPlaceholder v-for="i in 15" :key="i" />
       </div>
       <div class="recipe-list">
-        <RecipeCard
-          v-for="recipe in filteredRecipes"
-          :key="recipe.recipe_id"
-          :recipe="recipe"
-          @updateLiked="updateLiked"
-        />
+        <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe"
+          @updateLiked="updateLiked" />
       </div>
     </div>
     <div class="NoSearchResultsContainer">
-      <text v-if="this.filteredRecipes.length == 0 && isDataLoaded"
-        >No Search Results Found</text
-      >
+      <text v-if="this.filteredRecipes.length == 0 && isDataLoaded">No Search Results Found</text>
     </div>
   </div>
 </template>
@@ -185,12 +162,12 @@ export default {
       } else {
         const docSnap = await getDoc(doc(db, "categories", payload.name));
         const recipesIDlist = docSnap.data().recipes;
-        if (recipesIDlist.length != 0) {
-          this.filteredRecipes = this.filteredRecipesByName;
-          this.filteredRecipes = this.filteredRecipesByName.filter((recipe) =>
-            recipesIDlist.includes(recipe.recipe_id)
-          );
-        }
+
+        this.filteredRecipes = this.filteredRecipesByName;
+        this.filteredRecipes = this.filteredRecipesByName.filter((recipe) =>
+          recipesIDlist.includes(recipe.recipe_id)
+        );
+
       }
     },
     filterUsingSort(payload) {
@@ -237,6 +214,7 @@ export default {
               )
             ) {
               this.filteredRecipes.push(recipeData);
+              this.filteredRecipesByName = this.filteredRecipes;
             }
           } else {
             console.error(`Recipe with ID ${recipeId} does not exist.`);
