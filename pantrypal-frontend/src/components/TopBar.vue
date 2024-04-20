@@ -80,6 +80,14 @@ export default {
   beforeDestroy() {
     window.removeEventListener("scroll", this.handleScroll);
   },
+  watch: {
+    userData: {
+      handler() {
+        this.fetchUserData();
+      },
+      deep: true,
+    },
+  },
   methods: {
     goToCommunityPage() {
       this.$router.push("/community-page");
