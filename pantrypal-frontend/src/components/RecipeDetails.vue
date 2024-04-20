@@ -308,10 +308,14 @@ export default {
     },
 
     goBack() {
-      this.$router.push({
-        name: this.$store.state.RecipeFromPage,
-        query: { selected: "myCookbook" },
-      });
+      if (!this.likeExists) {
+        location.reload();
+      } else {
+        this.$router.push({
+          name: this.$store.state.RecipeFromPage,
+          query: { selected: this.$store.state.selected },
+        });
+      }
     },
   },
 };
