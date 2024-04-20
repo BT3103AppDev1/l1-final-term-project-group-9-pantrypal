@@ -18,3 +18,4 @@ jobs:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PANTRYPAL_E1225 }}
           channelId: live
           projectId: pantrypal-e1225
+          entryPoint: "./pantrypal-frontend"
