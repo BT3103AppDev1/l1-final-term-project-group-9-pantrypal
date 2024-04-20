@@ -2,16 +2,31 @@
   <div class="myCookbook-page">
     <div class="filterBar">
       <div class="search-bar">
-        <input type="text" class="search-input" placeholder="Search name or ingredients..." v-model="searchQuery" />
-        <img class="search-button" src="../assets/search-icon.svg" alt="Search Icon" />
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Search name or ingredients..."
+          v-model="searchQuery"
+        />
+        <img
+          class="search-button"
+          src="../assets/search-icon.svg"
+          alt="Search Icon"
+        />
       </div>
       <div class="category-bar-text">
         <p>Category:</p>
       </div>
       <div class="category-bar-dropdown">
         <div class="dropdown-container">
-          <dropdown class="my-dropdown-toggle" :options="arrayOfCategories" :selected="category" :placeholder="'All'"
-            :closeOnOutsideClick="true" v-on:updateOption="filterUsingCategory">
+          <dropdown
+            class="my-dropdown-toggle"
+            :options="arrayOfCategories"
+            :selected="category"
+            :placeholder="'All'"
+            :closeOnOutsideClick="true"
+            v-on:updateOption="filterUsingCategory"
+          >
           </dropdown>
         </div>
       </div>
@@ -20,8 +35,14 @@
       </div>
       <div class="category-bar-dropdown">
         <div class="dropdown-container">
-          <dropdown class="my-dropdown-toggle" :options="arrayOfSorts" :selected="sort" :placeholder="'Most Recent'"
-            :closeOnOutsideClick="true" v-on:updateOption="filterUsingSort">
+          <dropdown
+            class="my-dropdown-toggle"
+            :options="arrayOfSorts"
+            :selected="sort"
+            :placeholder="'Most Recent'"
+            :closeOnOutsideClick="true"
+            v-on:updateOption="filterUsingSort"
+          >
           </dropdown>
         </div>
       </div>
@@ -32,12 +53,18 @@
     <!-- recipe card list -->
     <div class="recipe-container">
       <div class="recipe-list">
-        <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe"
-          @updateLiked="updateLiked" />
+        <RecipeCard
+          v-for="recipe in filteredRecipes"
+          :key="recipe.recipe_id"
+          :recipe="recipe"
+          @updateLiked="updateLiked"
+        />
       </div>
     </div>
     <div class="NoSearchResultsContainer">
-      <text v-if="this.filteredRecipes.length == 0 && isDataLoaded">No Search Results Found</text>
+      <text v-if="this.filteredRecipes.length == 0 && isDataLoaded"
+        >No Search Results Found</text
+      >
     </div>
     <CircleButton logo="./plus-icon.png" @click="toggleCreateRecipe" />
   </div>
@@ -101,6 +128,7 @@ export default {
   created() {
     this.fetchRecipes();
     this.sortAllByMostRecent();
+    this.$store.commit("mycookbook");
   },
 
   methods: {
@@ -111,11 +139,15 @@ export default {
       this.$emit("updateLiked");
     },
     async fetchRecipes() {
-      console.log(this.userData);
-      const myRecipes = this.userData.my_cookbook || [];
+      const userDocSnapshot = await getDoc(
+        doc(db, "users", auth.currentUser.uid)
+      );
+      const myRecipes = userDocSnapshot.data().my_cookbook || [];
       this.filteredRecipes = await Promise.all(
         myRecipes.map(async (recipeId) => {
-          const recipeDocSnapshot = await getDoc(doc(db, "all_recipes", recipeId));
+          const recipeDocSnapshot = await getDoc(
+            doc(db, "all_recipes", recipeId)
+          );
           return recipeDocSnapshot.data();
         })
       );

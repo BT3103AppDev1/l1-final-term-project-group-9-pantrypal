@@ -203,6 +203,7 @@ export default {
   },
   mounted() {
     this.fetchRecipeUsernameAndCookingTime();
+    console.log(this.$store.state.RecipeFromPage);
   },
   methods: {
     async fetchRecipeUsernameAndCookingTime() {
@@ -307,11 +308,10 @@ export default {
     },
 
     goBack() {
-			if (!this.likeExists) {
-				location.reload();
-			} else {
-				this.$router.push("/community-page");
-			}
+      this.$router.push({
+        name: this.$store.state.RecipeFromPage,
+        query: { selected: "myCookbook" },
+      });
     },
   },
 };
