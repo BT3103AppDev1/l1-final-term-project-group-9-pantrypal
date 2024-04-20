@@ -2,16 +2,31 @@
   <div class="liked-recipes-page">
     <div class="filterBar">
       <div class="search-bar">
-        <input type="text" class="search-input" placeholder="Search name or ingredients..." v-model="searchQuery" />
-        <img class="search-button" src="../assets/search-icon.svg" alt="Search Icon" />
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Search name or ingredients..."
+          v-model="searchQuery"
+        />
+        <img
+          class="search-button"
+          src="../assets/search-icon.svg"
+          alt="Search Icon"
+        />
       </div>
       <div class="category-bar-text">
         <p>Category:</p>
       </div>
       <div class="category-bar-dropdown">
         <div class="dropdown-container">
-          <dropdown class="my-dropdown-toggle" :options="arrayOfCategories" :selected="category" :placeholder="'All'"
-            :closeOnOutsideClick="true" v-on:updateOption="filterUsingCategory">
+          <dropdown
+            class="my-dropdown-toggle"
+            :options="arrayOfCategories"
+            :selected="category"
+            :placeholder="'All'"
+            :closeOnOutsideClick="true"
+            v-on:updateOption="filterUsingCategory"
+          >
           </dropdown>
         </div>
       </div>
@@ -20,8 +35,14 @@
       </div>
       <div class="category-bar-dropdown">
         <div class="dropdown-container">
-          <dropdown class="my-dropdown-toggle" :options="arrayOfSorts" :selected="sort" :placeholder="'Most Recent'"
-            :closeOnOutsideClick="true" v-on:updateOption="filterUsingSort">
+          <dropdown
+            class="my-dropdown-toggle"
+            :options="arrayOfSorts"
+            :selected="sort"
+            :placeholder="'Most Recent'"
+            :closeOnOutsideClick="true"
+            v-on:updateOption="filterUsingSort"
+          >
           </dropdown>
         </div>
       </div>
@@ -35,12 +56,18 @@
         <RecipeCardPlaceholder v-for="i in 15" :key="i" />
       </div>
       <div class="recipe-list">
-        <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe"
-          @updateLiked="updateLiked" />
+        <RecipeCard
+          v-for="recipe in filteredRecipes"
+          :key="recipe.recipe_id"
+          :recipe="recipe"
+          @updateLiked="updateLiked"
+        />
       </div>
     </div>
     <div class="NoSearchResultsContainer">
-      <text v-if="this.filteredRecipes.length == 0 && isDataLoaded">No Search Results Found</text>
+      <text v-if="this.filteredRecipes.length == 0 && isDataLoaded"
+        >No Search Results Found</text
+      >
     </div>
   </div>
 </template>
@@ -49,7 +76,13 @@
 import RecipeCard from "../components/RecipeCard.vue";
 
 import { db, auth } from "../firebase.js";
-import { collection, getDocs, getDoc, doc, onSnapshot } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  getDoc,
+  doc,
+  onSnapshot,
+} from "firebase/firestore";
 import dropdown from "vue-dropdowns";
 import RecipeImage from "@/components/RecipeImage.vue";
 import RecipeCardPlaceholder from "./RecipeCardPlaceholder.vue";
@@ -104,7 +137,7 @@ export default {
   },
   created() {
     this.fetchRecipes();
-
+    this.$store.commit("likedrecipes");
     // Set up real-time listener for liked recipes
     if (this.userData && this.userData.uid) {
       const userDocRef = doc(db, "users", this.userData.uid);
@@ -123,7 +156,9 @@ export default {
     },
     async fetchRecipes() {
       if (auth.currentUser) {
-        const userDocSnapshot = await getDoc(doc(db, "users", auth.currentUser.uid));
+        const userDocSnapshot = await getDoc(
+          doc(db, "users", auth.currentUser.uid)
+        );
         const likedRecipes = userDocSnapshot.data().liked_recipes || [];
         this.updateLikedRecipes(likedRecipes);
       } else {
@@ -139,7 +174,9 @@ export default {
           .includes(this.searchQuery.toLowerCase());
         let ingredientsMatch = false;
         recipe.ingredients.forEach((ingredient) => {
-          if (ingredient.toLowerCase().includes(this.searchQuery.toLowerCase())) {
+          if (
+            ingredient.toLowerCase().includes(this.searchQuery.toLowerCase())
+          ) {
             ingredientsMatch = true;
           }
         });
@@ -167,7 +204,6 @@ export default {
         this.filteredRecipes = this.filteredRecipesByName.filter((recipe) =>
           recipesIDlist.includes(recipe.recipe_id)
         );
-
       }
     },
     filterUsingSort(payload) {
@@ -198,7 +234,9 @@ export default {
         this.filteredRecipes = [];
         this.allLikedRecipes = [];
         const promises = likedRecipes.map(async (recipeId) => {
-          const recipeDocSnapshot = await getDoc(doc(db, "all_recipes", recipeId));
+          const recipeDocSnapshot = await getDoc(
+            doc(db, "all_recipes", recipeId)
+          );
           if (recipeDocSnapshot.exists()) {
             const recipeData = recipeDocSnapshot.data();
             if (
