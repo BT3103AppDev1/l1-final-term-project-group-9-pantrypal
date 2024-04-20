@@ -45,38 +45,49 @@ export default {
     },
   },
   async mounted() {
-    console.log("mounted..");
     await this.fetchRecipe();
   },
   methods: {
-    fetchRecipe() {
+    async fetchRecipe() {
       const payload = {
         ingredients: this.ingredients,
         categories: this.categories,
         dietaryRestrictions: this.dietaryRestrictions,
       };
-      if (this.previousRecipe !== null) {
+      if (this.prev_recipe_name !== null) {
         payload.prev_recipe_name = this.prev_recipe_name;
         payload.first = false;
       } else {
         payload.first = true;
       }
-      axios
-        .post("https://us-central1-pantrypal-e1225.cloudfunctions.net/api/initial-recipe", payload)
-        .then((response) => {
-          if (response.status === 400) {
-            this.showErrorModal = true;
-          } else {
-            this.$emit("recipeGenerated", {
-              generatedRecipe: response.data.content,
-            });
-          }
-        })
-        .catch((error) => {
-          this.showErrorModal = true;
-          console.error("Error fetching recipe:", error);
-          console.log(this.showErrorModal + "hi");
-        });
+
+      try {
+        const response = await axios.post("https://us-central1-pantrypal-e1225.cloudfunctions.net/api/initial-recipe", payload);
+        if (response.status === 400) {
+        	this.showErrorModal = true;
+        } else {
+        	this.$emit("recipeGenerated", { generatedRecipe: response.data.content });
+        }
+			} catch (error) {
+					this.showErrorModal = true;
+					console.error("Error fetching recipe:", error);
+			}
+      
+    //   axios
+    //     .post("https://us-central1-pantrypal-e1225.cloudfunctions.net/api/initial-recipe", payload)
+    //     .then((response) => {
+    //       if (response.status === 400) {
+    //         this.showErrorModal = true;
+    //       } else {
+    //         this.$emit("recipeGenerated", {
+    //           generatedRecipe: response.data.content,
+    //         });
+    //       }
+    //     })
+    //     .catch((error) => {
+    //       this.showErrorModal = true;
+    //       console.error("Error fetching recipe:", error);
+    //     });
     },
     handleModalClose() {
       this.showErrorModal = false;

@@ -80,6 +80,14 @@ export default {
   beforeDestroy() {
     window.removeEventListener("scroll", this.handleScroll);
   },
+  watch: {
+    userData: {
+      handler() {
+        this.fetchUserData();
+      },
+      deep: true,
+    },
+  },
   methods: {
     goToCommunityPage() {
       this.$router.push("/community-page");
@@ -123,7 +131,6 @@ export default {
 </script>
 <style>
 .topBar {
-  /* margin: 15px 0px; */
   padding: 0 5rem;
   background-color: #fff;
   height: 90px;

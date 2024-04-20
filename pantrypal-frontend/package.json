@@ -15,6 +15,7 @@
     "chart.js": "^4.4.2",
     "firebase": "^10.8.1",
     "flush-promises": "^1.0.2",
+    "fuse.js": "^7.0.0",
     "uuid": "^9.0.1",
     "vue": "^3.4.15",
     "vue-chartkick": "^1.1.0",

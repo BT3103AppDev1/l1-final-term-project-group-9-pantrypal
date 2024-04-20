@@ -73,7 +73,7 @@
 <script>
 import RecipeCard from "../components/RecipeCard.vue";
 import { db, auth } from "../firebase.js";
-import { collection, getDocs, getDoc, doc } from "firebase/firestore";
+import { getDoc, doc } from "firebase/firestore";
 import dropdown from "vue-dropdowns";
 import RecipeImage from "@/components/RecipeImage.vue";
 import CircleButton from "@/components/CircleButton.vue";
@@ -86,7 +86,10 @@ export default {
     CircleButton,
   },
   props: {
-    userData: {},
+    userData: {
+      type: Object,
+      required: true,
+    },
   },
   data() {
     return {
@@ -149,6 +152,7 @@ export default {
         })
       );
       this.myRecipes = this.filteredRecipes;
+      this.filteredRecipesByName = this.filteredRecipes;
       this.sortByMostRecent();
       this.sortAllByMostRecent();
       this.isDataLoaded = true;
@@ -160,9 +164,7 @@ export default {
           .includes(this.searchQuery.toLowerCase());
         let ingredientsMatch = false;
         recipe.ingredients.forEach((ingredient) => {
-          if (
-            ingredient.toLowerCase().includes(this.searchQuery.toLowerCase())
-          ) {
+          if (ingredient.toLowerCase().includes(this.searchQuery.toLowerCase())) {
             ingredientsMatch = true;
           }
         });
@@ -184,12 +186,10 @@ export default {
       } else {
         const docSnap = await getDoc(doc(db, "categories", payload.name));
         const recipesIDlist = docSnap.data().recipes;
-        if (recipesIDlist.length != 0) {
-          this.filteredRecipes = this.filteredRecipesByName;
-          this.filteredRecipes = this.filteredRecipesByName.filter((recipe) =>
-            recipesIDlist.includes(recipe.recipe_id)
-          );
-        }
+        this.filteredRecipes = this.filteredRecipesByName;
+        this.filteredRecipes = this.filteredRecipesByName.filter((recipe) =>
+          recipesIDlist.includes(recipe.recipe_id)
+        );
       }
     },
     filterUsingSort(payload) {
