@@ -24,7 +24,24 @@
         <h1>{{ selectedRecipe.recipe_name }}</h1>
         <LikeButton v-if="likeExists" :recipe="selectedRecipe" />
       </div>
-      <div class="warning" v-if="selectedRecipe.AIgenerated">
+      <div
+        class="warning"
+        v-if="selectedRecipe.AIgenerated && selectedRecipe.editted"
+      >
+        <img
+          clas="warning-logo"
+          src="../assets/warning-icon.png"
+          height="16px"
+        />
+        <span
+          >This recipe is AI-generated (edited) and PantryPal has not verified
+          it for accuracy and safety.</span
+        >
+      </div>
+      <div
+        class="warning"
+        v-if="selectedRecipe.AIgenerated && !selectedRecipe.editted"
+      >
         <img
           clas="warning-logo"
           src="../assets/warning-icon.png"
@@ -35,7 +52,10 @@
           accuracy and safety.</span
         >
       </div>
-      <div class="warning" v-if="selectedRecipe.editted">
+      <div
+        class="warning"
+        v-if="!selectedRecipe.AIgenerated && selectedRecipe.editted"
+      >
         <img
           clas="warning-logo"
           src="../assets/warning-icon.png"
