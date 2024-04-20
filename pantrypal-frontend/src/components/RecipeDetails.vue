@@ -307,7 +307,11 @@ export default {
     },
 
     goBack() {
-      this.$router.push("/community-page");
+			if (!this.likeExists) {
+				location.reload();
+			} else {
+				this.$router.go(-1);
+			}
     },
   },
 };
