@@ -310,7 +310,7 @@ export default {
 			if (!this.likeExists) {
 				location.reload();
 			} else {
-				this.$router.go(-1);
+				this.$router.push("/community-page");
 			}
     },
   },
