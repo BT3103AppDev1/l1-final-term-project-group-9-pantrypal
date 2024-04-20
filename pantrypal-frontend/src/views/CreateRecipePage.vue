@@ -429,7 +429,7 @@ export default {
           .map((word) => word.trim()),
         categories: this.recipeData.category,
         community: this.recipeData.publish_to_community,
-        cookTime: parseInt(cookTimeHours) * 60 + parseInt(cookTimeMinutes),
+        cook_time: parseInt(cookTimeHours) * 60 + parseInt(cookTimeMinutes),
         created_date: new Date(),
         description: this.recipeData.description,
         directions: this.recipeData.directions.map((d) => d.text),
