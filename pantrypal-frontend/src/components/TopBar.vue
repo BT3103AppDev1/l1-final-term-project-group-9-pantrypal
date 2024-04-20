@@ -93,7 +93,11 @@ export default {
       this.$router.push("/community-page");
     },
     goToRecipeGenerator() {
-      this.$router.push("/recipe-generator");
+        if (window.location.pathname === "/recipe-generator") {
+            location.reload();
+        } else {
+            this.$router.push("/recipe-generator");
+        }
     },
     goToProfile() {
       this.$router.push("/profile");
