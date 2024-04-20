@@ -75,7 +75,7 @@ export default {
               liked_recipes: [],
               my_cookbook: [],
               profile_img_url:
-                "",
+                "https://firebasestorage.googleapis.com/v0/b/pantrypal-e1225.appspot.com/o/profileImg%2FGeneric-Profile-Placeholder-3660825460.png?alt=media&token=b9df0faf-9989-4c7d-b882-9a785254d07c",
               user_id: auth.currentUser.uid,
               username: this.user.username,
             });

@@ -7,11 +7,11 @@ export default {
   data() {
     return {
       defaultProfileUrl: "@/assets/profile.svg",
+      profileKey: 0,
     };
   },
   props: {
     path: String,
-    ifCard: Boolean,
   },
   async created() {
     try {
@@ -24,6 +24,13 @@ export default {
     renderedUrl() {
       console.log(this.path);
       return this.path && this.path.trim() !== "" ? this.path : this.defaultProfileUrl;
+    },
+  },
+  watch: {
+    path(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        this.profileKey++;
+      }
     },
   },
 };
