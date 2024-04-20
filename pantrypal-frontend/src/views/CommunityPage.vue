@@ -5,16 +5,31 @@
     <div class="filters">
       <div class="filterBar">
         <div class="search-bar">
-          <input type="text" class="search-input" placeholder="Search name or ingredients..." v-model="searchQuery" />
-          <img class="search-button" src="../assets/search-icon.svg" alt="Search Icon" />
+          <input
+            type="text"
+            class="search-input"
+            placeholder="Search name or ingredients..."
+            v-model="searchQuery"
+          />
+          <img
+            class="search-button"
+            src="../assets/search-icon.svg"
+            alt="Search Icon"
+          />
         </div>
         <div class="category-bar-text">
           <p>Category:</p>
         </div>
         <div class="category-bar-dropdown">
           <div class="dropdown-container">
-            <dropdown class="my-dropdown-toggle" :options="arrayOfCategories" :selected="category" :placeholder="'All'"
-              :closeOnOutsideClick="true" v-on:updateOption="filterUsingCategory">
+            <dropdown
+              class="my-dropdown-toggle"
+              :options="arrayOfCategories"
+              :selected="category"
+              :placeholder="'All'"
+              :closeOnOutsideClick="true"
+              v-on:updateOption="filterUsingCategory"
+            >
             </dropdown>
           </div>
         </div>
@@ -23,8 +38,14 @@
         </div>
         <div class="category-bar-dropdown">
           <div class="dropdown-container">
-            <dropdown class="my-dropdown-toggle" :options="arrayOfSorts" :selected="sort" :placeholder="'Most Recent'"
-              :closeOnOutsideClick="true" v-on:updateOption="filterUsingSort">
+            <dropdown
+              class="my-dropdown-toggle"
+              :options="arrayOfSorts"
+              :selected="sort"
+              :placeholder="'Most Recent'"
+              :closeOnOutsideClick="true"
+              v-on:updateOption="filterUsingSort"
+            >
             </dropdown>
           </div>
         </div>
@@ -37,11 +58,17 @@
       </div>
       <!-- recipe card list -->
       <div class="recipe-list" v-else>
-        <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.recipe_id" :recipe="recipe"
-          @toggle="toggleRecipeDetails" />
+        <RecipeCard
+          v-for="recipe in filteredRecipes"
+          :key="recipe.recipe_id"
+          :recipe="recipe"
+          @toggle="toggleRecipeDetails"
+        />
       </div>
       <div class="NoSearchResultsContainer">
-        <text v-if="this.filteredRecipes.length == 0">No Search Results Found</text>
+        <text v-if="this.filteredRecipes.length == 0"
+          >No Search Results Found</text
+        >
       </div>
       <!-- Back to Top button 
     <button class="back-to-top" @click="scrollToTop" v-show="showBackToTop">
@@ -120,6 +147,7 @@ export default {
   created() {
     this.fetchRecipes();
     this.router = router;
+    this.$store.commit("communitypage");
     window.addEventListener("scroll", this.handleScroll);
   },
   destroyed() {
@@ -169,7 +197,9 @@ export default {
           .includes(this.searchQuery.toLowerCase());
         let ingredientsMatch = false;
         recipe.ingredients.forEach((ingredient) => {
-          if (ingredient.toLowerCase().includes(this.searchQuery.toLowerCase())) {
+          if (
+            ingredient.toLowerCase().includes(this.searchQuery.toLowerCase())
+          ) {
             ingredientsMatch = true;
           }
         });
@@ -222,7 +252,8 @@ export default {
     handleScroll() {
       // Show the button when user scrolls down beyond 300px
       this.showBackToTop = window.scrollY > 250;
-      const currentScrollPosition = window.scrollY || document.documentElement.scrollTop;
+      const currentScrollPosition =
+        window.scrollY || document.documentElement.scrollTop;
       if (currentScrollPosition < 0) {
         return;
       }
