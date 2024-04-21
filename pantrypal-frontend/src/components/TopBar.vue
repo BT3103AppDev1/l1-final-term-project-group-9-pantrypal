@@ -70,7 +70,11 @@ export default {
   mounted() {
     let localUserData = localStorage.getItem("userData");
     console.log(localUserData);
-    if (localUserData && localUserData !== "" && localUserData !== "undefined") {
+    if (
+      localUserData &&
+      localUserData !== "" &&
+      localUserData !== "undefined"
+    ) {
       this.userData = JSON.parse(localUserData);
     } else {
       this.fetchUserData();
@@ -82,8 +86,10 @@ export default {
   },
   watch: {
     userData: {
-      handler() {
-        this.fetchUserData();
+      handler(newUserData, oldUserData) {
+        if (newUserData.profile_img_url !== oldUserData.profile_img_url) {
+          this.fetchUserData();
+        }
       },
       deep: true,
     },
@@ -109,14 +115,18 @@ export default {
         });
     },
     async fetchUserData() {
+      console.log("testtest");
       if (auth.currentUser) {
-        const userDocSnapshot = await getDoc(doc(db, "users", auth.currentUser.uid));
+        const userDocSnapshot = await getDoc(
+          doc(db, "users", auth.currentUser.uid)
+        );
         this.userData = userDocSnapshot.data();
         localStorage.setItem("userData", JSON.stringify(this.userData));
       }
     },
     handleScroll() {
-      const currentScrollPosition = window.scrollY || document.documentElement.scrollTop;
+      const currentScrollPosition =
+        window.scrollY || document.documentElement.scrollTop;
       if (currentScrollPosition < 0) {
         return;
       }
