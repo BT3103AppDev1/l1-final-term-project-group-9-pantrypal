@@ -41,13 +41,23 @@
           </div>
           <div class="first2">
             <label for="recipeName">Title:</label>
-            <input type="text" id="recipeName" v-model="recipeData.recipe_name" />
+            <input
+              type="text"
+              id="recipeName"
+              v-model="recipeData.recipe_name"
+            />
 
             <label for="recipeDescription">Description:</label>
-            <textarea id="recipeDescription" v-model="recipeData.description"></textarea>
+            <textarea
+              id="recipeDescription"
+              v-model="recipeData.description"
+            ></textarea>
 
             <label for="allergenInfo">Allergen Information:</label>
-            <textarea id="allergenInfo" v-model="recipeData.allergen_info"></textarea>
+            <textarea
+              id="allergenInfo"
+              v-model="recipeData.allergen_info"
+            ></textarea>
 
             <!-- Added Cook Time, Category and Serving Size -->
             <div class="additional-info">
@@ -107,7 +117,10 @@
                     v-model="recipeData.ingredients[index]"
                     placeholder="e.g. 10g Apple"
                   />
-                  <button class="remove-button" @click="removeIngredient(index)">
+                  <button
+                    class="remove-button"
+                    @click="removeIngredient(index)"
+                  >
                     x
                   </button>
                 </div>
@@ -138,7 +151,10 @@
                       :id="'direction' + direction.stepNumber"
                       v-model="direction.text"
                     ></textarea>
-                    <button class="remove-button" @click="removeDirection(index)">
+                    <button
+                      class="remove-button"
+                      @click="removeDirection(index)"
+                    >
                       x
                     </button>
                   </div>
@@ -173,7 +189,12 @@ import {
   fetchCategories,
 } from "../firebase.js";
 import { ref as storageRef } from "firebase/storage";
-import { getFirestore, addDoc, collection, updateDoc } from "firebase/firestore";
+import {
+  getFirestore,
+  addDoc,
+  collection,
+  updateDoc,
+} from "firebase/firestore";
 
 export default {
   components: {
@@ -277,7 +298,9 @@ export default {
       const userId = user ? user.uid : "";
 
       const recipe = {
-        allergens: this.recipeData.allergen_info.split(",").map((word) => word.trim()),
+        allergens: this.recipeData.allergen_info
+          .split(",")
+          .map((word) => word.trim()),
         categories: this.recipeData.category,
         community: this.recipeData.publish_to_community,
         cook_time:
