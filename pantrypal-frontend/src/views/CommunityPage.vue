@@ -11,11 +11,7 @@
             placeholder="Search name or ingredients..."
             v-model="searchQuery"
           />
-          <img
-            class="search-button"
-            src="../assets/search-icon.svg"
-            alt="Search Icon"
-          />
+          <img class="search-button" src="../assets/search-icon.svg" alt="Search Icon" />
         </div>
         <div class="category-bar-text">
           <p>Category:</p>
@@ -66,9 +62,7 @@
         />
       </div>
       <div class="NoSearchResultsContainer">
-        <text v-if="this.filteredRecipes.length == 0"
-          >No Search Results Found</text
-        >
+        <text v-if="this.filteredRecipes.length == 0">No Search Results Found</text>
       </div>
       <!-- Back to Top button 
     <button class="back-to-top" @click="scrollToTop" v-show="showBackToTop">
@@ -77,7 +71,7 @@
     </button>
     -->
 
-      <CircleButton logo="./plus-icon.png" @click="toggleCreateRecipe" />
+      <CircleButton logo="src/assets/plus-icon.png" @click="toggleCreateRecipe" />
     </div>
   </div>
 </template>
@@ -86,6 +80,8 @@
 import RecipeCard from "../components/RecipeCard.vue";
 import { db } from "../firebase.js";
 import { collection, getDocs, getDoc, doc } from "firebase/firestore";
+import { mapState } from "vuex";
+
 import TopBar from "@/components/TopBar.vue";
 import dropdown from "vue-dropdowns";
 import RecipeImage from "@/components/RecipeImage.vue";
@@ -147,7 +143,6 @@ export default {
   created() {
     this.fetchRecipes();
     this.router = router;
-    this.$store.commit("communitypage");
     window.addEventListener("scroll", this.handleScroll);
   },
   destroyed() {
@@ -197,9 +192,7 @@ export default {
           .includes(this.searchQuery.toLowerCase());
         let ingredientsMatch = false;
         recipe.ingredients.forEach((ingredient) => {
-          if (
-            ingredient.toLowerCase().includes(this.searchQuery.toLowerCase())
-          ) {
+          if (ingredient.toLowerCase().includes(this.searchQuery.toLowerCase())) {
             ingredientsMatch = true;
           }
         });
@@ -223,11 +216,12 @@ export default {
       } else {
         const docSnap = await getDoc(doc(db, "categories", payload.name));
         const recipesIDlist = docSnap.data().recipes;
-        this.filteredRecipes = this.filteredRecipesByName;
-        this.filteredRecipes = this.filteredRecipesByName.filter((recipe) =>
-          recipesIDlist.includes(recipe.recipe_id)
-        );
-
+        if (recipesIDlist.length != 0) {
+          this.filteredRecipes = this.filteredRecipesByName;
+          this.filteredRecipes = this.filteredRecipesByName.filter((recipe) =>
+            recipesIDlist.includes(recipe.recipe_id)
+          );
+        }
       }
     },
     filterUsingSort(payload) {
@@ -252,8 +246,7 @@ export default {
     handleScroll() {
       // Show the button when user scrolls down beyond 300px
       this.showBackToTop = window.scrollY > 250;
-      const currentScrollPosition =
-        window.scrollY || document.documentElement.scrollTop;
+      const currentScrollPosition = window.scrollY || document.documentElement.scrollTop;
       if (currentScrollPosition < 0) {
         return;
       }
