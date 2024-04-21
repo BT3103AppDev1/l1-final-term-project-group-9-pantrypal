@@ -8,11 +8,7 @@
           placeholder="Search name or ingredients..."
           v-model="searchQuery"
         />
-        <img
-          class="search-button"
-          src="../assets/search-icon.svg"
-          alt="Search Icon"
-        />
+        <img class="search-button" src="../assets/search-icon.svg" alt="Search Icon" />
       </div>
       <div class="category-bar-text">
         <p>Category:</p>
@@ -77,6 +73,8 @@ import { getDoc, doc } from "firebase/firestore";
 import dropdown from "vue-dropdowns";
 import RecipeImage from "@/components/RecipeImage.vue";
 import CircleButton from "@/components/CircleButton.vue";
+import { mapState } from "vuex";
+import store from "@/store";
 
 export default {
   components: {
@@ -91,6 +89,10 @@ export default {
       required: true,
     },
   },
+  computed: {
+    ...mapState(["RecipeFromPage", "selected"]),
+  },
+
   data() {
     return {
       arrayOfCategories: [
@@ -128,7 +130,7 @@ export default {
   created() {
     this.fetchRecipes();
     this.sortAllByMostRecent();
-    this.$store.commit("mycookbook");
+    store.commit("mycookbook");
   },
 
   methods: {
@@ -139,18 +141,16 @@ export default {
       this.$emit("updateLiked");
     },
     async fetchRecipes() {
-      const userDocSnapshot = await getDoc(
-        doc(db, "users", auth.currentUser.uid)
-      );
-      const myRecipes = userDocSnapshot.data().my_cookbook || [];
-      this.filteredRecipes = await Promise.all(
+      if (auth.currentUser) {
+        const userDocSnapshot = await getDoc(doc(db, "users", auth.currentUser.uid));
+        const myRecipes = userDocSnapshot.data().my_cookbook || [];
+        this.filteredRecipes = await Promise.all(
         myRecipes.map(async (recipeId) => {
-          const recipeDocSnapshot = await getDoc(
-            doc(db, "all_recipes", recipeId)
-          );
+          const recipeDocSnapshot = await getDoc(doc(db, "all_recipes", recipeId));
           return recipeDocSnapshot.data();
         })
       );
+      }
       this.myRecipes = this.filteredRecipes;
       this.filteredRecipesByName = this.filteredRecipes;
       this.sortByMostRecent();
