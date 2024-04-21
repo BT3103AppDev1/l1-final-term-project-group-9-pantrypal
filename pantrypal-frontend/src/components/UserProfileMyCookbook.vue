@@ -145,11 +145,11 @@ export default {
         const userDocSnapshot = await getDoc(doc(db, "users", auth.currentUser.uid));
         const myRecipes = userDocSnapshot.data().my_cookbook || [];
         this.filteredRecipes = await Promise.all(
-        myRecipes.map(async (recipeId) => {
-          const recipeDocSnapshot = await getDoc(doc(db, "all_recipes", recipeId));
-          return recipeDocSnapshot.data();
-        })
-      );
+          myRecipes.map(async (recipeId) => {
+            const recipeDocSnapshot = await getDoc(doc(db, "all_recipes", recipeId));
+            return recipeDocSnapshot.data();
+          })
+        );
       }
       this.myRecipes = this.filteredRecipes;
       this.filteredRecipesByName = this.filteredRecipes;
