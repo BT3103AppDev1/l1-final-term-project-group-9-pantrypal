@@ -18,6 +18,29 @@ import {
     where,
     query,
   } from "firebase/firestore";
+  import { createStore } from 'vuex';
+
+  const store = createStore({
+    state () {
+      return {
+        RecipeFromPage: '',
+        selected: '',
+      }
+    },
+    mutations: {
+      communitypage (state) {
+        state.RecipeFromPage = 'Community Page'
+      },
+      likedrecipes (state) {
+        state.RecipeFromPage = 'Profile'
+        state.selected = 'likedRecipes'
+      },
+      mycookbook (state) {
+        state.RecipeFromPage = 'Profile'
+        state.selected = 'myCookbook'
+      }
+    }
+  });
 
   vi.mock('@/firebase', () => ({
     auth: {
@@ -122,9 +145,11 @@ describe('RecipeDetails Component', () => {
           $router: {
             push: vi.fn(),
           },
+          $store: store,
           auth,
         },
         plugins: [useToast],
+        plugins: [store],
         computed,
       },
       data() {
