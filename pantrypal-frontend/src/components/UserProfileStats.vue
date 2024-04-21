@@ -22,7 +22,6 @@
       </div>
     </div>
 
-    <!--INSERT YUENNING'S PIE CHART HERE-->
     <div class="favourite-category">
       <h2>Favourite Categories</h2>
       <p>(My Cookbook)</p>
@@ -44,7 +43,6 @@
         <p>No recipes liked</p>
       </div>
     </div>
-    <!--UNTIL HERE-->
 
     <div class="numberOfRecipesCreated">
       <h2>Number of recipes created</h2>

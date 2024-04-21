@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
+import { nextTick } from 'vue';
 import UserProfileStats from '@/components/UserProfileStats.vue';
 
 describe('UserProfileStats', () => {
@@ -21,7 +22,7 @@ describe('UserProfileStats', () => {
     expect(pieChart.exists()).toBe(true);
   });
 
-  it('renders a column chart for the number of recipes created', () => {
+  it('renders a column chart for the number of recipes created', async () => {
     const wrapper = mount(UserProfileStats, {
       data() {
         return {
@@ -30,7 +31,8 @@ describe('UserProfileStats', () => {
       },
     });
 
-    const columnChart = wrapper.find('.column-chart');
+    await nextTick();
+    const columnChart = wrapper.find('column-chart');
     expect(columnChart.exists()).toBe(true);
   });
 
@@ -48,7 +50,7 @@ describe('UserProfileStats', () => {
       },
     });
 
-    const barChart = wrapper.find('.bar-chart');
+    const barChart = wrapper.find('bar-chart');
     expect(barChart.exists()).toBe(true);
   });
 });
