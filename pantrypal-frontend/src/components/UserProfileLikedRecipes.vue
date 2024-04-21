@@ -8,11 +8,7 @@
           placeholder="Search name or ingredients..."
           v-model="searchQuery"
         />
-        <img
-          class="search-button"
-          src="../assets/search-icon.svg"
-          alt="Search Icon"
-        />
+        <img class="search-button" src="../assets/search-icon.svg" alt="Search Icon" />
       </div>
       <div class="category-bar-text">
         <p>Category:</p>
@@ -74,15 +70,10 @@
 
 <script>
 import RecipeCard from "../components/RecipeCard.vue";
-
+import { mapState } from "vuex";
+import store from "@/store";
 import { db, auth } from "../firebase.js";
-import {
-  collection,
-  getDocs,
-  getDoc,
-  doc,
-  onSnapshot,
-} from "firebase/firestore";
+import { getDoc, doc, onSnapshot } from "firebase/firestore";
 import dropdown from "vue-dropdowns";
 import RecipeImage from "@/components/RecipeImage.vue";
 import RecipeCardPlaceholder from "./RecipeCardPlaceholder.vue";
@@ -99,6 +90,9 @@ export default {
       type: Object,
       required: true,
     },
+  },
+  computed: {
+    ...mapState(["RecipeFromPage", "selected"]),
   },
   data() {
     return {
@@ -137,7 +131,7 @@ export default {
   },
   created() {
     this.fetchRecipes();
-    this.$store.commit("likedrecipes");
+    store.commit("likedrecipes");
     // Set up real-time listener for liked recipes
     if (this.userData && this.userData.uid) {
       const userDocRef = doc(db, "users", this.userData.uid);
@@ -156,9 +150,7 @@ export default {
     },
     async fetchRecipes() {
       if (auth.currentUser) {
-        const userDocSnapshot = await getDoc(
-          doc(db, "users", auth.currentUser.uid)
-        );
+        const userDocSnapshot = await getDoc(doc(db, "users", auth.currentUser.uid));
         const likedRecipes = userDocSnapshot.data().liked_recipes || [];
         this.updateLikedRecipes(likedRecipes);
       } else {
@@ -174,9 +166,7 @@ export default {
           .includes(this.searchQuery.toLowerCase());
         let ingredientsMatch = false;
         recipe.ingredients.forEach((ingredient) => {
-          if (
-            ingredient.toLowerCase().includes(this.searchQuery.toLowerCase())
-          ) {
+          if (ingredient.toLowerCase().includes(this.searchQuery.toLowerCase())) {
             ingredientsMatch = true;
           }
         });
@@ -234,9 +224,7 @@ export default {
         this.filteredRecipes = [];
         this.allLikedRecipes = [];
         const promises = likedRecipes.map(async (recipeId) => {
-          const recipeDocSnapshot = await getDoc(
-            doc(db, "all_recipes", recipeId)
-          );
+          const recipeDocSnapshot = await getDoc(doc(db, "all_recipes", recipeId));
           if (recipeDocSnapshot.exists()) {
             const recipeData = recipeDocSnapshot.data();
             if (
