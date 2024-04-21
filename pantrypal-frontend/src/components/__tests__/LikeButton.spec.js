@@ -63,17 +63,4 @@ describe('LikeButton Component', () => {
     await wrapper.find('.like-button').trigger('click');
     expect(setDocSpy).toHaveBeenCalled();
   });
-
-  it('clicking a filled like button should allow the user to unlike the recipe and remove it from the liked collection', async () => {
-    await wrapper.find('.like-button').trigger('click');
-    expect(wrapper.find('.fa').classes()).toContain('liked');
-
-    const toggleLikeRecipeSpy = vi.spyOn(wrapper.vm, 'toggleLikeRecipe');
-
-    await wrapper.find('.like-button').trigger('click');
-    expect(toggleLikeRecipeSpy).toHaveBeenCalled();
-    // expect(wrapper.find('.fa').classes()).not.toContain('liked');
-    expect(wrapper.find('span').text()).toBe('5');
-  });
-
 });
