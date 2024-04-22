@@ -3,9 +3,8 @@ import { createStore } from 'vuex'
 const store = createStore({
     state () {
       return {
-        RecipeFromPage: '',
+        RecipeFromPage: 'Community Page',
         selected: '',
-
       }
     },
     mutations: {
