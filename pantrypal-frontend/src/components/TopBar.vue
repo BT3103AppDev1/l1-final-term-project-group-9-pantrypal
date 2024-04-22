@@ -32,12 +32,8 @@
         <p class="logOutButton-text">Log Out</p>
       </button>
       <button type="button" class="profileButton" @click="goToProfile()">
-        <ProfileImage
-          :path="profilePicUrl || userData.profile_img_url"
-          alt="profile pic"
-          class="profile"
-          @click="goToProfile()"
-        />
+        <ProfileImage :path="profilePicUrl || userData.profile_img_url" alt="profile pic" class="profile"
+          @click="goToProfile()" />
       </button>
     </div>
     <hr />
@@ -46,6 +42,7 @@
 
 <script>
 import { db, auth } from "../firebase.js";
+import store from "@/store";
 import { signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import ProfileImage from "./ProfileImage.vue";
@@ -96,14 +93,15 @@ export default {
   },
   methods: {
     goToCommunityPage() {
+      store.commit('communitypage');
       this.$router.push("/community-page");
     },
     goToRecipeGenerator() {
-        if (window.location.pathname === "/recipe-generator") {
-            location.reload();
-        } else {
-            this.$router.push("/recipe-generator");
-        }
+      if (window.location.pathname === "/recipe-generator") {
+        location.reload();
+      } else {
+        this.$router.push("/recipe-generator");
+      }
     },
     goToProfile() {
       this.$router.push("/profile");
