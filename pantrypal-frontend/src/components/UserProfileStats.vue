@@ -5,16 +5,20 @@
       <p>(Liked Recipes)</p>
       <div v-if="Object.keys(categoryList).length > 0" class="category-charts">
         <div class="category-liked">
-          <pie-chart class="pie-category-liked" :data="categoryList" :colors="[
-            '#596639',
-            '#CBDF99',
-            '#8AB3A5',
-            '#BAD7BC',
-            '#DCAA83',
-            '#BD6B16',
-            '#406344',
-            '#2F4858',
-          ]"></pie-chart>
+          <pie-chart
+            class="pie-category-liked"
+            :data="categoryList"
+            :colors="[
+              '#596639',
+              '#CBDF99',
+              '#8AB3A5',
+              '#BAD7BC',
+              '#DCAA83',
+              '#BD6B16',
+              '#406344',
+              '#2F4858',
+            ]"
+          ></pie-chart>
         </div>
       </div>
       <div v-else>
@@ -25,18 +29,25 @@
     <div class="favourite-category">
       <h2>Favourite Categories</h2>
       <p>(My Cookbook)</p>
-      <div v-if="Object.keys(myCookbookCategoryList).length > 0" class="category-charts">
+      <div
+        v-if="Object.keys(myCookbookCategoryList).length > 0"
+        class="category-charts"
+      >
         <div class="category-liked">
-          <pie-chart class="pie-category-liked" :data="myCookbookCategoryList" :colors="[
-            '#596639',
-            '#CBDF99',
-            '#8AB3A5',
-            '#BAD7BC',
-            '#DCAA83',
-            '#BD6B16',
-            '#406344',
-            '#2F4858',
-          ]"></pie-chart>
+          <pie-chart
+            class="pie-category-liked"
+            :data="myCookbookCategoryList"
+            :colors="[
+              '#596639',
+              '#CBDF99',
+              '#8AB3A5',
+              '#BAD7BC',
+              '#DCAA83',
+              '#BD6B16',
+              '#406344',
+              '#2F4858',
+            ]"
+          ></pie-chart>
         </div>
       </div>
       <div v-else>
@@ -47,16 +58,26 @@
     <div class="numberOfRecipesCreated">
       <h2>Number of recipes created</h2>
       <div class="category-liked">
-        <column-chart :data="recipesCreatedData" xtitle="Month" ytitle="Number of Recipes Created"
-          :colors="['#BD6B16']"></column-chart>
+        <column-chart
+          :data="recipesCreatedData"
+          xtitle="Month"
+          ytitle="Number of Recipes Created"
+          :colors="['#BD6B16']"
+        ></column-chart>
       </div>
     </div>
 
     <div class="pastMonthLeftovers">
       <h2>Leftovers for the Past Month</h2>
       <div class="category-liked">
-        <bar-chart :data="leftoverPastMonth" xtitle="Counts" ytitle="Leftovers" :colors="['#596639']"
-          loading="Loading..." xstep="1"></bar-chart>
+        <bar-chart
+          :data="leftoverPastMonth"
+          xtitle="Counts"
+          ytitle="Leftovers"
+          :colors="['#596639']"
+          loading="Loading..."
+          xstep="1"
+        ></bar-chart>
       </div>
     </div>
   </div>
@@ -90,7 +111,7 @@ export default {
     this.fetchMyCookbookData();
   },
   methods: {
-    fetchRecipeFromFirebase(recipeId) {
+    async fetchRecipeFromFirebase(recipeId) {
       return getDoc(doc(db, "all_recipes", recipeId))
         .then((docSnapshot) => {
           if (docSnapshot.exists()) {
@@ -105,12 +126,13 @@ export default {
         });
     },
     handleLastStatsUpdate() {
-      console.log("nice");
       this.fetchLikedRecipesData();
     },
     async fetchLikedRecipesData() {
       if (auth.currentUser) {
-        const userDocSnapshot = await getDoc(doc(db, "users", auth.currentUser.uid));
+        const userDocSnapshot = await getDoc(
+          doc(db, "users", auth.currentUser.uid)
+        );
         this.userData = userDocSnapshot.data();
         this.fetchRecipesFromCookbook();
       }
@@ -129,7 +151,10 @@ export default {
       };
 
       this.likedRecipes = this.userData.liked_recipes;
-      if (this.userData.liked_recipes && this.userData.liked_recipes.length > 0) {
+      if (
+        this.userData.liked_recipes &&
+        this.userData.liked_recipes.length > 0
+      ) {
         const fetchPromises = this.likedRecipes.map((recipeId) => {
           return this.fetchRecipeFromFirebase(recipeId)
             .then((recipeDoc) => {
@@ -156,7 +181,6 @@ export default {
           sortedCategories.forEach(([key, value]) => {
             topCategories[key] = value;
           });
-
           this.categoryList = topCategories;
         });
       } else {
@@ -165,7 +189,9 @@ export default {
     },
     async fetchLikedRecipesData() {
       if (auth.currentUser) {
-        const userDocSnapshot = await getDoc(doc(db, "users", auth.currentUser.uid));
+        const userDocSnapshot = await getDoc(
+          doc(db, "users", auth.currentUser.uid)
+        );
         this.userData = userDocSnapshot.data();
         this.fetchRecipesFromCookbook();
       }
@@ -184,7 +210,10 @@ export default {
       };
 
       this.likedRecipes = this.userData.liked_recipes;
-      if (this.userData.liked_recipes && this.userData.liked_recipes.length > 0) {
+      if (
+        this.userData.liked_recipes &&
+        this.userData.liked_recipes.length > 0
+      ) {
         const fetchPromises = this.likedRecipes.map((recipeId) => {
           return this.fetchRecipeFromFirebase(recipeId)
             .then((recipeDoc) => {
@@ -220,7 +249,9 @@ export default {
     },
     async fetchMyCookbookData() {
       if (auth.currentUser) {
-        const userDocSnapshot = await getDoc(doc(db, "users", auth.currentUser.uid));
+        const userDocSnapshot = await getDoc(
+          doc(db, "users", auth.currentUser.uid)
+        );
         this.userData = userDocSnapshot.data();
         this.fetchRecipesFromCookbook();
       }
@@ -257,7 +288,9 @@ export default {
         });
 
         Promise.all(fetchPromises).then(() => {
-          let sortedMyCookbookCategories = Object.entries(myCookbookCategoryList)
+          let sortedMyCookbookCategories = Object.entries(
+            myCookbookCategoryList
+          )
             .filter(([key, value]) => value > 0)
             .sort((a, b) => b[1] - a[1])
             .slice(0, 5);
@@ -278,7 +311,9 @@ export default {
       const recipes = [];
       for (const recipeId of this.userData.my_cookbook) {
         try {
-          const recipeDocSnapshot = await getDoc(doc(db, "all_recipes", recipeId));
+          const recipeDocSnapshot = await getDoc(
+            doc(db, "all_recipes", recipeId)
+          );
           if (recipeDocSnapshot.exists()) {
             const recipeData = recipeDocSnapshot.data();
             recipes.push(recipeData);
@@ -290,10 +325,6 @@ export default {
       this.myCookbookRecipes = recipes;
       this.fetchRecipeCreationData();
       this.fetchLeftoverPastMonth();
-      // can add other functions here for common leftovers Barchart and fav category
-      // that need cookbook recipes data
-      //
-      //
     },
     async fetchRecipeCreationData() {
       const currentDate = new Date();
@@ -324,19 +355,25 @@ export default {
             creationMonth >= currentMonth - 5 && // Adjusted to cover only the past 6 months
             creationMonth <= currentMonth // Ensure it doesn't count future months
           ) {
-            const month = creationDate.toLocaleString("default", { month: "short" });
+            const month = creationDate.toLocaleString("default", {
+              month: "short",
+            });
             recipeCounts[month]++;
           }
         }
       }
 
-      const recipeData = monthLabels.map((month) => [month, recipeCounts[month]]);
+      const recipeData = monthLabels.map((month) => [
+        month,
+        recipeCounts[month],
+      ]);
       this.recipesCreatedData = recipeData;
-      console.log(recipeData);
     },
     async fetchLeftoverPastMonth() {
       const currentDate = new Date();
-      const lastMonthDate = new Date(currentDate.setMonth(currentDate.getMonth() - 1));
+      const lastMonthDate = new Date(
+        currentDate.setMonth(currentDate.getMonth() - 1)
+      );
       const lastMonthMidnight = new Date(
         lastMonthDate.getFullYear(),
         lastMonthDate.getMonth(),
@@ -395,7 +432,6 @@ export default {
         }, {});
 
       this.leftoverPastMonth = sortedLeftoverCounts;
-      console.log(sortedLeftoverCounts);
     },
   },
 };
