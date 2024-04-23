@@ -32,8 +32,12 @@
         <p class="logOutButton-text">Log Out</p>
       </button>
       <button type="button" class="profileButton" @click="goToProfile()">
-        <ProfileImage :path="profilePicUrl || userData.profile_img_url" alt="profile pic" class="profile"
-          @click="goToProfile()" />
+        <ProfileImage
+          :path="profilePicUrl || userData.profile_img_url"
+          alt="profile pic"
+          class="profile"
+          @click="goToProfile()"
+        />
       </button>
     </div>
     <hr />
@@ -66,7 +70,6 @@ export default {
   },
   mounted() {
     let localUserData = localStorage.getItem("userData");
-    console.log(localUserData);
     if (
       localUserData &&
       localUserData !== "" &&
@@ -93,7 +96,7 @@ export default {
   },
   methods: {
     goToCommunityPage() {
-      store.commit('communitypage');
+      store.commit("communitypage");
       this.$router.push("/community-page");
     },
     goToRecipeGenerator() {
@@ -117,7 +120,6 @@ export default {
         });
     },
     async fetchUserData() {
-      console.log("testtest");
       if (auth.currentUser) {
         const userDocSnapshot = await getDoc(
           doc(db, "users", auth.currentUser.uid)
@@ -209,7 +211,6 @@ export default {
 
 .thirdContainer {
   flex: 0.3;
-  /* width: 20%; */
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -239,8 +240,6 @@ export default {
   padding: 0;
   background-color: transparent;
   border: none;
-  /* margin-bottom: 75px; */
-  /* margin-right: 150px; */
 }
 
 .profile {
@@ -256,6 +255,5 @@ hr {
   margin: 0;
   border: 0;
   border-top: 1.4px solid black;
-  /* #dddddd; */
 }
 </style>
