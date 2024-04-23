@@ -142,8 +142,6 @@ export default {
   created() {
     this.fetchRecipes();
     this.router = router;
-
-    this.$store.commit("communitypage");
     window.addEventListener("scroll", this.handleScroll);
   },
   destroyed() {
