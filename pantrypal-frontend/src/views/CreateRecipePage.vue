@@ -59,7 +59,6 @@
               class="input-text"
             ></textarea>
 
-            <!-- Added Cook Time, Category and Serving Size -->
             <div class="additional-info">
               <div class="input-group">
                 <label for="cookTime">Cook Time:</label>
@@ -138,7 +137,6 @@
             </div>
           </div>
 
-          <!-- Directions -->
           <div class="second2">
             <div class="recipe-section">
               <label for="directions">Directions:</label>
@@ -227,8 +225,8 @@ export default {
         allergens: [],
         cook_time_hours: "",
         cook_time_minutes: "",
-        categories: [], //loaded categories
-        category: [], //input categories
+        categories: [],
+        category: [],
         ingredients: [""],
         directions: [{ stepNumber: 1, text: "" }],
       },
@@ -273,20 +271,18 @@ export default {
             console.log("Upload is " + progress + "% done");
           },
           (error) => {
-            // Handle unsuccessful uploads
             console.error("Upload failed", error);
-            reject(error); // Reject the promise on error
+            reject(error);
           },
           () => {
-            // Handle successful uploads on complete
             getDownloadURL(uploadTask.snapshot.ref)
               .then((downloadURL) => {
                 console.log("File available at", downloadURL);
-                resolve(downloadURL); // Resolve the promise with the download URL
+                resolve(downloadURL);
               })
               .catch((error) => {
                 console.error("Failed to get download URL", error);
-                reject(error); // Reject the promise if getting the download URL fails
+                reject(error);
               });
           }
         );
@@ -324,13 +320,10 @@ export default {
     onlyNumberInput(event, field) {
       const code = event.keyCode || event.which;
       if (code > 31 && (code < 48 || code > 57) && code !== 46) {
-        // If the key pressed is not a number or a decimal point, prevent the keypress
         event.preventDefault();
       } else if (code === 46 && this.recipeData[field].includes(".")) {
-        // If the key pressed is a decimal point and the current value already includes a decimal point, prevent the keypress
         event.preventDefault();
       } else {
-        // If the key pressed is a number or a decimal point, update the value
         this.recipeData[field] = event.target.value;
       }
     },
@@ -345,9 +338,6 @@ export default {
       if (!this.recipeData.description) {
         missingFields.push("Description");
       }
-      // if (!this.recipeData.allergen_info) {
-      //   missingFields.push("Allergen Information");
-      // }
       if (
         !this.recipeData.cook_time_hours &&
         !this.recipeData.cook_time_minutes
