@@ -13,6 +13,9 @@ In conclusion, the successful development and deployment of PantryPal exemplify 
 
 ### Links
 Website: https://pantrypal-e1225.web.app/
+
 Report: https://docs.google.com/document/d/1sBYRNxE0Yrr5owWkquDM1H5IOaIg2pSf6eANqiQeJkc/edit?usp=sharing
+
 SCRUM Artefacts: https://docs.google.com/spreadsheets/d/1YmsZ2pfBofQhoxQOZtnoy6yAnzAnQzqcCA1MogU8HpU/edit?usp=sharing
+
 Video: 
