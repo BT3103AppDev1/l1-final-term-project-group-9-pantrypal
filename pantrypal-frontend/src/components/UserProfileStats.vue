@@ -329,7 +329,7 @@ export default {
     async fetchRecipeCreationData() {
       const currentDate = new Date();
       const currentYear = currentDate.getFullYear();
-      const currentMonth = currentDate.getMonth(); // Month is zero-based
+      const currentMonth = currentDate.getMonth(); 
 
       const monthLabels = [];
       const recipeCounts = {};
@@ -342,18 +342,16 @@ export default {
         recipeCounts[month] = 0;
       }
 
-      // Count recipes created by month from myCookbookRecipes
       for (const recipe of this.myCookbookRecipes) {
         if (recipe && recipe.created_date) {
           const creationDate = new Date(recipe.created_date.seconds * 1000);
           const creationYear = creationDate.getFullYear();
           const creationMonth = creationDate.getMonth();
 
-          // Check if the recipe was created in the last 6 months
           if (
             creationYear === currentYear &&
-            creationMonth >= currentMonth - 5 && // Adjusted to cover only the past 6 months
-            creationMonth <= currentMonth // Ensure it doesn't count future months
+            creationMonth >= currentMonth - 5 && 
+            creationMonth <= currentMonth 
           ) {
             const month = creationDate.toLocaleString("default", {
               month: "short",
@@ -402,10 +400,8 @@ export default {
         const matches = fuse.search(leftover);
 
         if (matches.length > 0) {
-          // Sort the matches by score in ascending order
           matches.sort((a, b) => a.score - b.score);
 
-          // Get the top 1 highest matching result
           const topMatch = matches[0];
           const matchedValue = topMatch.item;
 

@@ -49,7 +49,6 @@ describe('ChefBot', () => {
             conversationHistory: [
                 { role: 'assistant', content: 'Welcome to ChefBot! Let\'s get cooking with your selected recipe: Test Recipe. Do you have any questions?'},
                 { role: 'user', content: userMessage },
-                // { role: 'assistant', content: 'Mock response' },
             ],
             selectedRecipe: { recipe_name: 'Test Recipe' },
             }

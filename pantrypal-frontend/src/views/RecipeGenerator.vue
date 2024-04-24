@@ -110,7 +110,6 @@ export default {
 
       try {
         this.recipe = props.generatedRecipe;
-        // this.componentKey++;
 
         const user = auth.currentUser;
         let user_id = user ? user.uid : "chefbot";
@@ -125,14 +124,12 @@ export default {
 
         // Check each ingredient in the recipe if it's present in this.ingredients
         this.recipe.ingredients.forEach((recipeIngredient, recipeIndex) => {
-          // Iterate over this.ingredients to find a match
           for (let i = 0; i < this.ingredients.length; i++) {
             const ingredient = this.ingredients[i].name;
-            // Check if the recipeIngredient contains ingredient
             if (recipeIngredient.toLowerCase().includes(ingredient.toLowerCase())) {
-              this.selectedIngredients[recipeIndex] = true; // Mark checkbox as checked if ingredient is in this.ingredients
+              this.selectedIngredients[recipeIndex] = true; 
               temporaryLeftovers.push(ingredient.toLowerCase());
-              break; // Exit the loop once a match is found
+              break; 
             }
           }
         });
@@ -217,20 +214,18 @@ export default {
             console.log("Upload is " + progress + "% done");
           },
           (error) => {
-            // Handle unsuccessful uploads
             console.error("Upload failed", error);
-            reject(error); // Reject the promise on error
+            reject(error); 
           },
           () => {
-            // Handle successful uploads on complete
             getDownloadURL(uploadTask.snapshot.ref)
               .then((downloadURL) => {
                 console.log("File available at", downloadURL);
-                resolve(downloadURL); // Resolve the promise with the download URL
+                resolve(downloadURL); 
               })
               .catch((error) => {
                 console.error("Failed to get download URL", error);
-                reject(error); // Reject the promise if getting the download URL fails
+                reject(error); 
               });
           }
         );
@@ -276,20 +271,6 @@ export default {
   padding: 2rem;
   min-height: 400px;
 }
-
-/* .reloadButton {
-  background-color: #a7bf6a;
-  border: none;
-  text-decoration: none;
-  padding: 0;
-  cursor: pointer;
-  border-radius: 10px;
-  width: 90px;
-  height: 32px;
-  color: white;
-  text-align: center;
-  line-height: 32px; 
-} */
 
 .reloadButton {
   background-color: #3c1f11;

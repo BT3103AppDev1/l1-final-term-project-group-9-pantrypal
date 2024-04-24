@@ -163,7 +163,6 @@ const generateInitialRecipe = async (req, res) => {
         recipe_img_url: imageUrl
     };
 
-    // Add the generated recipe to the conversation history
     res.send({ role: "system", content: recipeWithImage });
     console.log("Generated Recipe: ", recipeWithImage);
 };
