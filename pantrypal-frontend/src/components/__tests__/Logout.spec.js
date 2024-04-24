@@ -31,7 +31,7 @@ beforeEach(() => {
                     })),
                 },
             },
-            stubs: ['ProfileImage']  // Stub any child components
+            stubs: ['ProfileImage']  
         }
     });
 });
@@ -40,21 +40,17 @@ describe('TopBar Component', () => {
 
     it('renders the logout button', () => {
         const logoutButton = wrapper.find('.logOutButton');
-        expect(logoutButton.exists()).toBe(true);  // Assert the button is present
+        expect(logoutButton.exists()).toBe(true);  
     });
 
     it('calls logout on logout button click', async () => {
-        // Spy on logout method
         const logoutSpy = vi.spyOn(wrapper.vm, 'logout');
         
-        // Trigger the logout button click
         await wrapper.find('.logOutButton').trigger('click');
 
-        // Assert logout method was called
         expect(logoutSpy).toHaveBeenCalled();
         await flushPromises();
 
-        // Assert that router and localStorage actions were called as expected
         expect(wrapper.vm.$router.push).toHaveBeenCalledWith('/');
         expect(localStorage.clear).toHaveBeenCalled();
     });

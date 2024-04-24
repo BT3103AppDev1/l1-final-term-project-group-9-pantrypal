@@ -34,7 +34,6 @@ beforeEach(() => {
   });
 });
 
-
 describe("SignUp.vue", () => {
     it('renders the sign-up form', () => {
         expect(wrapper.find('.signup-form-container').exists()).toBe(true);

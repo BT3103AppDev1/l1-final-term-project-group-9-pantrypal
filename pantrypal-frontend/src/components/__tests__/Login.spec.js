@@ -4,7 +4,6 @@ import Login from '@/views/Login.vue';
 import { auth } from "@/firebase.js";
 import { signInWithEmailAndPassword } from "firebase/auth";
 
-// Mocking Firebase
 vi.mock('@/firebase.js', () => ({
   auth: { signInWithEmailAndPassword: vi.fn() }
 }));
