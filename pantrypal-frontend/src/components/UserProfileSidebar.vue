@@ -74,7 +74,6 @@ export default {
     };
   },
   props: {
-    // string: settings, likedRecipes, myCookbook
     selected: "",
     userData: {},
   },
@@ -126,11 +125,9 @@ export default {
           const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         },
         (error) => {
-          // Handle unsuccessful uploads
           console.error("Upload failed", error);
         },
         () => {
-          // Handle successful uploads on complete
           console.log("HI");
           getDownloadURL(uploadTask.snapshot.ref)
             .then((downloadURL) => {
@@ -206,7 +203,6 @@ export default {
   padding: 8px 0px;
   margin: 2rem 0px;
   color: white;
-  /* transition: background-color 0.3s, color 0.3s; */
 }
 
 h3 {
