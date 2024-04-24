@@ -59,7 +59,6 @@ export default {
     },
     mounted() {
         console.log(this.selectedRecipe);
-        console.log("mounted");
         const initialMessage = `Welcome to ChefBot! Let's get cooking with your selected recipe: ${this.selectedRecipe.recipe_name}. Do you have any questions?`;
 
         this.messages.push({
