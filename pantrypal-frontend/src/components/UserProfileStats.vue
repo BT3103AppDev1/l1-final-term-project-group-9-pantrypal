@@ -29,10 +29,7 @@
     <div class="favourite-category">
       <h2>Favourite Categories</h2>
       <p>(My Cookbook)</p>
-      <div
-        v-if="Object.keys(myCookbookCategoryList).length > 0"
-        class="category-charts"
-      >
+      <div v-if="Object.keys(myCookbookCategoryList).length > 0" class="category-charts">
         <div class="category-liked">
           <pie-chart
             class="pie-category-liked"
@@ -130,9 +127,7 @@ export default {
     },
     async fetchLikedRecipesData() {
       if (auth.currentUser) {
-        const userDocSnapshot = await getDoc(
-          doc(db, "users", auth.currentUser.uid)
-        );
+        const userDocSnapshot = await getDoc(doc(db, "users", auth.currentUser.uid));
         this.userData = userDocSnapshot.data();
         this.fetchRecipesFromCookbook();
       }
@@ -151,10 +146,7 @@ export default {
       };
 
       this.likedRecipes = this.userData.liked_recipes;
-      if (
-        this.userData.liked_recipes &&
-        this.userData.liked_recipes.length > 0
-      ) {
+      if (this.userData.liked_recipes && this.userData.liked_recipes.length > 0) {
         const fetchPromises = this.likedRecipes.map((recipeId) => {
           return this.fetchRecipeFromFirebase(recipeId)
             .then((recipeDoc) => {
@@ -189,9 +181,7 @@ export default {
     },
     async fetchLikedRecipesData() {
       if (auth.currentUser) {
-        const userDocSnapshot = await getDoc(
-          doc(db, "users", auth.currentUser.uid)
-        );
+        const userDocSnapshot = await getDoc(doc(db, "users", auth.currentUser.uid));
         this.userData = userDocSnapshot.data();
         this.fetchRecipesFromCookbook();
       }
@@ -210,10 +200,7 @@ export default {
       };
 
       this.likedRecipes = this.userData.liked_recipes;
-      if (
-        this.userData.liked_recipes &&
-        this.userData.liked_recipes.length > 0
-      ) {
+      if (this.userData.liked_recipes && this.userData.liked_recipes.length > 0) {
         const fetchPromises = this.likedRecipes.map((recipeId) => {
           return this.fetchRecipeFromFirebase(recipeId)
             .then((recipeDoc) => {
@@ -249,9 +236,7 @@ export default {
     },
     async fetchMyCookbookData() {
       if (auth.currentUser) {
-        const userDocSnapshot = await getDoc(
-          doc(db, "users", auth.currentUser.uid)
-        );
+        const userDocSnapshot = await getDoc(doc(db, "users", auth.currentUser.uid));
         this.userData = userDocSnapshot.data();
         this.fetchRecipesFromCookbook();
       }
@@ -288,9 +273,7 @@ export default {
         });
 
         Promise.all(fetchPromises).then(() => {
-          let sortedMyCookbookCategories = Object.entries(
-            myCookbookCategoryList
-          )
+          let sortedMyCookbookCategories = Object.entries(myCookbookCategoryList)
             .filter(([key, value]) => value > 0)
             .sort((a, b) => b[1] - a[1])
             .slice(0, 5);
@@ -311,9 +294,7 @@ export default {
       const recipes = [];
       for (const recipeId of this.userData.my_cookbook) {
         try {
-          const recipeDocSnapshot = await getDoc(
-            doc(db, "all_recipes", recipeId)
-          );
+          const recipeDocSnapshot = await getDoc(doc(db, "all_recipes", recipeId));
           if (recipeDocSnapshot.exists()) {
             const recipeData = recipeDocSnapshot.data();
             recipes.push(recipeData);
@@ -329,12 +310,11 @@ export default {
     async fetchRecipeCreationData() {
       const currentDate = new Date();
       const currentYear = currentDate.getFullYear();
-      const currentMonth = currentDate.getMonth(); 
+      const currentMonth = currentDate.getMonth();
 
       const monthLabels = [];
       const recipeCounts = {};
 
-      // Generate month labels for the last 6 months
       for (let i = 5; i >= 0; i--) {
         const date = new Date(currentYear, currentMonth - i, 1);
         const month = date.toLocaleString("default", { month: "short" });
@@ -350,8 +330,8 @@ export default {
 
           if (
             creationYear === currentYear &&
-            creationMonth >= currentMonth - 5 && 
-            creationMonth <= currentMonth 
+            creationMonth >= currentMonth - 5 &&
+            creationMonth <= currentMonth
           ) {
             const month = creationDate.toLocaleString("default", {
               month: "short",
@@ -361,17 +341,12 @@ export default {
         }
       }
 
-      const recipeData = monthLabels.map((month) => [
-        month,
-        recipeCounts[month],
-      ]);
+      const recipeData = monthLabels.map((month) => [month, recipeCounts[month]]);
       this.recipesCreatedData = recipeData;
     },
     async fetchLeftoverPastMonth() {
       const currentDate = new Date();
-      const lastMonthDate = new Date(
-        currentDate.setMonth(currentDate.getMonth() - 1)
-      );
+      const lastMonthDate = new Date(currentDate.setMonth(currentDate.getMonth() - 1));
       const lastMonthMidnight = new Date(
         lastMonthDate.getFullYear(),
         lastMonthDate.getMonth(),
@@ -396,7 +371,6 @@ export default {
 
       const leftoverCounts = {};
       allLeftovers.forEach((leftover) => {
-        // Use Fuse.js to find the closest match in the allLeftovers array
         const matches = fuse.search(leftover);
 
         if (matches.length > 0) {

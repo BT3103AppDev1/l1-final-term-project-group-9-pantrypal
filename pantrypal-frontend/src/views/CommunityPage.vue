@@ -3,7 +3,6 @@
   <div class="community-page">
     <div class="filters">
       <div class="filterBar">
-        <!--SearchBar-->
         <div class="search-bar">
           <input
             type="text"
@@ -11,13 +10,8 @@
             placeholder="Search name or ingredients..."
             v-model="searchQuery"
           />
-          <img
-            class="search-button"
-            src="../assets/search-icon.svg"
-            alt="Search Icon"
-          />
+          <img class="search-button" src="../assets/search-icon.svg" alt="Search Icon" />
         </div>
-        <!--Sort By Category Dropdown-->
         <div class="category-bar-text">
           <p>Category:</p>
         </div>
@@ -34,7 +28,6 @@
             </dropdown>
           </div>
         </div>
-        <!--Sort By Most Recent/Most Liked Dropdown-->
         <div class="sortby-bar-text">
           <p>Sort By:</p>
         </div>
@@ -54,11 +47,9 @@
       </div>
     </div>
     <div class="main-content">
-      <!--recipe card Placeholder-->
       <div class="recipe-list" v-if="!isDataLoaded">
         <RecipeCardPlaceholder v-for="i in 15" :key="i" />
       </div>
-      <!-- recipe card list -->
       <div class="recipe-list" v-else>
         <RecipeCard
           v-for="recipe in filteredRecipes"
@@ -68,9 +59,7 @@
         />
       </div>
       <div class="NoSearchResultsContainer">
-        <text v-if="this.filteredRecipes.length == 0"
-          >No Search Results Found</text
-        >
+        <text v-if="this.filteredRecipes.length == 0">No Search Results Found</text>
       </div>
       <CircleButton logo="./plus-icon.png" @click="toggleCreateRecipe" />
     </div>
@@ -191,9 +180,7 @@ export default {
           .includes(this.searchQuery.toLowerCase());
         let ingredientsMatch = false;
         recipe.ingredients.forEach((ingredient) => {
-          if (
-            ingredient.toLowerCase().includes(this.searchQuery.toLowerCase())
-          ) {
+          if (ingredient.toLowerCase().includes(this.searchQuery.toLowerCase())) {
             ingredientsMatch = true;
           }
         });
@@ -243,27 +230,22 @@ export default {
       });
     },
     handleScroll() {
-      // Show the button when user scrolls down beyond 300px
       this.showBackToTop = window.scrollY > 250;
-      const currentScrollPosition =
-        window.scrollY || document.documentElement.scrollTop;
+      const currentScrollPosition = window.scrollY || document.documentElement.scrollTop;
       if (currentScrollPosition < 0) {
         return;
       }
       if (currentScrollPosition > this.lastScrollPosition) {
-        // Scrolling down
         this.showTopBar = false;
       } else {
-        // Scrolling up
         this.showTopBar = true;
       }
       this.lastScrollPosition = currentScrollPosition;
     },
-    // Method to scroll to the top of the page
     scrollToTop() {
       window.scrollTo({
         top: 0,
-        behavior: "smooth", // Smooth scrolling
+        behavior: "smooth",
       });
     },
   },
@@ -274,7 +256,6 @@ export default {
 .community-page {
   margin: 0 auto;
   display: flex;
-  /* justify-content: center; */
   padding: 70px 0px;
   align-items: center;
   min-height: 100vh;

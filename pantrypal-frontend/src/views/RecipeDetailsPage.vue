@@ -54,12 +54,9 @@ export default {
 }
 .recipe-content {
   background-color: white;
-  /* padding: 20px; */
   border-radius: 8px;
   height: 90%;
-  /* margin: 30px; */
   margin-left: 70px;
   margin-right: 70px;
-  /* margin-top: 90px; */
 }
 </style>

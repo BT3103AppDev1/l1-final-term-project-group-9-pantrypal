@@ -129,7 +129,6 @@
       </div>
     </div>
   </div>
-  <!-- <ConfirmDialog v-if="showConfirmation" @confirm="deleteRecipe" @cancel="hideConfirmDialog" /> -->
 </template>
 
 <script>
@@ -328,7 +327,6 @@ export default {
 
 .popout-recipe-content {
   background-color: white;
-  /* padding: 20px; */
   border-radius: 8px;
   width: 80%;
   height: 90%;

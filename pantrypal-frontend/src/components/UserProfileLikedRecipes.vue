@@ -44,9 +44,6 @@
       </div>
     </div>
 
-    <!-- RecipeCards######### -->
-
-    <!-- recipe card list -->
     <div class="recipe-container">
       <div class="recipe-list" v-if="!isDataLoaded">
         <RecipeCardPlaceholder v-for="i in 15" :key="i" />
@@ -132,7 +129,6 @@ export default {
   created() {
     this.fetchRecipes();
     store.commit("likedrecipes");
-    // Set up real-time listener for liked recipes
     if (this.userData && this.userData.uid) {
       const userDocRef = doc(db, "users", this.userData.uid);
       onSnapshot(userDocRef, (doc) => {
@@ -345,40 +341,14 @@ export default {
 }
 
 .recipe-container {
-  /* display: flex;
-    justify-content: center; */
   margin: 0 80px;
 }
 
 .recipe-list {
   margin: 10px 0px;
-  /* flex: 0.9; */
-  /* width: 1030px;
-  display: flex;
-  flex-wrap: wrap;
-  align-self: flex-start; */
-  /* flex-direction: row; */
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 }
-
-/* @media screen and (max-width: 1330px) {
-  .recipe-list {
-    margin: 10px auto 0;
-    display: flex;
-    flex-wrap: wrap;
-    width: 690px;
-  }
-}
-
-@media screen and (max-width: 990px) {
-  .recipe-list {
-    margin: 10px auto 0;
-    display: flex;
-    flex-wrap: wrap;
-    width: 340px;
-  }
-} */
 
 .NoSearchResultsContainer {
   display: flex;
