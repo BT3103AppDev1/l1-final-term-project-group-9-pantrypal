@@ -307,7 +307,7 @@ describe('EditRecipePage', () => {
 
     // Verify that the success toast was displayed
     expect(toast.success).toHaveBeenCalled();
-    expect(toast.success).toHaveBeenCalledWith("Recipe was successfully created!", expect.anything());
+    expect(toast.success).toHaveBeenCalledWith("Changes were successfully saved!", expect.anything());
   });
 
   it('should navigate to the RecipeDetailsPage when close is called', async () => {
