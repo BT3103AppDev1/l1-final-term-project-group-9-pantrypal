@@ -305,7 +305,7 @@ describe('EditRecipePage', () => {
     // Execute the submission process
     await wrapper.vm.submitRecipe();
 
-    // Verify that the success toast was displayed
+    // Verify that the success toast was displayed with correct text
     expect(toast.success).toHaveBeenCalled();
     expect(toast.success).toHaveBeenCalledWith("Changes were successfully saved!", expect.anything());
   });
