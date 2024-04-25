@@ -46,7 +46,6 @@ describe('InputLeftover', () => {
   });
 
   it('validates the ingredient fields', () => {
-    // Set some invalid ingredients
     wrapper.vm.ingredients = [
       { name: '', quantity: '' },
       { name: 'Chicken', quantity: '' },
@@ -56,7 +55,6 @@ describe('InputLeftover', () => {
   });
 
   it('generates a recipe when the "Generate Recipe" button is clicked', async () => {
-    // Set some valid ingredients
     wrapper.vm.ingredients = [
       { name: 'Chicken', quantity: '100g' },
       { name: 'Carrots', quantity: '50g' },
@@ -67,7 +65,6 @@ describe('InputLeftover', () => {
   });
 
   it('shows a toast error when the ingredient fields are invalid', async () => {
-    // Set some invalid ingredients
     wrapper.vm.ingredients = [
       { name: '', quantity: '' },
       { name: 'Chicken', quantity: '' },

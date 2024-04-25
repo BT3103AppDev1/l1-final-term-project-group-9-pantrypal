@@ -35,15 +35,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.topBar {
-  cursor: pointer;
-  padding: 0;
-  background-color: white;
-  border: none;
-  border-radius: 50%;
-  height: 60px;
-  width: 60px;
-}
-</style>

@@ -46,6 +46,7 @@
 
 <script>
 import { db, auth } from "../firebase.js";
+import store from "@/store";
 import { signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import ProfileImage from "./ProfileImage.vue";
@@ -69,7 +70,6 @@ export default {
   },
   mounted() {
     let localUserData = localStorage.getItem("userData");
-    console.log(localUserData);
     if (
       localUserData &&
       localUserData !== "" &&
@@ -96,14 +96,15 @@ export default {
   },
   methods: {
     goToCommunityPage() {
+      store.commit("communitypage");
       this.$router.push("/community-page");
     },
     goToRecipeGenerator() {
-        if (window.location.pathname === "/recipe-generator") {
-            location.reload();
-        } else {
-            this.$router.push("/recipe-generator");
-        }
+      if (window.location.pathname === "/recipe-generator") {
+        location.reload();
+      } else {
+        this.$router.push("/recipe-generator");
+      }
     },
     goToProfile() {
       this.$router.push("/profile");
@@ -119,7 +120,6 @@ export default {
         });
     },
     async fetchUserData() {
-      console.log("testtest");
       if (auth.currentUser) {
         const userDocSnapshot = await getDoc(
           doc(db, "users", auth.currentUser.uid)
@@ -211,7 +211,6 @@ export default {
 
 .thirdContainer {
   flex: 0.3;
-  /* width: 20%; */
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -241,8 +240,6 @@ export default {
   padding: 0;
   background-color: transparent;
   border: none;
-  /* margin-bottom: 75px; */
-  /* margin-right: 150px; */
 }
 
 .profile {
@@ -258,6 +255,5 @@ hr {
   margin: 0;
   border: 0;
   border-top: 1.4px solid black;
-  /* #dddddd; */
 }
 </style>

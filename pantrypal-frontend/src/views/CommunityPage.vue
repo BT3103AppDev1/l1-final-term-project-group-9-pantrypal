@@ -1,6 +1,5 @@
 <template>
   <TopBar whichPage="feed" :showNavbar="showTopBar" />
-
   <div class="community-page">
     <div class="filters">
       <div class="filterBar">
@@ -48,11 +47,9 @@
       </div>
     </div>
     <div class="main-content">
-      <!-- RecipeCards######### -->
       <div class="recipe-list" v-if="!isDataLoaded">
         <RecipeCardPlaceholder v-for="i in 15" :key="i" />
       </div>
-      <!-- recipe card list -->
       <div class="recipe-list" v-else>
         <RecipeCard
           v-for="recipe in filteredRecipes"
@@ -64,14 +61,7 @@
       <div class="NoSearchResultsContainer">
         <text v-if="this.filteredRecipes.length == 0">No Search Results Found</text>
       </div>
-      <!-- Back to Top button 
-    <button class="back-to-top" @click="scrollToTop" v-show="showBackToTop">
-      <img src="../assets/BackToTop.svg" alt="Back To Top" />
-      <text>Back To Top</text>
-    </button>
-    -->
-
-      <CircleButton logo="src/assets/plus-icon.png" @click="toggleCreateRecipe" />
+      <CircleButton logo="./plus-icon.png" @click="toggleCreateRecipe" />
     </div>
   </div>
 </template>
@@ -80,8 +70,6 @@
 import RecipeCard from "../components/RecipeCard.vue";
 import { db } from "../firebase.js";
 import { collection, getDocs, getDoc, doc } from "firebase/firestore";
-import { mapState } from "vuex";
-
 import TopBar from "@/components/TopBar.vue";
 import dropdown from "vue-dropdowns";
 import RecipeImage from "@/components/RecipeImage.vue";
@@ -216,12 +204,10 @@ export default {
       } else {
         const docSnap = await getDoc(doc(db, "categories", payload.name));
         const recipesIDlist = docSnap.data().recipes;
-        if (recipesIDlist.length != 0) {
-          this.filteredRecipes = this.filteredRecipesByName;
-          this.filteredRecipes = this.filteredRecipesByName.filter((recipe) =>
-            recipesIDlist.includes(recipe.recipe_id)
-          );
-        }
+        this.filteredRecipes = this.filteredRecipesByName;
+        this.filteredRecipes = this.filteredRecipesByName.filter((recipe) =>
+          recipesIDlist.includes(recipe.recipe_id)
+        );
       }
     },
     filterUsingSort(payload) {
@@ -244,26 +230,22 @@ export default {
       });
     },
     handleScroll() {
-      // Show the button when user scrolls down beyond 300px
       this.showBackToTop = window.scrollY > 250;
       const currentScrollPosition = window.scrollY || document.documentElement.scrollTop;
       if (currentScrollPosition < 0) {
         return;
       }
       if (currentScrollPosition > this.lastScrollPosition) {
-        // Scrolling down
         this.showTopBar = false;
       } else {
-        // Scrolling up
         this.showTopBar = true;
       }
       this.lastScrollPosition = currentScrollPosition;
     },
-    // Method to scroll to the top of the page
     scrollToTop() {
       window.scrollTo({
         top: 0,
-        behavior: "smooth", // Smooth scrolling
+        behavior: "smooth",
       });
     },
   },
@@ -274,7 +256,6 @@ export default {
 .community-page {
   margin: 0 auto;
   display: flex;
-  /* justify-content: center; */
   padding: 70px 0px;
   align-items: center;
   min-height: 100vh;
@@ -407,20 +388,4 @@ export default {
   display: flex;
   flex-direction: column;
 }
-
-/*
-.NoSearchResultsContainer {
-  display: flex;
-  justify-content: center;
-}
-
-Show the button when scrolling down
-.back-to-top.show {
-  display: block;
-}
-
-.back-to-top img {
-  width: 60px;
-  height: 60px;
-} */
 </style>

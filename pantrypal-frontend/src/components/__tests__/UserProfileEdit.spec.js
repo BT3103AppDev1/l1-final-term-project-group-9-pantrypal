@@ -196,10 +196,7 @@ describe('UserProfileSidebar Component', () => {
     const file = new File(['content'], 'photo.jpg', { type: 'image/jpeg' });
     const fileInput = wrapper.find('input[type="file"]');
   
-    // Trigger file input selection
     await wrapper.vm.onFileSelected({ target: { files: [file] } });
-  
-    // Wait for async operations to complete, including our simulated upload delay
     await flushPromises();
   
     // Assertions

@@ -114,8 +114,6 @@ export default {
             console.log(this.value);
 
             if (this.validateIngredients() === false) {
-                // Show alert if any ingredient fields are empty
-                // alert('Please fill in all leftover names and quantities.');
                 this.triggerToast();
             } else {
                 this.$emit('generate-recipe', {

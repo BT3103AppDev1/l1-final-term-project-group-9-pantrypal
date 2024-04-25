@@ -5,16 +5,20 @@
       <p>(Liked Recipes)</p>
       <div v-if="Object.keys(categoryList).length > 0" class="category-charts">
         <div class="category-liked">
-          <pie-chart class="pie-category-liked" :data="categoryList" :colors="[
-            '#596639',
-            '#CBDF99',
-            '#8AB3A5',
-            '#BAD7BC',
-            '#DCAA83',
-            '#BD6B16',
-            '#406344',
-            '#2F4858',
-          ]"></pie-chart>
+          <pie-chart
+            class="pie-category-liked"
+            :data="categoryList"
+            :colors="[
+              '#596639',
+              '#CBDF99',
+              '#8AB3A5',
+              '#BAD7BC',
+              '#DCAA83',
+              '#BD6B16',
+              '#406344',
+              '#2F4858',
+            ]"
+          ></pie-chart>
         </div>
       </div>
       <div v-else>
@@ -22,43 +26,55 @@
       </div>
     </div>
 
-    <!--INSERT YUENNING'S PIE CHART HERE-->
     <div class="favourite-category">
       <h2>Favourite Categories</h2>
       <p>(My Cookbook)</p>
       <div v-if="Object.keys(myCookbookCategoryList).length > 0" class="category-charts">
         <div class="category-liked">
-          <pie-chart class="pie-category-liked" :data="myCookbookCategoryList" :colors="[
-            '#596639',
-            '#CBDF99',
-            '#8AB3A5',
-            '#BAD7BC',
-            '#DCAA83',
-            '#BD6B16',
-            '#406344',
-            '#2F4858',
-          ]"></pie-chart>
+          <pie-chart
+            class="pie-category-liked"
+            :data="myCookbookCategoryList"
+            :colors="[
+              '#596639',
+              '#CBDF99',
+              '#8AB3A5',
+              '#BAD7BC',
+              '#DCAA83',
+              '#BD6B16',
+              '#406344',
+              '#2F4858',
+            ]"
+          ></pie-chart>
         </div>
       </div>
       <div v-else>
         <p>No recipes liked</p>
       </div>
     </div>
-    <!--UNTIL HERE-->
 
     <div class="numberOfRecipesCreated">
       <h2>Number of recipes created</h2>
       <div class="category-liked">
-        <column-chart :data="recipesCreatedData" xtitle="Month" ytitle="Number of Recipes Created"
-          :colors="['#BD6B16']"></column-chart>
+        <column-chart
+          :data="recipesCreatedData"
+          xtitle="Month"
+          ytitle="Number of Recipes Created"
+          :colors="['#BD6B16']"
+        ></column-chart>
       </div>
     </div>
 
     <div class="pastMonthLeftovers">
       <h2>Leftovers for the Past Month</h2>
       <div class="category-liked">
-        <bar-chart :data="leftoverPastMonth" xtitle="Counts" ytitle="Leftovers" :colors="['#596639']"
-          loading="Loading..." xstep="1"></bar-chart>
+        <bar-chart
+          :data="leftoverPastMonth"
+          xtitle="Counts"
+          ytitle="Leftovers"
+          :colors="['#596639']"
+          loading="Loading..."
+          xstep="1"
+        ></bar-chart>
       </div>
     </div>
   </div>
@@ -92,7 +108,7 @@ export default {
     this.fetchMyCookbookData();
   },
   methods: {
-    fetchRecipeFromFirebase(recipeId) {
+    async fetchRecipeFromFirebase(recipeId) {
       return getDoc(doc(db, "all_recipes", recipeId))
         .then((docSnapshot) => {
           if (docSnapshot.exists()) {
@@ -107,7 +123,6 @@ export default {
         });
     },
     handleLastStatsUpdate() {
-      console.log("nice");
       this.fetchLikedRecipesData();
     },
     async fetchLikedRecipesData() {
@@ -158,7 +173,6 @@ export default {
           sortedCategories.forEach(([key, value]) => {
             topCategories[key] = value;
           });
-
           this.categoryList = topCategories;
         });
       } else {
@@ -292,20 +306,15 @@ export default {
       this.myCookbookRecipes = recipes;
       this.fetchRecipeCreationData();
       this.fetchLeftoverPastMonth();
-      // can add other functions here for common leftovers Barchart and fav category
-      // that need cookbook recipes data
-      //
-      //
     },
     async fetchRecipeCreationData() {
       const currentDate = new Date();
       const currentYear = currentDate.getFullYear();
-      const currentMonth = currentDate.getMonth(); // Month is zero-based
+      const currentMonth = currentDate.getMonth();
 
       const monthLabels = [];
       const recipeCounts = {};
 
-      // Generate month labels for the last 6 months
       for (let i = 5; i >= 0; i--) {
         const date = new Date(currentYear, currentMonth - i, 1);
         const month = date.toLocaleString("default", { month: "short" });
@@ -313,20 +322,20 @@ export default {
         recipeCounts[month] = 0;
       }
 
-      // Count recipes created by month from myCookbookRecipes
       for (const recipe of this.myCookbookRecipes) {
         if (recipe && recipe.created_date) {
           const creationDate = new Date(recipe.created_date.seconds * 1000);
           const creationYear = creationDate.getFullYear();
           const creationMonth = creationDate.getMonth();
 
-          // Check if the recipe was created in the last 6 months
           if (
             creationYear === currentYear &&
-            creationMonth >= currentMonth - 5 && // Adjusted to cover only the past 6 months
-            creationMonth <= currentMonth // Ensure it doesn't count future months
+            creationMonth >= currentMonth - 5 &&
+            creationMonth <= currentMonth
           ) {
-            const month = creationDate.toLocaleString("default", { month: "short" });
+            const month = creationDate.toLocaleString("default", {
+              month: "short",
+            });
             recipeCounts[month]++;
           }
         }
@@ -334,7 +343,6 @@ export default {
 
       const recipeData = monthLabels.map((month) => [month, recipeCounts[month]]);
       this.recipesCreatedData = recipeData;
-      console.log(recipeData);
     },
     async fetchLeftoverPastMonth() {
       const currentDate = new Date();
@@ -363,14 +371,11 @@ export default {
 
       const leftoverCounts = {};
       allLeftovers.forEach((leftover) => {
-        // Use Fuse.js to find the closest match in the allLeftovers array
         const matches = fuse.search(leftover);
 
         if (matches.length > 0) {
-          // Sort the matches by score in ascending order
           matches.sort((a, b) => a.score - b.score);
 
-          // Get the top 1 highest matching result
           const topMatch = matches[0];
           const matchedValue = topMatch.item;
 
@@ -397,7 +402,6 @@ export default {
         }, {});
 
       this.leftoverPastMonth = sortedLeftoverCounts;
-      console.log(sortedLeftoverCounts);
     },
   },
 };
