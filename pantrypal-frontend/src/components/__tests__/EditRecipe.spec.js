@@ -337,7 +337,7 @@ describe('EditRecipePage', () => {
     await wrapper.vm.submitRecipe();
     expect(wrapper.vm.submitRecipe).toHaveBeenCalled();
     expect(toast.success).toHaveBeenCalled();
-    expect(toast.success).toHaveBeenCalledWith("Recipe was successfully created!", expect.anything());
+    expect(toast.success).toHaveBeenCalledWith("Changes were successfully saved!", expect.anything());
   });
 
 });
