@@ -18,4 +18,4 @@ Report: https://docs.google.com/document/d/1sBYRNxE0Yrr5owWkquDM1H5IOaIg2pSf6eAN
 
 SCRUM Artefacts: https://docs.google.com/spreadsheets/d/1YmsZ2pfBofQhoxQOZtnoy6yAnzAnQzqcCA1MogU8HpU/edit?usp=sharing
 
-Video: https://youtu.be/jU9gwtz15cQ
+Video: [https://youtu.be/jU9gwtz15cQ](https://youtu.be/qeTImnWxWUE)
