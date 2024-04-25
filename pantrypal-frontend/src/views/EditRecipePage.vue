@@ -418,7 +418,7 @@ export default {
       });
     },
     recipeSavedSuccess() {
-      this.toast.success("Recipe was successfully created!", {
+      this.toast.success("Changes were successfully saved!", {
         timeout: 2000,
         position: "top-center",
         hideProgressBar: true,
