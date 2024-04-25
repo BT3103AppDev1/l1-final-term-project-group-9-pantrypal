@@ -59,7 +59,6 @@
               v-model="recipeData.allergen_info"
             ></textarea>
 
-            <!-- Added Cook Time, Category and Serving Size -->
             <div class="additional-info">
               <div class="input-group">
                 <label for="cookTime">Cook Time:</label>
@@ -133,7 +132,6 @@
             </div>
           </div>
 
-          <!-- Directions -->
           <div class="second2">
             <div class="recipe-section">
               <label for="directions">Directions:</label>
@@ -213,8 +211,8 @@ export default {
         allergens: [],
         cook_time_hours: "",
         cook_time_minutes: "",
-        categories: [], //loaded categories
-        category: [], //input categories
+        categories: [],
+        category: [],
         ingredients: [""],
         directions: [{ stepNumber: 1, text: "" }],
       },
@@ -228,13 +226,13 @@ export default {
       this.$refs.fileInput.click();
     },
     handleImageUpload(event) {
-      const file = event.target.files[0]; // Get the file from the input
+      const file = event.target.files[0];
       if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
         const reader = new FileReader();
         reader.onload = (e) => {
-          this.recipeData.imageSrc = e.target.result; // Data URL is ready and set
+          this.recipeData.imageSrc = e.target.result;
         };
-        reader.readAsDataURL(file); // Read the file
+        reader.readAsDataURL(file);
       } else {
         alert("Please select a JPG or PNG image file.");
       }
@@ -259,17 +257,6 @@ export default {
       this.$emit("close");
     },
     validateForm() {
-      // if (
-      //   isNaN(this.recipeData.cook_time_hours) ||
-      //   isNaN(this.recipeData.cook_time_minutes)
-      // ) {
-      //   alert("Please enter valid cook time values.");
-      //   return false;
-      // }
-      // if (isNaN(this.recipeData.serving_size)) {
-      //   alert("Please enter valid serving size values.");
-      //   return false;
-      // }
       if (
         !this.recipeData.recipe_name ||
         !this.recipeData.description ||
@@ -282,7 +269,6 @@ export default {
         !this.recipeData.ingredients.length ||
         !this.recipeData.directions.length
       ) {
-        // at least one field is empty
         alert(
           "Please fill in all fields properly before submitting the recipe."
         );
@@ -311,7 +297,7 @@ export default {
         directions: this.recipeData.directions.map((d) => d.text),
         ingredients: this.recipeData.ingredients,
         like_count: 0,
-        recipe_id: "", //dont know if this works
+        recipe_id: "",
         recipe_img_url: this.recipeData.imageSrc,
         recipe_name: this.recipeData.recipe_name,
         serving_size: parseInt(this.recipeData.serving_size),
@@ -324,7 +310,6 @@ export default {
         .then((docRef) => {
           console.log("Document written with ID: ", docRef.id);
 
-          // Update the recipe document with the recipe_id
           updateDoc(docRef, { recipe_id: docRef.id })
             .then(() => {
               console.log("Document updated successfully.");
