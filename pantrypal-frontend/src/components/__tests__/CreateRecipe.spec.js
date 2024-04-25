@@ -20,8 +20,6 @@ import { useToast } from 'vue-toastification';
 import VueRouter from 'vue-router';
 import { createRouter, createWebHistory } from 'vue-router';
 
-
-// Mock Firebase services and utilities
 vi.mock('@/firebase', () => ({
   auth: {
     currentUser: { uid: '123' }
@@ -40,8 +38,8 @@ vi.mock('firebase/storage', () => {
     return {
       snapshot: mockSnapshot,
       on: (event, progress, error, complete) => {
-        progress({ bytesTransferred: file.size, totalBytes: file.size }); // simulate progress
-        complete(); // simulate completion
+        progress({ bytesTransferred: file.size, totalBytes: file.size });
+        complete(); 
       }
     };
   });
@@ -50,38 +48,31 @@ vi.mock('firebase/storage', () => {
 });
 
 vi.mock("firebase/firestore", () => {
-  // Create a mock for the document snapshot
   const docSnapshotMock = {
     exists: () => true,
     data: vi.fn(() => ({ field1: 'value1', field2: 'value2' })),
     id: 'doc1',
   };
 
-  // Mock for document references that can be used to chain further Firestore methods
   const docRefMock = {
     set: vi.fn(() => Promise.resolve()),
     update: vi.fn(() => Promise.resolve()),
-    get: vi.fn(() => Promise.resolve(docSnapshotMock)), // Simulate getting a document snapshot
+    get: vi.fn(() => Promise.resolve(docSnapshotMock)), 
   };
 
-  // Mock for getDoc function
   const getDocMock = vi.fn((docRef) => Promise.resolve(docSnapshotMock));
 
-  // Mock for arrayUnion
   const arrayUnionMock = vi.fn((...items) => ({ arrayUnionOp: items }));
 
-  // Mock for collections that returns a document reference mock
   const collectionMock = vi.fn(() => ({
     doc: vi.fn(() => docRefMock)
   }));
 
-  // Mock the getFirestore function to return an object that mimics Firestore's methods
   const getFirestoreMock = vi.fn(() => ({
     collection: collectionMock,
     doc: vi.fn(() => docRefMock),
   }));
 
-  // Return all mocked functions and objects
   return {
     getFirestore: getFirestoreMock,
     doc: vi.fn(() => docRefMock),
@@ -108,7 +99,6 @@ const router = createRouter({
   routes,
 });
 
-// Mocking global components that might not be directly tested or are irrelevant for specific tests
 const globalComponents = {
   components: {
     Multiselect,
@@ -134,14 +124,13 @@ describe('CreateRecipePage', () => {
     originalRemoveEventListener = window.removeEventListener;
     originalHistory = window.history;
 
-    // Stub only specific properties
     window.addEventListener = vi.fn();
     window.removeEventListener = vi.fn();
     window.history = { 
-      length: 1,  // Default to 1, adjust as needed per test
-      go: vi.fn(),  // Add stub for history.go method
-      pushState: vi.fn(),  // If needed by other parts of your component or application
-      replaceState: vi.fn()  // If needed by other parts of your component or application
+      length: 1,  
+      go: vi.fn(),  
+      pushState: vi.fn(),  
+      replaceState: vi.fn()  
   };
   vi.spyOn(wrapper.vm, 'submitRecipe');
   await wrapper.vm.$nextTick();
@@ -174,11 +163,7 @@ describe('CreateRecipePage', () => {
       ingredients: [""],
       directions: [{ stepNumber: 1, text: "" }],
     };
-
-    // Check if the initial data matches the expected default data
     expect(wrapper.vm.recipeData).toEqual(expect.objectContaining(defaultData));
-
-    // You can also check individual properties
     expect(wrapper.vm.recipeData.publish_to_community).toBe(false);
     expect(wrapper.vm.recipeData.recipe_name).toBe('');
     expect(wrapper.vm.recipeData.ingredients).toEqual(['']);
@@ -204,10 +189,10 @@ describe('CreateRecipePage', () => {
   });
 
   it('removes an ingredient when remove button is clicked', async () => {
-    await wrapper.vm.addIngredient(); // Add a second ingredient to test removal
-    expect(wrapper.vm.recipeData.ingredients.length).toBe(2); // Confirm addition
+    await wrapper.vm.addIngredient(); 
+    expect(wrapper.vm.recipeData.ingredients.length).toBe(2); 
     await wrapper.find('.ingredient-input .remove-button').trigger('click');
-    expect(wrapper.vm.recipeData.ingredients.length).toBe(1); // Confirm removal
+    expect(wrapper.vm.recipeData.ingredients.length).toBe(1);
   });
 
   it('adds a direction when add more button is clicked', async () => {
@@ -216,123 +201,92 @@ describe('CreateRecipePage', () => {
   });
 
   it('removes a direction when remove button is clicked', async () => {
-    await wrapper.vm.addDirection(); // Add a second direction to test removal
-    expect(wrapper.vm.recipeData.directions.length).toBe(2); // Confirm addition
+    await wrapper.vm.addDirection(); 
+    expect(wrapper.vm.recipeData.directions.length).toBe(2); 
     await wrapper.findAll('.direction-step .remove-button').at(0).trigger('click');
-    expect(wrapper.vm.recipeData.directions.length).toBe(1); // Confirm removal
+    expect(wrapper.vm.recipeData.directions.length).toBe(1); 
   });
 
   it('allows only numeric input in cook time fields', async () => {
     const cookTimeHoursInput = wrapper.find('#cookTimeHours');
     const cookTimeMinsInput = wrapper.find('#cookTimeMins');
 
-    // Simulate key press for a non-numeric value
     await cookTimeHoursInput.setValue('e');
     await cookTimeMinsInput.setValue('e');
 
-    // Check if the input is rejected (field should be empty or unchanged if starting value is empty)
     expect(cookTimeHoursInput.element.value).toBe('');
     expect(cookTimeMinsInput.element.value).toBe('');
 
-    // Simulate key press for a numeric value
     await cookTimeHoursInput.setValue('2');
     await cookTimeMinsInput.setValue('30');
 
-    // Check if the input is accepted
     expect(cookTimeHoursInput.element.value).toBe('2');
     expect(cookTimeMinsInput.element.value).toBe('30');
   });
 
   it('shows error toast when the image file is not valid', async () => {
-    // Simulate image upload with an invalid file type
-    const file = new File([''], 'test-image.gif', { type: 'image/gif' }); // Unsupported format
+    const file = new File([''], 'test-image.gif', { type: 'image/gif' }); 
     const event = { target: { files: [file] } };
     await wrapper.vm.handleImageUpload(event);
 
-    // Check that error toast was called
     expect(toast.error).toHaveBeenCalled();
     expect(toast.error).toHaveBeenCalledWith("Please select a JPG or PNG image file.", expect.anything());
   });
 
   it('shows error toast when mandatory fields are missing before submitting', async () => {
-    // Prepare form without required fields filled
-    wrapper.vm.recipeData.recipe_name = ''; // Assume recipe name is required and it's empty
+    wrapper.vm.recipeData.recipe_name = ''; 
     await wrapper.vm.submitRecipe();
 
-    // Check if the error toast for missing fields is called
     expect(toast.error).toHaveBeenCalled();
     expect(toast.error).toHaveBeenCalledWith(expect.stringContaining("Please fill in the following fields"), expect.anything());
   });
 
   it('shows error toast when recipe cannot be saved due to an error', async () => {
-    // Mock the submitRecipe method to simulate a failure
     vi.spyOn(wrapper.vm, 'submitRecipe').mockImplementation(() => {
-      wrapper.vm.cannotSaveRecipe(); // Simulate calling the error toast
+      wrapper.vm.cannotSaveRecipe();
       return Promise.reject(new Error("Failed to save"));
     });
-
-    // Attempt to submit the recipe
     try {
       await wrapper.vm.submitRecipe();
     } catch {}
-
-    // Verify that the error toast was displayed
     expect(toast.error).toHaveBeenCalled();
     expect(toast.error).toHaveBeenCalledWith("Recipe could not be saved.", expect.anything());
   });
 
   it('shows success toast when recipe is saved successfully', async () => {
-    // Mock the submitRecipe method to simulate a success
     vi.spyOn(wrapper.vm, 'submitRecipe').mockImplementation(() => {
-      wrapper.vm.recipeSavedSuccess(); // Trigger the success toast
+      wrapper.vm.recipeSavedSuccess(); 
       return Promise.resolve();
     });
-
-    // Execute the submission process
     await wrapper.vm.submitRecipe();
-
-    // Verify that the success toast was displayed
     expect(toast.success).toHaveBeenCalled();
     expect(toast.success).toHaveBeenCalledWith("Recipe was successfully created!", expect.anything());
   });
 
   it('routes to the home page on cancel', async () => {
-
-    // Simulate the cancel button click
     await wrapper.find('.cancel-button').trigger('click');
-
-    // Check if the router goes to the previous page or root
-    expect(router.currentRoute.value.path).toBe('/'); // Modify this according to your logic
+    expect(router.currentRoute.value.path).toBe('/');
   });
 
   it('routes to the previous page on cancel when history length is more than 1', async () => {
-    window.history.length = 2;  // Simulate history length greater than 1
-
+    window.history.length = 2; 
     const spy = vi.spyOn(router, 'go');
-
-    // Simulate the cancel button click
     await wrapper.find('.cancel-button').trigger('click');
-
-    // Check if the router goes to the previous page
     expect(spy).toHaveBeenCalledWith(-1);
     spy.mockRestore();
   });
 
   it('routes to the home page on cancel when history length is 1 or less', async () => {
-    window.history.length = 1;  // Simulate history length of 1
+    window.history.length = 1;  
 
     const spy = vi.spyOn(router, 'push');
 
-    // Simulate the cancel button click
     await wrapper.find('.cancel-button').trigger('click');
-
-    // Check if the router pushes to the home page
     expect(spy).toHaveBeenCalledWith('/');
     spy.mockRestore();
   });
 
   it('submits a recipe with valid data', async () => {
-    // Prepare form inputs
     wrapper.vm.recipeData.recipe_name = 'Chocolate Cake';
     wrapper.vm.recipeData.description = 'Delicious chocolate cake';
     wrapper.vm.recipeData.ingredients[0] = '1 cup flour';
@@ -343,7 +297,6 @@ describe('CreateRecipePage', () => {
     wrapper.vm.recipeData.category = ['Dessert'];
 
     const pushSpy = vi.spyOn(router, 'push');
-    // Mock method to simulate successful submission
     await wrapper.vm.submitRecipe();
     expect(wrapper.vm.submitRecipe).toHaveBeenCalled();
     expect(pushSpy).toHaveBeenCalledWith('/community-page');
