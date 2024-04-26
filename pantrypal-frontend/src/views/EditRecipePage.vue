@@ -119,7 +119,7 @@
                     type="text"
                     v-model="recipeData.ingredients[index]"
                     placeholder="e.g. 10g Apple"
-                    maxlength="30"
+                    maxlength="40"
                   />
                   <button
                     class="remove-button"
