@@ -19,3 +19,20 @@ Report: https://docs.google.com/document/d/1sBYRNxE0Yrr5owWkquDM1H5IOaIg2pSf6eAN
 SCRUM Artefacts: https://docs.google.com/spreadsheets/d/1YmsZ2pfBofQhoxQOZtnoy6yAnzAnQzqcCA1MogU8HpU/edit?usp=sharing
 
 Video: [https://youtu.be/jU9gwtz15cQ](https://youtu.be/qeTImnWxWUE)
+
+### How To Use Locally
+To clone and run this application, you will need [Git](https://github.com/git-guides/install-git) and [Node.js](https://nodejs.org/en) (which comes with npm) installed on your computer. 
+From your command line:
+```
+# Clone this repository
+git clone https://github.com/BT3103AppDev1/l1-final-term-project-group-9-pantrypal.git
+
+# Go into the frontend folder
+cd pantrypal-frontend
+
+# Install dependencies
+npm i
+
+# Run the frontend app
+npm run dev
+```
