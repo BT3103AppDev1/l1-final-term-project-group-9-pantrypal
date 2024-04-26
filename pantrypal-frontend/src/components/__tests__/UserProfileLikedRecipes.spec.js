@@ -59,31 +59,5 @@ describe('UserProfileLikedRecipes Component', () => {
         expect(firestore.collection).toHaveBeenCalledWith('users'); 
         expect(firestore.collection('users').doc).toHaveBeenCalledWith('123');
       });  
-
-    // it('renders only liked recipes in RecipeCard components', async () => {
-    //     const userDocRef = firestore.collection('users').doc('123');
-    //     const allRecipes = [
-    //       { recipe_id: 'recipeId1', name: 'Recipe 1' }, 
-    //       { recipe_id: 'recipeId2', name: 'Recipe 2' },
-    //       { recipe_id: 'recipeId3', name: 'Recipe 3' },
-    //     ];
-    //     const likedRecipes = ['recipeId1', 'recipeId3'];
-    //     vi.mocked(userDocRef.onSnapshot).mockImplementation((callback) => {
-    //       callback({ data: () => ({ liked_recipes: likedRecipes, all_recipes: allRecipes }) });
-    //     });
-      
-    //     await flushPromises();
-    //     await wrapper.vm.$nextTick();
-      
-    //     const recipeCards = wrapper.findAllComponents('RecipeCard');
-
-    //     await flushPromises();
-      
-    //     expect(recipeCards).toHaveLength(2); // Assuming two liked recipes
-    //     recipeCards.forEach((recipeCard, index) => {
-    //       const recipeId = recipeCard.props('recipe').recipe_id;
-    //       expect(likedRecipes).toContain(recipeId);
-    //     });
-    //   });          
 });
       
