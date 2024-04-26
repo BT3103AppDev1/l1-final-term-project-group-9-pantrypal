@@ -143,6 +143,7 @@ export default {
   methods: {
     updateLiked() {
       this.$emit("updateLiked");
+      this.fetchRecipes();
     },
     async fetchRecipes() {
       if (auth.currentUser) {
