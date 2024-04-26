@@ -248,6 +248,8 @@ export default {
       } catch (error) {
         console.error("Error fetching recipes:", error);
       }
+      this.sortAllByMostRecent();
+      this.sortByMostRecent();
     },
   },
 };
