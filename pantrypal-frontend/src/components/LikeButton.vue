@@ -40,7 +40,7 @@ export default {
       const recipeDocRef = doc(db, "all_recipes", this.recipe.recipe_id);
 
       try {
-        this.$emit("updateLiked");
+        // this.$emit("updateLiked");
         if (this.recipeIsLiked) {
           this.recipe.like_count--;
           await setDoc(recipeDocRef, {
@@ -76,6 +76,7 @@ export default {
         }
 
         this.recipeIsLiked = !this.recipeIsLiked;
+        this.$emit("updateLiked");
       } catch (error) {
         console.error("Error toggling recipe like:", error);
       }
