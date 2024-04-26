@@ -21,9 +21,9 @@ SCRUM Artefacts: https://docs.google.com/spreadsheets/d/1YmsZ2pfBofQhoxQOZtnoy6y
 Video: [https://youtu.be/jU9gwtz15cQ](https://youtu.be/qeTImnWxWUE)
 
 ## Tech Stack
-Frontend: JavaScript, HTML, CSS, Vuetify
-Backend: Node.js
-APIs: OpenAI
+* Frontend: JavaScript, HTML, CSS, Vuetify
+* Backend: Node.js
+* APIs: OpenAI
 
 ## How To Use Locally
 ### Frontend
